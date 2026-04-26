@@ -1,0 +1,143 @@
+"use server";
+
+import { auth } from "@/lib/auth";
+import { db } from "@/db";
+import { users, sellers, vendors } from "@/db/schema";
+import { eq } from "drizzle-orm";
+import { redirect } from "next/navigation";
+import { headers } from "next/headers";
+import { getCurrentSession } from "@/lib/auth/session";
+
+// ============================================================
+// AUTH ACTIONS
+// ============================================================
+
+export async function registerUser(
+  data: {
+    email: string;
+    password: string;
+    name: string;
+    role: "SELLER" | "VENDOR" | "ADMIN";
+    companyName: string;
+    industry?: string | undefined;
+    companySize?: string | undefined;
+    website?: string | undefined;
+  }
+) {
+  try {
+    const existing = await db.query.users.findFirst({
+      where: eq(users.email, data.email),
+    });
+
+    if (existing) {
+      return { error: "Email already registered" };
+    }
+
+    const result = await auth.api.signUpEmail({
+      headers: await headers(),
+      body: {
+        email: data.email,
+        password: data.password,
+        name: data.name,
+      },
+    });
+
+    const user = result.user;
+
+    await db
+      .update(users)
+      .set({ role: data.role })
+      .where(eq(users.id, user.id));
+
+    if (data.role === "ADMIN") {
+      return { success: true, userId: user.id };
+    }
+
+    const profileValues = {
+      userId: user.id,
+      companyName: data.companyName,
+      industry: data.industry,
+      companySize: data.companySize,
+      website: data.website,
+    };
+
+    if (data.role === "SELLER") {
+      await db.insert(sellers).values({
+        ...profileValues,
+      });
+    } else if (data.role === "VENDOR") {
+      await db.insert(vendors).values({
+        ...profileValues,
+      });
+    }
+
+    return { success: true, userId: user.id };
+  } catch (error) {
+    console.error("Register error:", error);
+    return { error: "Registration failed" };
+  }
+}
+
+export async function signIn(data: {
+  email: string;
+  password: string;
+  expectedRole?: "SELLER" | "VENDOR" | "ADMIN";
+}) {
+  try {
+    const result = await auth.api.signInEmail({
+      headers: await headers(),
+      body: {
+        email: data.email,
+        password: data.password,
+      },
+    });
+
+    const userRecord = await db.query.users.findFirst({
+      where: eq(users.id, result.user.id),
+    });
+
+    if (data.expectedRole && userRecord?.role !== data.expectedRole) {
+      await auth.api.signOut({
+        headers: await headers(),
+      });
+
+      return { error: "This account does not match the selected workspace" };
+    }
+
+    return { success: true, user: userRecord ?? result.user };
+  } catch (error) {
+    console.error("Sign in error:", error);
+    return { error: "Invalid email or password" };
+  }
+}
+
+export async function signOut() {
+  try {
+    await auth.api.signOut({
+      headers: await headers(),
+    });
+
+    redirect("/login");
+  } catch (error) {
+    console.error("Sign out error:", error);
+    redirect("/login");
+  }
+}
+
+export async function getSession() {
+  return getCurrentSession();
+}
+
+export async function getCurrentUser() {
+  const session = await getCurrentSession();
+  if (!session?.user) return null;
+
+  return db.query.users.findFirst({
+    where: eq(users.id, session.user.id),
+    with: {
+      seller: true,
+      vendor: true,
+      adminTeam: true,
+    },
+  });
+}

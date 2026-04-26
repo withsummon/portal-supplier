@@ -173,7 +173,7 @@ export default function AdminProjectsPage() {
         const note = {
             text: actionNote || (action === 'accept' ? 'Project accepted' : action === 'reject' ? 'Project rejected' : 'Clarification requested'),
             by: 'Admin',
-            at: new Date().toISOString().split('T')[0],
+            at: new Date().toISOString().split('T')[0] ?? new Date().toISOString(),
             type: action === 'clarify' ? 'clarification' as const : 'status_change' as const
         };
 
@@ -259,8 +259,8 @@ export default function AdminProjectsPage() {
                         </thead>
                         <tbody>
                             {filteredProjects.map((project) => {
-                                const statusConfig = STATUS_CONFIG[project.status];
-                                const priorityConfig = PRIORITY_CONFIG[project.priority];
+                                const statusConfig = STATUS_CONFIG[project.status] ?? STATUS_CONFIG.submitted;
+                                const priorityConfig = PRIORITY_CONFIG[project.priority] ?? PRIORITY_CONFIG.medium;
                                 const StatusIcon = statusConfig.icon;
                                 return (
                                     <tr key={project.id}>

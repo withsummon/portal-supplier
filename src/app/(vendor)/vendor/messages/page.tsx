@@ -1,7 +1,17 @@
-'use client';
+import MessagesPageClient from '@/app/(dashboard)/messages/MessagesPageClient'
+import { requireRole } from '@/lib/auth/session'
+import { getCachedUserConversations } from '@/lib/data/communications'
 
-import MessagesPage from '@/app/(dashboard)/messages/page';
+export default async function VendorMessagesPage() {
+  const user = await requireRole('VENDOR')
+  const conversations = await getCachedUserConversations(user.id)
 
-export default function VendorMessagesPage() {
-    return <MessagesPage />;
+  return (
+    <MessagesPageClient
+      currentUserId={user.id}
+      initialConversations={conversations}
+      pageTitle="Messages"
+      pageSubtitle="Manage conversations with the Summon team around bids and project clarifications."
+    />
+  )
 }

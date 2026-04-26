@@ -33,6 +33,8 @@ export default function ProjectComments({ projectStatus }: { projectStatus: stri
             const timer = setTimeout(() => setIsTyping(true), 2000);
             return () => clearTimeout(timer);
         }
+
+        return undefined;
     }, [projectStatus]);
 
     const handleSend = () => {

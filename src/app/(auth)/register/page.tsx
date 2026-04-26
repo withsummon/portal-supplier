@@ -1,9 +1,9 @@
 'use client';
 
-import { useState } from 'react';
+import { useActionState, useEffect, useState } from 'react';
 import Link from 'next/link';
-import { Eye, EyeOff, CheckCircle, Zap, Shield, TrendingUp, Building2, Users } from 'lucide-react';
-import { useRouter } from 'next/navigation';
+import { Eye, EyeOff, CheckCircle, Zap, Shield, TrendingUp, Building2, Users, AlertCircle, Loader2 } from 'lucide-react';
+import { registerUser } from '@/lib/actions/auth';
 
 type UserRole = 'seller' | 'vendor';
 
@@ -33,16 +33,62 @@ const companySizes = [
     '201–500 employees', '500+ employees',
 ];
 
+type RegisterState = {
+    error?: string;
+    success?: boolean;
+} | null;
+
+async function handleRegister(_prevState: RegisterState, formData: FormData): Promise<{ error?: string; success?: boolean }> {
+    const firstName = formData.get('firstName') as string;
+    const lastName = formData.get('lastName') as string;
+    const email = formData.get('email') as string;
+    const password = formData.get('password') as string;
+    const companyName = formData.get('companyName') as string;
+    const website = formData.get('website') as string;
+    const industry = formData.get('industry') as string;
+    const companySize = formData.get('companySize') as string;
+    const role = (formData.get('role') as string).toUpperCase() as 'SELLER' | 'VENDOR';
+
+    if (!firstName || !lastName || !email || !password || !companyName) {
+        return { error: 'Please fill in all required fields' };
+    }
+
+    if (password.length < 8) {
+        return { error: 'Password must be at least 8 characters' };
+    }
+
+    const name = `${firstName} ${lastName}`.trim();
+
+    const result = await registerUser({
+        name,
+        email,
+        password,
+        role,
+        companyName,
+        website: website || undefined,
+        industry: industry || undefined,
+        companySize: companySize || undefined,
+    });
+
+    if (result.error) {
+        return { error: result.error };
+    }
+
+    return { success: true };
+}
+
 export default function RegisterPage() {
-    const router = useRouter();
     const [showPassword, setShowPassword] = useState(false);
     const [selectedRole, setSelectedRole] = useState<UserRole>('seller');
+    const [state, formAction, isPending] = useActionState(handleRegister, null);
 
-    const handleRegister = (e: React.FormEvent) => {
-        e.preventDefault();
-        // In a real app we'd save to a provider/context, here we pass role as query param
-        router.push(`/onboarding?role=${selectedRole}`);
-    };
+    useEffect(() => {
+        if (!state?.success || typeof window === 'undefined') {
+            return;
+        }
+
+        window.location.href = `/onboarding?role=${selectedRole}`;
+    }, [selectedRole, state]);
 
     return (
         <div className="auth-layout">
@@ -123,117 +169,147 @@ export default function RegisterPage() {
                         </div>
                     </div>
 
-                    <form className="auth-fields" onSubmit={handleRegister}>
-                        {/* Personal */}
-                        <div
-                            style={{
-                                fontSize: 'var(--fs-xs)',
-                                fontWeight: 'var(--fw-semibold)',
-                                textTransform: 'uppercase',
-                                letterSpacing: '0.08em',
-                                color: 'var(--text-muted)',
-                                marginBottom: 'var(--sp-1)',
-                            }}
-                        >
-                            Personal Information
-                        </div>
+                    <form action={formAction}>
+                        <input type="hidden" name="role" value={selectedRole} />
 
-                        <div className="grid-2" style={{ gap: 'var(--sp-3)' }}>
+                        {state?.error && (
+                            <div style={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: 'var(--sp-2)',
+                                padding: 'var(--sp-3)',
+                                background: 'var(--color-danger-bg)',
+                                border: '1px solid var(--color-danger)',
+                                borderRadius: 'var(--radius-md)',
+                                marginBottom: 'var(--sp-4)',
+                                color: 'var(--color-danger)',
+                                fontSize: 'var(--fs-sm)',
+                            }}>
+                                <AlertCircle size={16} />
+                                {state.error}
+                            </div>
+                        )}
+
+                        <div className="auth-fields">
+                            {/* Personal */}
+                            <div
+                                style={{
+                                    fontSize: 'var(--fs-xs)',
+                                    fontWeight: 'var(--fw-semibold)',
+                                    textTransform: 'uppercase',
+                                    letterSpacing: '0.08em',
+                                    color: 'var(--text-muted)',
+                                    marginBottom: 'var(--sp-1)',
+                                }}
+                            >
+                                Personal Information
+                            </div>
+
+                            <div className="grid-2" style={{ gap: 'var(--sp-3)' }}>
+                                <div className="form-group">
+                                    <label className="form-label">First name <span className="form-required">*</span></label>
+                                    <input required className="input" type="text" name="firstName" placeholder="Budi" />
+                                </div>
+                                <div className="form-group">
+                                    <label className="form-label">Last name <span className="form-required">*</span></label>
+                                    <input required className="input" type="text" name="lastName" placeholder="Santoso" />
+                                </div>
+                            </div>
+
                             <div className="form-group">
-                                <label className="form-label">First name <span className="form-required">*</span></label>
-                                <input required className="input" type="text" placeholder="Budi" />
+                                <label className="form-label">Email address <span className="form-required">*</span></label>
+                                <input required className="input" type="email" name="email" placeholder="budi@company.com" />
                             </div>
+
                             <div className="form-group">
-                                <label className="form-label">Last name <span className="form-required">*</span></label>
-                                <input required className="input" type="text" placeholder="Santoso" />
+                                <label className="form-label">Password <span className="form-required">*</span></label>
+                                <div style={{ position: 'relative' }}>
+                                    <input
+                                        required
+                                        className="input"
+                                        type={showPassword ? 'text' : 'password'}
+                                        name="password"
+                                        placeholder="Minimum 8 characters"
+                                        style={{ paddingRight: '44px' }}
+                                    />
+                                    <button
+                                        type="button"
+                                        onClick={() => setShowPassword(!showPassword)}
+                                        style={{
+                                            position: 'absolute', right: '12px', top: '50%',
+                                            transform: 'translateY(-50%)', color: 'var(--text-muted)',
+                                            background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center',
+                                        }}
+                                    >
+                                        {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                                    </button>
+                                </div>
                             </div>
-                        </div>
 
-                        <div className="form-group">
-                            <label className="form-label">Email address <span className="form-required">*</span></label>
-                            <input required className="input" type="email" placeholder="budi@company.com" />
-                        </div>
-
-                        <div className="form-group">
-                            <label className="form-label">Password <span className="form-required">*</span></label>
-                            <div style={{ position: 'relative' }}>
-                                <input
-                                    required
-                                    className="input"
-                                    type={showPassword ? 'text' : 'password'}
-                                    placeholder="Minimum 8 characters"
-                                    style={{ paddingRight: '44px' }}
-                                />
-                                <button
-                                    type="button"
-                                    onClick={() => setShowPassword(!showPassword)}
-                                    style={{
-                                        position: 'absolute', right: '12px', top: '50%',
-                                        transform: 'translateY(-50%)', color: 'var(--text-muted)',
-                                        background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center',
-                                    }}
-                                >
-                                    {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
-                                </button>
+                            {/* Company */}
+                            <div
+                                style={{
+                                    fontSize: 'var(--fs-xs)',
+                                    fontWeight: 'var(--fw-semibold)',
+                                    textTransform: 'uppercase',
+                                    letterSpacing: '0.08em',
+                                    color: 'var(--text-muted)',
+                                    marginTop: 'var(--sp-2)',
+                                    marginBottom: 'var(--sp-1)',
+                                }}
+                            >
+                                Company Information
                             </div>
-                        </div>
 
-                        {/* Company */}
-                        <div
-                            style={{
-                                fontSize: 'var(--fs-xs)',
-                                fontWeight: 'var(--fw-semibold)',
-                                textTransform: 'uppercase',
-                                letterSpacing: '0.08em',
-                                color: 'var(--text-muted)',
-                                marginTop: 'var(--sp-2)',
-                                marginBottom: 'var(--sp-1)',
-                            }}
-                        >
-                            Company Information
-                        </div>
-
-                        <div className="form-group">
-                            <label className="form-label">Company name <span className="form-required">*</span></label>
-                            <input required className="input" type="text" placeholder="PT Arya Teknologi" />
-                        </div>
-
-                        <div className="form-group">
-                            <label className="form-label">Company website</label>
-                            <input className="input" type="url" placeholder="https://yourcompany.com" />
-                        </div>
-
-                        <div className="grid-2" style={{ gap: 'var(--sp-3)' }}>
                             <div className="form-group">
-                                <label className="form-label">Industry <span className="form-required">*</span></label>
-                                <select required className="select">
-                                    <option value="">Select industry</option>
-                                    {industries.map((i) => <option key={i}>{i}</option>)}
-                                </select>
+                                <label className="form-label">Company name <span className="form-required">*</span></label>
+                                <input required className="input" type="text" name="companyName" placeholder="PT Arya Teknologi" />
                             </div>
+
                             <div className="form-group">
-                                <label className="form-label">Company size <span className="form-required">*</span></label>
-                                <select required className="select">
-                                    <option value="">Select size</option>
-                                    {companySizes.map((s) => <option key={s}>{s}</option>)}
-                                </select>
+                                <label className="form-label">Company website</label>
+                                <input className="input" type="url" name="website" placeholder="https://yourcompany.com" />
                             </div>
+
+                            <div className="grid-2" style={{ gap: 'var(--sp-3)' }}>
+                                <div className="form-group">
+                                    <label className="form-label">Industry <span className="form-required">*</span></label>
+                                    <select required className="select" name="industry">
+                                        <option value="">Select industry</option>
+                                        {industries.map((i) => <option key={i}>{i}</option>)}
+                                    </select>
+                                </div>
+                                <div className="form-group">
+                                    <label className="form-label">Company size <span className="form-required">*</span></label>
+                                    <select required className="select" name="companySize">
+                                        <option value="">Select size</option>
+                                        {companySizes.map((s) => <option key={s}>{s}</option>)}
+                                    </select>
+                                </div>
+                            </div>
+
+                            {/* Terms */}
+                            <label style={{ display: 'flex', alignItems: 'flex-start', gap: 'var(--sp-3)', cursor: 'pointer', marginTop: 'var(--sp-2)', marginBottom: 'var(--sp-4)' }}>
+                                <input required type="checkbox" style={{ marginTop: '2px', accentColor: 'var(--blue-600)', flexShrink: 0 }} />
+                                <span style={{ fontSize: 'var(--fs-sm)', color: 'var(--text-secondary)', lineHeight: 'var(--lh-relaxed)' }}>
+                                    I agree to Summon&apos;s{' '}
+                                    <a href="#" style={{ color: 'var(--text-accent)', fontWeight: 'var(--fw-medium)' }}>Terms of Service</a>
+                                    {' '}and{' '}
+                                    <a href="#" style={{ color: 'var(--text-accent)', fontWeight: 'var(--fw-medium)' }}>Privacy Policy</a>.
+                                </span>
+                            </label>
+
+                            <button type="submit" className="btn btn-primary btn-lg" style={{ width: '100%' }} disabled={isPending}>
+                                {isPending ? (
+                                    <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 'var(--sp-2)' }}>
+                                        <Loader2 size={16} style={{ animation: 'spin 1s linear infinite' }} />
+                                        Creating account...
+                                    </span>
+                                ) : (
+                                    'Continue to Onboarding'
+                                )}
+                            </button>
                         </div>
-
-                        {/* Terms */}
-                        <label style={{ display: 'flex', alignItems: 'flex-start', gap: 'var(--sp-3)', cursor: 'pointer', marginTop: 'var(--sp-2)', marginBottom: 'var(--sp-4)' }}>
-                            <input required type="checkbox" style={{ marginTop: '2px', accentColor: 'var(--blue-600)', flexShrink: 0 }} />
-                            <span style={{ fontSize: 'var(--fs-sm)', color: 'var(--text-secondary)', lineHeight: 'var(--lh-relaxed)' }}>
-                                I agree to Summon&apos;s{' '}
-                                <a href="#" style={{ color: 'var(--text-accent)', fontWeight: 'var(--fw-medium)' }}>Terms of Service</a>
-                                {' '}and{' '}
-                                <a href="#" style={{ color: 'var(--text-accent)', fontWeight: 'var(--fw-medium)' }}>Privacy Policy</a>.
-                            </span>
-                        </label>
-
-                        <button type="submit" className="btn btn-primary btn-lg" style={{ width: '100%' }}>
-                            Continue to Onboarding
-                        </button>
                     </form>
 
                     <p style={{ textAlign: 'center', marginTop: 'var(--sp-6)', fontSize: 'var(--fs-sm)', color: 'var(--text-secondary)' }}>
@@ -275,6 +351,13 @@ export default function RegisterPage() {
                     </div>
                 </div>
             </div>
+
+            <style jsx global>{`
+                @keyframes spin {
+                    from { transform: rotate(0deg); }
+                    to { transform: rotate(360deg); }
+                }
+            `}</style>
         </div>
     );
 }

@@ -202,6 +202,8 @@ function Step2({ data, onChange }: { data: FormData; onChange: (k: keyof FormDat
 }
 
 function Step3({ data, onChange }: { data: FormData; onChange: (k: keyof FormData, v: unknown) => void }) {
+    const budgetOptions = BUDGET_RANGES[data.currency] ?? BUDGET_RANGES.USD ?? [];
+
     return (
         <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--sp-5)' }}>
             <div className="grid-2">
@@ -229,7 +231,7 @@ function Step3({ data, onChange }: { data: FormData; onChange: (k: keyof FormDat
                     <div style={{ flex: 1 }}>
                         <select className="select" value={data.budgetRange} onChange={e => onChange('budgetRange', e.target.value)}>
                             <option value="">Select budget range...</option>
-                            {(BUDGET_RANGES[data.currency] || BUDGET_RANGES['USD']).map(b => (
+                            {budgetOptions.map(b => (
                                 <option key={b.value} value={b.label}>
                                     {b.label}
                                 </option>
@@ -420,6 +422,7 @@ export default function SubmitProjectPage() {
 
     const handleNext = () => { if (step < 4) setStep(step + 1); };
     const handleBack = () => { if (step > 0) setStep(step - 1); };
+    const currentStep = STEPS[step] ?? STEPS[0];
 
     const handleSubmit = () => {
         setSubmitted(true);
@@ -485,8 +488,8 @@ export default function SubmitProjectPage() {
                 <div className="card">
                     <div className="card-header">
                         <div>
-                            <div className="card-title">Step {step + 1}: {STEPS[step].label}</div>
-                            <div className="card-subtitle">{STEPS[step].desc}</div>
+                            <div className="card-title">Step {step + 1}: {currentStep?.label}</div>
+                            <div className="card-subtitle">{currentStep?.desc}</div>
                         </div>
                         <span style={{
                             fontSize: 'var(--fs-xs)', color: 'var(--text-muted)',

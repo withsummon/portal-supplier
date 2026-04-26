@@ -17,7 +17,7 @@ export default function QuoteCalculator() {
     });
 
     const totalEstimate = PRESETS.reduce((sum, preset) => {
-        return sum + values[preset.id] * preset.basePrice;
+        return sum + (values[preset.id] ?? 0) * preset.basePrice;
     }, 0);
 
     const formatCurrency = (val: number) => {
@@ -53,7 +53,7 @@ export default function QuoteCalculator() {
                     <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--sp-6)' }}>
                         {PRESETS.map((preset) => {
                             const Icon = preset.icon;
-                            const val = values[preset.id];
+                            const val = values[preset.id] ?? preset.min;
                             const percent = ((val - preset.min) / (preset.max - preset.min)) * 100;
                             return (
                                 <div key={preset.id}>
