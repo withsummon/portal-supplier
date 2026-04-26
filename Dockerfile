@@ -6,7 +6,7 @@ FROM oven/bun:1-alpine AS builder
 WORKDIR /app
 
 # Install dependencies using bun (faster than copying all files first)
-COPY package.json bun.lockb ./
+COPY package.json bun.lock ./
 RUN bun install --frozen-lockfile
 
 # Copy source code

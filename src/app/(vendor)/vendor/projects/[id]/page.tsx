@@ -1,6 +1,7 @@
 import { notFound } from 'next/navigation'
 import VendorProjectDetailClient from './VendorProjectDetailClient'
-import { getCachedVendorProjectDetail } from '@/lib/data/vendors'
+import { requireRole } from '@/lib/auth/session'
+import { getCachedVendorProjectDetailForUser } from '@/lib/data/project-workflows'
 
 interface PageProps {
   params: Promise<{ id: string }>
@@ -8,7 +9,8 @@ interface PageProps {
 
 export default async function VendorProjectDetailPage({ params }: PageProps) {
   const { id } = await params
-  const project = await getCachedVendorProjectDetail(id)
+  const user = await requireRole('VENDOR')
+  const project = await getCachedVendorProjectDetailForUser(id, user.id)
 
   if (!project) {
     notFound()

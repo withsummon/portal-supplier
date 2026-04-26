@@ -5,12 +5,23 @@ import Sidebar from './Sidebar'
 import Header from './Header'
 import CommandBar, { type CommandBarProject } from './CommandBar'
 
+// Minimal type for user data needed in layout (must match SidebarUser)
+interface UserProfile {
+  id: string
+  email: string
+  name: string | null
+  seller?: { companyName: string } | null
+  vendor?: { companyName: string } | null
+  adminTeam?: { department: string } | null
+}
+
 interface DashboardLayoutClientProps {
   children: React.ReactNode
   projects: CommandBarProject[]
+  user: UserProfile | null
 }
 
-export default function DashboardLayoutClient({ children, projects }: DashboardLayoutClientProps) {
+export default function DashboardLayoutClient({ children, projects, user }: DashboardLayoutClientProps) {
   const [collapsed, setCollapsed] = useState(false)
 
   return (
@@ -22,7 +33,7 @@ export default function DashboardLayoutClient({ children, projects }: DashboardL
           : undefined
       }
     >
-      <Sidebar collapsed={collapsed} onToggle={() => setCollapsed(!collapsed)} />
+      <Sidebar collapsed={collapsed} onToggle={() => setCollapsed(!collapsed)} user={user} />
       <div className={`portal-main${collapsed ? ' sidebar-collapsed' : ''}`}>
         <Header sidebarCollapsed={collapsed} />
         <main className="portal-content animate-in">{children}</main>

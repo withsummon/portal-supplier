@@ -1,5 +1,6 @@
 'use client'
 
+import type { LucideIcon } from 'lucide-react'
 import { Mail, Phone, Plus, Search, Shield, Trash2, UserCheck, UserPlus, Users } from 'lucide-react'
 import { useSellerTeam } from '@/hooks/use-seller-team'
 import type { SellerTeamMemberDto } from '@/lib/data/teams'
@@ -12,6 +13,36 @@ const ROLES = [
   'Designer',
   'Analyst',
   'Support',
+]
+
+const TEAM_STATS: Array<{
+  label: string
+  icon: LucideIcon
+  background: string
+  color: string
+  getValue: (members: SellerTeamMemberDto[]) => number
+}> = [
+  {
+    label: 'Total Members',
+    icon: Users,
+    background: 'var(--blue-50)',
+    color: 'var(--blue-600)',
+    getValue: (members) => members.length,
+  },
+  {
+    label: 'Active',
+    icon: UserCheck,
+    background: 'var(--color-success-bg)',
+    color: 'var(--color-success)',
+    getValue: (members) => members.filter((member) => member.status === 'active').length,
+  },
+  {
+    label: 'Pending',
+    icon: UserPlus,
+    background: 'var(--color-warning-bg)',
+    color: 'var(--color-warning)',
+    getValue: (members) => members.filter((member) => member.status === 'pending').length,
+  },
 ]
 
 export default function TeamPageClient({
@@ -34,9 +65,6 @@ export default function TeamPageClient({
     isPending,
   } = useSellerTeam(initialMembers)
 
-  const activeMembers = members.filter((member) => member.status === 'active').length
-  const pendingMembers = members.filter((member) => member.status === 'pending').length
-
   return (
     <div className="animate-in">
       <div className="page-header">
@@ -49,7 +77,6 @@ export default function TeamPageClient({
           Add Member
         </button>
       </div>
-
       <div
         style={{
           display: 'grid',
@@ -58,29 +85,25 @@ export default function TeamPageClient({
           marginBottom: 'var(--sp-6)',
         }}
       >
-        {[
-          ['Total Members', members.length, Users, 'var(--blue-50)', 'var(--blue-600)'],
-          ['Active', activeMembers, UserCheck, 'var(--color-success-bg)', 'var(--color-success)'],
-          ['Pending', pendingMembers, UserPlus, 'var(--color-warning-bg)', 'var(--color-warning)'],
-        ].map(([label, value, Icon, bg, color]) => (
-          <div key={String(label)} className="card" style={{ padding: 'var(--sp-5)' }}>
+        {TEAM_STATS.map(({ label, icon: Icon, background, color, getValue }) => (
+          <div key={label} className="card" style={{ padding: 'var(--sp-5)' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--sp-3)' }}>
               <div
                 style={{
                   width: '44px',
                   height: '44px',
                   borderRadius: 'var(--radius-lg)',
-                  background: String(bg),
+                  background,
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
                 }}
               >
-                <Icon size={20} style={{ color: String(color) }} />
+                <Icon size={20} style={{ color }} />
               </div>
               <div>
                 <div style={{ fontSize: 'var(--fs-2xl)', fontWeight: 'var(--fw-bold)' }}>
-                  {value}
+                  {getValue(members)}
                 </div>
                 <div style={{ fontSize: 'var(--fs-xs)', color: 'var(--text-muted)' }}>{label}</div>
               </div>

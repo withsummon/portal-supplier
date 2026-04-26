@@ -308,7 +308,18 @@ export default async function ProjectDetailPage({ params }: Props) {
           </div>
 
           {/* Messages & Clarifications */}
-          <ProjectComments projectStatus={mockStatus as MockProjectStatus} />
+          <ProjectComments
+            projectId={project.id}
+            projectStatus={mockStatus as MockProjectStatus}
+            initialComments={project.comments.map((comment) => ({
+              id: comment.id,
+              authorId: comment.authorId,
+              authorName: comment.author?.name ?? comment.author?.email ?? 'Unknown',
+              authorRole: (comment.author?.role ?? 'USER').toLowerCase(),
+              message: comment.message,
+              createdAt: comment.createdAt.toISOString(),
+            }))}
+          />
         </div>
 
         {/* Right Column */}

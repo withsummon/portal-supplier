@@ -1,6 +1,6 @@
 import React from 'react'
 import { db } from '@/db'
-import { projects, quotes } from '@/db/schema'
+import { comments, projects, quotes } from '@/db/schema'
 import { desc, eq, gte } from 'drizzle-orm'
 
 // ============================================================
@@ -21,6 +21,12 @@ export const getCachedProjectsById = React.cache(async (id: string) => {
       seller: { with: { user: true } },
       files: true,
       statusHistory: true,
+      comments: {
+        with: {
+          author: true,
+        },
+        orderBy: [desc(comments.createdAt)],
+      },
       quotes: { with: { vendor: { with: { user: true } } } },
     },
   })

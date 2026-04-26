@@ -22,6 +22,16 @@ import { usePathname, useRouter } from 'next/navigation'
 
 import { type LucideIcon } from 'lucide-react'
 
+// Minimal type for user data needed in Sidebar
+interface SidebarUser {
+  id: string
+  email: string
+  name: string | null
+  seller?: { companyName: string } | null
+  vendor?: { companyName: string } | null
+  adminTeam?: { department: string } | null
+}
+
 // Type definition for nav items
 type NavItem = {
   label: string
@@ -99,9 +109,11 @@ const adminNavItems: NavSection[] = [
 export default function Sidebar({
   collapsed,
   onToggle,
+  user,
 }: {
   collapsed?: boolean
   onToggle?: () => void
+  user: SidebarUser | null
 }) {
   const pathname = usePathname()
   const router = useRouter()
@@ -122,9 +134,28 @@ export default function Sidebar({
   }
 
   const handleLogout = () => {
-    // Since we're using hardcoded logic, just redirect to login
     router.push('/login')
   }
+
+  // Get display name and company from user
+  const getUserDisplay = () => {
+    if (!user) {
+      return { name: 'Loading...', company: '' }
+    }
+    const name = user.name || user.email
+    let company = ''
+    if (user.seller) {
+      company = user.seller.companyName
+    } else if (user.vendor) {
+      company = user.vendor.companyName
+    } else if (user.adminTeam) {
+      company = user.adminTeam.department
+    }
+    return { name, company }
+  }
+
+  const { name, company } = getUserDisplay()
+  const userInitial = name ? name.charAt(0).toUpperCase() : 'U'
 
   return (
     <aside className={`sidebar${collapsed ? ' collapsed' : ''}`}>
@@ -215,13 +246,13 @@ export default function Sidebar({
           className={`sidebar-user${isActive('/profile') ? ' active-profile' : ''}`}
           onClick={() => router.push(`${isAdmin ? '/admin' : isVendor ? '/vendor' : ''}/profile`)}
           style={{ cursor: 'pointer' }}
-          title={collapsed ? 'Budi Santoso (PT Arya Teknologi)' : undefined}
+          title={collapsed ? `${name}${company ? ` (${company})` : ''}` : undefined}
         >
-          <div className="sidebar-avatar">AT</div>
+          <div className="sidebar-avatar">{userInitial}</div>
           {!collapsed && (
             <div className="sidebar-user-info">
-              <div className="sidebar-user-name">Budi Santoso</div>
-              <div className="sidebar-user-role">PT Arya Teknologi</div>
+              <div className="sidebar-user-name">{name}</div>
+              <div className="sidebar-user-role">{company}</div>
             </div>
           )}
           <button

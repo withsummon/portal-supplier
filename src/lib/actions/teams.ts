@@ -99,6 +99,10 @@ export async function createAdminTeamMember(input: {
       })
       .returning()
 
+    if (!createdUser) {
+      throw new Error('Failed to create admin user.')
+    }
+
     const [member] = await tx
       .insert(adminTeamMembers)
       .values({
@@ -110,6 +114,10 @@ export async function createAdminTeamMember(input: {
         isActive: true,
       })
       .returning()
+
+    if (!member) {
+      throw new Error('Failed to create admin team member.')
+    }
 
     return { createdUser, member }
   })

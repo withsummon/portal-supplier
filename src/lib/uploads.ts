@@ -9,11 +9,14 @@ function sanitizeFilename(filename: string) {
 export async function saveLocalUpload(input: {
   file: File
   folder: string
-  allowedMimePrefix: 'image/' | 'application/'
+  allowedMimePrefix: 'image/' | 'application/' | '' | Array<'image/' | 'application/' | ''>
 }) {
   const { file, folder, allowedMimePrefix } = input
+  const allowedPrefixes = Array.isArray(allowedMimePrefix) ? allowedMimePrefix : [allowedMimePrefix]
 
-  if (!file.type.startsWith(allowedMimePrefix)) {
+  const isAllowed = allowedPrefixes.some((prefix) => prefix === '' || file.type.startsWith(prefix))
+
+  if (!isAllowed) {
     throw new Error('Unsupported file type.')
   }
 

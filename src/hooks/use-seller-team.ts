@@ -35,6 +35,10 @@ export function useSellerTeam(initialMembers: SellerTeamMemberDto[]) {
   function submitNewMember() {
     startTransition(() => {
       void createSellerTeamMember(draft).then((member) => {
+        if (!member) {
+          return
+        }
+
         setMembers((current) => [
           {
             id: member.id,

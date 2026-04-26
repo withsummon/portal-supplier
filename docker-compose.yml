@@ -9,7 +9,7 @@ services:
       - "3000:3000"
     environment:
       - NODE_ENV=production
-      - DATABASE_URL=${DATABASE_URL}
+      - DATABASE_URL=${DATABASE_URL_DOCKER:-postgresql://postgres:postgres@db:5432/portal_supplier}
       - AUTH_TRUST_HOST=${AUTH_TRUST_HOST:-true}
     depends_on:
       db:

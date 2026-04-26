@@ -1,7 +1,7 @@
 import { betterAuth } from 'better-auth'
 import { drizzleAdapter } from 'better-auth/adapters/drizzle'
 import { nextCookies } from 'better-auth/next-js'
-import { hash } from 'bcryptjs'
+import { compare, hash } from 'bcryptjs'
 import { db } from '@/db'
 import * as schema from '@/db/schema'
 
@@ -25,8 +25,10 @@ export const auth = betterAuth({
   }),
   emailAndPassword: {
     enabled: true,
-    passwordHash: async (password: string) => {
-      return hash(password, 12)
+    password: {
+      hash: async (password: string) => hash(password, 12),
+      verify: async ({ hash: hashedPassword, password }: { hash: string; password: string }) =>
+        compare(password, hashedPassword),
     },
   },
   plugins: [nextCookies()],

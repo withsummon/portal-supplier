@@ -35,6 +35,10 @@ export function useAdminTeam(initialMembers: AdminTeamMemberDto[]) {
   function submitNewMember() {
     startTransition(() => {
       void createAdminTeamMember(draft).then(({ createdUser, member }) => {
+        if (!createdUser || !member) {
+          return
+        }
+
         setMembers((current) => [
           {
             id: member.id,
@@ -65,13 +69,14 @@ export function useAdminTeam(initialMembers: AdminTeamMemberDto[]) {
       current.map((member) => (member.id === id ? { ...member, ...updates } : member)),
     )
     startTransition(() => {
-      void updateAdminTeamMember({
-        id,
-        role: updates.role,
-        department: updates.department,
-        status: updates.status,
-        verified: updates.verified,
-      })
+      const payload: Parameters<typeof updateAdminTeamMember>[0] = { id }
+
+      if (updates.role !== undefined) payload.role = updates.role
+      if (updates.department !== undefined) payload.department = updates.department
+      if (updates.status !== undefined) payload.status = updates.status
+      if (updates.verified !== undefined) payload.verified = updates.verified
+
+      void updateAdminTeamMember(payload)
     })
   }
 

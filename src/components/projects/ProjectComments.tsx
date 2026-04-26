@@ -1,66 +1,23 @@
 'use client'
 
-import { useState, useEffect } from 'react'
-import { Send, Paperclip, Clock } from 'lucide-react'
+import { Clock, Paperclip, Send } from 'lucide-react'
+import { useProjectComments } from '@/hooks/use-project-comments'
+import type { ProjectCommentDto } from '@/lib/data/project-workflows'
+import { formatDateTime } from '@/lib/utils/data'
 
-interface Comment {
-  id: string
-  author: string
-  role: 'seller' | 'admin'
-  message: string
-  timestamp: string
-}
-
-const MOCK_COMMENTS: Comment[] = [
-  {
-    id: 'c1',
-    author: 'Summon Admin',
-    role: 'admin',
-    message:
-      'Please provide more detail on the SAP version being used and expected data volume per day.',
-    timestamp: '2 hours ago',
-  },
-]
-
-export default function ProjectComments({ projectStatus }: { projectStatus: string }) {
-  const [comments, setComments] = useState<Comment[]>(MOCK_COMMENTS)
-  const [newMessage, setNewMessage] = useState('')
-  const [sending, setSending] = useState(false)
-  const [isTyping, setIsTyping] = useState(false)
-
-  // Simulate typing indicator after mount when status is need_clarification
-  useEffect(() => {
-    if (projectStatus === 'need_clarification') {
-      const timer = setTimeout(() => setIsTyping(true), 2000)
-      return () => clearTimeout(timer)
-    }
-
-    return undefined
-  }, [projectStatus])
-
-  const handleSend = () => {
-    if (!newMessage.trim()) return
-    setSending(true)
-    setIsTyping(false)
-    setTimeout(() => {
-      setComments((prev) => [
-        ...prev,
-        {
-          id: `c${prev.length + 1}`,
-          author: 'Budi Santoso',
-          role: 'seller',
-          message: newMessage.trim(),
-          timestamp: 'Just now',
-        },
-      ])
-      setNewMessage('')
-      setSending(false)
-      // Show typing again after seller replies
-      if (projectStatus === 'need_clarification') {
-        setTimeout(() => setIsTyping(true), 3000)
-      }
-    }, 500)
-  }
+export default function ProjectComments({
+  projectId,
+  projectStatus,
+  initialComments,
+}: {
+  projectId: string
+  projectStatus: string
+  initialComments: ProjectCommentDto[]
+}) {
+  const { comments, isPending, message, sendComment, setMessage } = useProjectComments(
+    projectId,
+    initialComments,
+  )
 
   return (
     <div className="card">
@@ -79,7 +36,6 @@ export default function ProjectComments({ projectStatus }: { projectStatus: stri
         </span>
       </div>
       <div className="card-body" style={{ padding: 0 }}>
-        {/* Comment List */}
         <div style={{ maxHeight: '360px', overflowY: 'auto', padding: 'var(--sp-5)' }}>
           {comments.length === 0 ? (
             <div
@@ -94,103 +50,68 @@ export default function ProjectComments({ projectStatus }: { projectStatus: stri
             </div>
           ) : (
             <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--sp-4)' }}>
-              {comments.map((c) => (
-                <div
-                  key={c.id}
-                  style={{
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: c.role === 'seller' ? 'flex-end' : 'flex-start',
-                  }}
-                >
-                  <div
-                    style={{
-                      maxWidth: '85%',
-                      padding: 'var(--sp-3) var(--sp-4)',
-                      borderRadius: 'var(--radius-lg)',
-                      background: c.role === 'seller' ? 'var(--blue-600)' : 'var(--neutral-50)',
-                      color: c.role === 'seller' ? 'white' : 'var(--text-primary)',
-                      border: c.role === 'admin' ? '1px solid var(--border-default)' : 'none',
-                    }}
-                  >
-                    <div
-                      style={{
-                        fontSize: 'var(--fs-xs)',
-                        fontWeight: 'var(--fw-semibold)',
-                        marginBottom: '4px',
-                        opacity: c.role === 'seller' ? 0.85 : 1,
-                        color: c.role === 'admin' ? 'var(--text-muted)' : undefined,
-                      }}
-                    >
-                      {c.author}
-                    </div>
-                    <div
-                      style={{
-                        fontSize: 'var(--fs-sm)',
-                        lineHeight: 'var(--lh-relaxed)',
-                      }}
-                    >
-                      {c.message}
-                    </div>
-                  </div>
-                  <div
-                    style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '4px',
-                      marginTop: '4px',
-                      fontSize: 'var(--fs-xs)',
-                      color: 'var(--text-muted)',
-                    }}
-                  >
-                    <Clock size={10} />
-                    <span>{c.timestamp}</span>
-                  </div>
-                </div>
-              ))}
+              {comments.map((comment) => {
+                const isSeller = comment.authorRole === 'seller'
 
-              {/* Typing Indicator */}
-              {isTyping && (
-                <div
-                  style={{
-                    display: 'flex',
-                    alignItems: 'flex-start',
-                    flexDirection: 'column',
-                  }}
-                >
+                return (
                   <div
+                    key={comment.id}
                     style={{
-                      padding: 'var(--sp-3) var(--sp-4)',
-                      borderRadius: 'var(--radius-lg)',
-                      background: 'var(--neutral-50)',
-                      border: '1px solid var(--border-default)',
                       display: 'flex',
-                      alignItems: 'center',
-                      gap: 'var(--sp-2)',
+                      flexDirection: 'column',
+                      alignItems: isSeller ? 'flex-end' : 'flex-start',
                     }}
                   >
-                    <span
+                    <div
                       style={{
+                        maxWidth: '85%',
+                        padding: 'var(--sp-3) var(--sp-4)',
+                        borderRadius: 'var(--radius-lg)',
+                        background: isSeller ? 'var(--blue-600)' : 'var(--neutral-50)',
+                        color: isSeller ? 'white' : 'var(--text-primary)',
+                        border: isSeller ? 'none' : '1px solid var(--border-default)',
+                      }}
+                    >
+                      <div
+                        style={{
+                          fontSize: 'var(--fs-xs)',
+                          fontWeight: 'var(--fw-semibold)',
+                          marginBottom: '4px',
+                          opacity: isSeller ? 0.85 : 1,
+                          color: isSeller ? undefined : 'var(--text-muted)',
+                        }}
+                      >
+                        {comment.authorName}
+                      </div>
+                      <div
+                        style={{
+                          fontSize: 'var(--fs-sm)',
+                          lineHeight: 'var(--lh-relaxed)',
+                        }}
+                      >
+                        {comment.message}
+                      </div>
+                    </div>
+                    <div
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '4px',
+                        marginTop: '4px',
                         fontSize: 'var(--fs-xs)',
                         color: 'var(--text-muted)',
-                        fontWeight: 600,
                       }}
                     >
-                      Summon Admin
-                    </span>
-                    <span className="typing-dots">
-                      <span className="typing-dot" />
-                      <span className="typing-dot" />
-                      <span className="typing-dot" />
-                    </span>
+                      <Clock size={10} />
+                      <span>{formatDateTime(comment.createdAt)}</span>
+                    </div>
                   </div>
-                </div>
-              )}
+                )
+              })}
             </div>
           )}
         </div>
 
-        {/* Reply Input */}
         <div
           style={{
             padding: 'var(--sp-4) var(--sp-5)',
@@ -230,24 +151,24 @@ export default function ProjectComments({ projectStatus }: { projectStatus: stri
             <input
               className="input"
               placeholder="Type your reply to the Summon team..."
-              value={newMessage}
-              onChange={(e) => setNewMessage(e.target.value)}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter' && !e.shiftKey) {
-                  e.preventDefault()
-                  handleSend()
+              value={message}
+              onChange={(event) => setMessage(event.target.value)}
+              onKeyDown={(event) => {
+                if (event.key === 'Enter' && !event.shiftKey) {
+                  event.preventDefault()
+                  sendComment()
                 }
               }}
               style={{ flex: 1, fontSize: 'var(--fs-sm)' }}
             />
             <button
               className="btn btn-primary btn-sm"
-              onClick={handleSend}
-              disabled={!newMessage.trim() || sending}
+              onClick={sendComment}
+              disabled={!message.trim() || isPending}
               style={{ flexShrink: 0, gap: '6px' }}
             >
               <Send size={14} />
-              {sending ? 'Sending...' : 'Send'}
+              {isPending ? 'Sending...' : 'Send'}
             </button>
           </div>
         </div>

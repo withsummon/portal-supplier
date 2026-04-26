@@ -102,7 +102,7 @@ export default function NotificationsPageClient({
   } = useNotificationsPage(initialNotifications)
 
   return (
-    <div className="animate-in" style={{ maxWidth: '800px', margin: '0 auto' }}>
+    <div className="animate-in">
       <div className="page-header">
         <div>
           <h1 className="page-title">Notifications</h1>
