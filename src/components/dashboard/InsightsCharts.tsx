@@ -1,55 +1,48 @@
-"use client";
+'use client'
 
-import { TrendingUp, DollarSign, PieChart } from "lucide-react";
+import { TrendingUp, DollarSign, PieChart } from 'lucide-react'
 
 interface MonthlyData {
-  month: string;
-  submissions: number;
-  revenue: number;
+  month: string
+  submissions: number
+  revenue: number
 }
 
 interface CategoryData {
-  category: string;
-  count: number;
-  revenue: number;
-  percent: number;
+  category: string
+  count: number
+  revenue: number
+  percent: number
 }
 
 interface PipelineData {
-  accepted: { label: string; value: number; color: string };
-  inProgress: { label: string; value: number; color: string };
-  total: number;
+  accepted: { label: string; value: number; color: string }
+  inProgress: { label: string; value: number; color: string }
+  total: number
 }
 
 interface Props {
-  monthlyData: MonthlyData[];
-  categoryData: CategoryData[];
-  pipelineData: PipelineData;
+  monthlyData: MonthlyData[]
+  categoryData: CategoryData[]
+  pipelineData: PipelineData
 }
 
 const CATEGORY_COLORS = [
-  "var(--blue-500)",
-  "var(--color-success)",
-  "var(--color-purple)",
-  "var(--color-warning)",
-  "var(--color-danger)",
-  "var(--blue-400)",
-  "var(--color-info)",
-];
+  'var(--blue-500)',
+  'var(--color-success)',
+  'var(--color-purple)',
+  'var(--color-warning)',
+  'var(--color-danger)',
+  'var(--blue-400)',
+  'var(--color-info)',
+]
 
-export default function InsightsCharts({
-  monthlyData,
-  categoryData,
-  pipelineData,
-}: Props) {
+export default function InsightsCharts({ monthlyData, categoryData, pipelineData }: Props) {
   const maxSubmissions =
-    monthlyData.length > 0
-      ? Math.max(...monthlyData.map((m) => m.submissions), 1)
-      : 1;
-  const maxRevenue = pipelineData.total || 1;
+    monthlyData.length > 0 ? Math.max(...monthlyData.map((m) => m.submissions), 1) : 1
+  const maxRevenue = pipelineData.total || 1
 
-  const formatCurrency = (val: number) =>
-    val >= 1000 ? `$${(val / 1000).toFixed(0)}K` : `$${val}`;
+  const formatCurrency = (val: number) => (val >= 1000 ? `$${(val / 1000).toFixed(0)}K` : `$${val}`)
 
   return (
     <div className="insights-section">
@@ -66,7 +59,7 @@ export default function InsightsCharts({
         {/* Submission Trend Chart */}
         <div className="card insight-card">
           <div className="card-header">
-            <div style={{ display: "flex", alignItems: "center", gap: "var(--sp-2)" }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--sp-2)' }}>
               <div className="insight-icon insight-icon-blue">
                 <TrendingUp size={15} />
               </div>
@@ -97,7 +90,7 @@ export default function InsightsCharts({
         {/* Revenue Pipeline */}
         <div className="card insight-card">
           <div className="card-header">
-            <div style={{ display: "flex", alignItems: "center", gap: "var(--sp-2)" }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--sp-2)' }}>
               <div className="insight-icon insight-icon-green">
                 <DollarSign size={15} />
               </div>
@@ -156,10 +149,7 @@ export default function InsightsCharts({
             <div className="pipeline-summary">
               <div className="pipeline-summary-item">
                 <span className="pipeline-summary-label">Win Rate</span>
-                <span
-                  className="pipeline-summary-value"
-                  style={{ color: "var(--color-success)" }}
-                >
+                <span className="pipeline-summary-value" style={{ color: 'var(--color-success)' }}>
                   {pipelineData.total > 0
                     ? ((pipelineData.accepted.value / pipelineData.total) * 100).toFixed(0)
                     : 0}
@@ -183,7 +173,7 @@ export default function InsightsCharts({
         {/* Category Distribution */}
         <div className="card insight-card">
           <div className="card-header">
-            <div style={{ display: "flex", alignItems: "center", gap: "var(--sp-2)" }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--sp-2)' }}>
               <div className="insight-icon insight-icon-purple">
                 <PieChart size={15} />
               </div>
@@ -194,10 +184,10 @@ export default function InsightsCharts({
             {categoryData.length === 0 ? (
               <div
                 style={{
-                  textAlign: "center",
-                  padding: "var(--sp-8)",
-                  color: "var(--text-muted)",
-                  fontSize: "var(--fs-sm)",
+                  textAlign: 'center',
+                  padding: 'var(--sp-8)',
+                  color: 'var(--text-muted)',
+                  fontSize: 'var(--fs-sm)',
                 }}
               >
                 No category data available yet.
@@ -211,17 +201,14 @@ export default function InsightsCharts({
                         <span
                           className="category-dot"
                           style={{
-                            background:
-                              CATEGORY_COLORS[i % CATEGORY_COLORS.length],
+                            background: CATEGORY_COLORS[i % CATEGORY_COLORS.length],
                           }}
                         />
                         {cat.category}
                       </span>
                       <div className="category-stats">
                         <span className="category-percent">{cat.percent}%</span>
-                        <span className="category-revenue">
-                          {formatCurrency(cat.revenue)}
-                        </span>
+                        <span className="category-revenue">{formatCurrency(cat.revenue)}</span>
                       </div>
                     </div>
                     <div className="category-bar-track">
@@ -241,5 +228,5 @@ export default function InsightsCharts({
         </div>
       </div>
     </div>
-  );
+  )
 }

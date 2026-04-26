@@ -1,17 +1,17 @@
-import React from "react";
-import { desc, eq, inArray } from "drizzle-orm";
-import { db } from "@/db";
-import { projects, quotes, vendors } from "@/db/schema";
-import { serializeQuote, serializeVendorProject } from "@/lib/serializers";
+import React from 'react'
+import { desc, eq, inArray } from 'drizzle-orm'
+import { db } from '@/db'
+import { projects, quotes, vendors } from '@/db/schema'
+import { serializeQuote, serializeVendorProject } from '@/lib/serializers'
 
 export const getCachedVendorProfile = React.cache(async (userId: string) => {
   const vendor = await db.query.vendors.findFirst({
     where: eq(vendors.userId, userId),
     with: { user: true },
-  });
+  })
 
   if (!vendor?.user) {
-    return null;
+    return null
   }
 
   return {
@@ -29,26 +29,26 @@ export const getCachedVendorProfile = React.cache(async (userId: string) => {
       createdAt: vendor.user.createdAt.toISOString(),
       updatedAt: vendor.user.updatedAt.toISOString(),
     },
-  };
-});
+  }
+})
 
 export const getCachedVendorDashboard = React.cache(async (userId: string) => {
   const vendor = await db.query.vendors.findFirst({
     where: eq(vendors.userId, userId),
     with: { user: true },
-  });
+  })
 
   if (!vendor) {
-    return null;
+    return null
   }
 
   const [openProjects, allQuotes] = await Promise.all([
     db.query.projects.findMany({
       where: inArray(projects.status, [
-        "SUBMITTED",
-        "UNDER_REVIEW",
-        "ACCEPTED",
-        "NEED_CLARIFICATION",
+        'SUBMITTED',
+        'UNDER_REVIEW',
+        'ACCEPTED',
+        'NEED_CLARIFICATION',
       ]),
       orderBy: [desc(projects.createdAt)],
     }),
@@ -60,7 +60,7 @@ export const getCachedVendorDashboard = React.cache(async (userId: string) => {
       },
       orderBy: [desc(quotes.createdAt)],
     }),
-  ]);
+  ])
 
   return {
     projects: openProjects.map(serializeVendorProject),
@@ -76,16 +76,16 @@ export const getCachedVendorDashboard = React.cache(async (userId: string) => {
         : null,
       joinedAt: vendor.createdAt.toISOString(),
     },
-  };
-});
+  }
+})
 
 export const getCachedVendorProjectsMarketplace = React.cache(async () => {
   const allProjects = await db.query.projects.findMany({
     orderBy: [desc(projects.createdAt)],
-  });
+  })
 
-  return allProjects.map(serializeVendorProject);
-});
+  return allProjects.map(serializeVendorProject)
+})
 
 export const getCachedVendorProjectDetail = React.cache(async (projectId: string) => {
   const project = await db.query.projects.findFirst({
@@ -98,29 +98,29 @@ export const getCachedVendorProjectDetail = React.cache(async (projectId: string
         },
       },
     },
-  });
+  })
 
   if (!project) {
-    return null;
+    return null
   }
 
-  return serializeVendorProject(project);
-});
+  return serializeVendorProject(project)
+})
 
 export const getCachedVendorQuotes = React.cache(async (userId: string) => {
   const vendor = await db.query.vendors.findFirst({
     where: eq(vendors.userId, userId),
-  });
+  })
 
   if (!vendor) {
-    return [];
+    return []
   }
 
   const allQuotes = await db.query.quotes.findMany({
     where: eq(quotes.vendorId, vendor.id),
     with: { project: true, vendor: { with: { user: true } } },
     orderBy: [desc(quotes.createdAt)],
-  });
+  })
 
-  return allQuotes.map(serializeQuote);
-});
+  return allQuotes.map(serializeQuote)
+})

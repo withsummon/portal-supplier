@@ -1,5 +1,5 @@
-import React from "react";
-import Link from "next/link";
+import React from 'react'
+import Link from 'next/link'
 import {
   FolderOpen,
   Clock,
@@ -10,37 +10,37 @@ import {
   ArrowRight,
   TrendingUp,
   ChevronRight,
-} from "lucide-react";
-import StatusBadge from "@/components/projects/StatusBadge";
-import InsightsCharts from "@/components/dashboard/InsightsCharts";
-import { formatDate, dbToMockStatus } from "@/lib/utils/data";
+} from 'lucide-react'
+import StatusBadge from '@/components/projects/StatusBadge'
+import InsightsCharts from '@/components/dashboard/InsightsCharts'
+import { formatDate, dbToMockStatus } from '@/lib/utils/data'
 import {
   getCachedAllProjects,
   getCachedSeller,
   getCachedMonthlyData,
   getCachedCategoryData,
   getCachedPipelineData,
-} from "@/lib/data/projects";
+} from '@/lib/data/projects'
 
 // ============================================================
 // STATIC CONFIG (hoisted outside component)
 // ============================================================
 
 const STATUS_LABELS: Record<string, string> = {
-  submitted: "Submitted",
-  under_review: "Under Review",
-  need_clarification: "Need Clarification",
-  accepted: "Accepted",
-  rejected: "Rejected",
-};
+  submitted: 'Submitted',
+  under_review: 'Under Review',
+  need_clarification: 'Need Clarification',
+  accepted: 'Accepted',
+  rejected: 'Rejected',
+}
 
 const STATUS_ITEMS = [
-  { status: "submitted", icon: FolderOpen, color: "var(--blue-500)" },
-  { status: "under_review", icon: Clock, color: "var(--color-warning)" },
-  { status: "need_clarification", icon: AlertCircle, color: "var(--color-purple)" },
-  { status: "accepted", icon: CheckCircle, color: "var(--color-success)" },
-  { status: "rejected", icon: XCircle, color: "var(--color-danger)" },
-] as const;
+  { status: 'submitted', icon: FolderOpen, color: 'var(--blue-500)' },
+  { status: 'under_review', icon: Clock, color: 'var(--color-warning)' },
+  { status: 'need_clarification', icon: AlertCircle, color: 'var(--color-purple)' },
+  { status: 'accepted', icon: CheckCircle, color: 'var(--color-success)' },
+  { status: 'rejected', icon: XCircle, color: 'var(--color-danger)' },
+] as const
 
 // ============================================================
 // PAGE (server component - parallel fetch, no inline db calls)
@@ -54,30 +54,28 @@ export default async function DashboardPage() {
     getCachedMonthlyData(),
     getCachedCategoryData(),
     getCachedPipelineData(),
-  ]);
+  ])
 
-  const total = allProjects.length;
-  const submitted = allProjects.filter((p) => p.status === "SUBMITTED").length;
-  const underReview = allProjects.filter((p) => p.status === "UNDER_REVIEW").length;
-  const accepted = allProjects.filter((p) => p.status === "ACCEPTED").length;
-  const rejected = allProjects.filter((p) => p.status === "REJECTED").length;
-  const needClarification = allProjects.filter((p) => p.status === "NEED_CLARIFICATION").length;
-  const recentProjects = allProjects.slice(0, 5);
-  const sellerName = seller?.user?.name ?? "User";
+  const total = allProjects.length
+  const submitted = allProjects.filter((p) => p.status === 'SUBMITTED').length
+  const underReview = allProjects.filter((p) => p.status === 'UNDER_REVIEW').length
+  const accepted = allProjects.filter((p) => p.status === 'ACCEPTED').length
+  const rejected = allProjects.filter((p) => p.status === 'REJECTED').length
+  const needClarification = allProjects.filter((p) => p.status === 'NEED_CLARIFICATION').length
+  const recentProjects = allProjects.slice(0, 5)
+  const sellerName = seller?.user?.name ?? 'User'
 
   return (
     <div className="animate-in">
       <div className="page-header">
         <div>
-          <h1 className="page-title">
-            Good evening, {sellerName.split(" ")[0]} 👋
-          </h1>
+          <h1 className="page-title">Good evening, {sellerName.split(' ')[0]} 👋</h1>
           <p className="page-subtitle">
             Here&apos;s an overview of your project activity on Summon Supplier Portal.
           </p>
         </div>
         <Link href="/projects/submit">
-          <button className="btn btn-primary" style={{ gap: "8px" }}>
+          <button className="btn btn-primary" style={{ gap: '8px' }}>
             <Plus size={15} />
             Submit New Project
           </button>
@@ -92,13 +90,13 @@ export default async function DashboardPage() {
             </div>
             <span
               style={{
-                fontSize: "var(--fs-xs)",
-                color: "var(--color-success)",
-                fontWeight: "var(--fw-semibold)",
-                background: "var(--color-success-bg)",
-                border: "1px solid var(--color-success-border)",
-                padding: "2px 8px",
-                borderRadius: "var(--radius-full)",
+                fontSize: 'var(--fs-xs)',
+                color: 'var(--color-success)',
+                fontWeight: 'var(--fw-semibold)',
+                background: 'var(--color-success-bg)',
+                border: '1px solid var(--color-success-border)',
+                padding: '2px 8px',
+                borderRadius: 'var(--radius-full)',
               }}
             >
               All time
@@ -157,9 +155,9 @@ export default async function DashboardPage() {
 
       <div
         style={{
-          display: "grid",
-          gridTemplateColumns: "1fr 320px",
-          gap: "var(--sp-6)",
+          display: 'grid',
+          gridTemplateColumns: '1fr 320px',
+          gap: 'var(--sp-6)',
         }}
       >
         <div className="card">
@@ -169,7 +167,7 @@ export default async function DashboardPage() {
               <div className="card-subtitle">Your latest project submissions</div>
             </div>
             <Link href="/projects">
-              <button className="btn btn-ghost btn-sm" style={{ gap: "4px" }}>
+              <button className="btn btn-ghost btn-sm" style={{ gap: '4px' }}>
                 View all <ArrowRight size={13} />
               </button>
             </Link>
@@ -189,25 +187,35 @@ export default async function DashboardPage() {
                 {recentProjects.map((project) => (
                   <tr key={project.id}>
                     <td>
-                      <div style={{ fontWeight: "var(--fw-semibold)", marginBottom: "2px" }}>
+                      <div style={{ fontWeight: 'var(--fw-semibold)', marginBottom: '2px' }}>
                         {project.name}
                       </div>
-                      <div style={{ fontSize: "var(--fs-xs)", color: "var(--text-muted)" }}>
-                        {project.clientName ?? "—"} · {project.projectId}
+                      <div style={{ fontSize: 'var(--fs-xs)', color: 'var(--text-muted)' }}>
+                        {project.clientName ?? '—'} · {project.projectId}
                       </div>
                     </td>
-                    <td style={{ color: "var(--text-secondary)" }}>{project.category}</td>
+                    <td style={{ color: 'var(--text-secondary)' }}>{project.category}</td>
                     <td>
                       <StatusBadge
-                        status={(dbToMockStatus[project.status] ?? project.status) as "submitted" | "under_review" | "accepted" | "rejected" | "need_clarification" | "in_progress" | "completed" | "cancelled"}
+                        status={
+                          (dbToMockStatus[project.status] ?? project.status) as
+                            | 'submitted'
+                            | 'under_review'
+                            | 'accepted'
+                            | 'rejected'
+                            | 'need_clarification'
+                            | 'in_progress'
+                            | 'completed'
+                            | 'cancelled'
+                        }
                       />
                     </td>
-                    <td style={{ color: "var(--text-secondary)", whiteSpace: "nowrap" }}>
+                    <td style={{ color: 'var(--text-secondary)', whiteSpace: 'nowrap' }}>
                       {formatDate(project.createdAt)}
                     </td>
                     <td>
                       <Link href={`/projects/${project.id}`}>
-                        <button className="btn btn-ghost btn-sm" style={{ padding: "0 8px" }}>
+                        <button className="btn btn-ghost btn-sm" style={{ padding: '0 8px' }}>
                           <ChevronRight size={14} />
                         </button>
                       </Link>
@@ -219,20 +227,29 @@ export default async function DashboardPage() {
           </div>
         </div>
 
-        <div style={{ display: "flex", flexDirection: "column", gap: "var(--sp-5)" }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--sp-5)' }}>
           <div className="card">
             <div className="card-header">
               <div className="card-title">Quick Actions</div>
             </div>
-            <div className="card-body" style={{ display: "flex", flexDirection: "column", gap: "var(--sp-2)" }}>
-              <Link href="/projects/submit" style={{ width: "100%" }}>
-                <button className="btn btn-primary" style={{ width: "100%", justifyContent: "flex-start", gap: "var(--sp-3)" }}>
+            <div
+              className="card-body"
+              style={{ display: 'flex', flexDirection: 'column', gap: 'var(--sp-2)' }}
+            >
+              <Link href="/projects/submit" style={{ width: '100%' }}>
+                <button
+                  className="btn btn-primary"
+                  style={{ width: '100%', justifyContent: 'flex-start', gap: 'var(--sp-3)' }}
+                >
                   <Plus size={15} />
                   Submit New Project
                 </button>
               </Link>
-              <Link href="/projects" style={{ width: "100%" }}>
-                <button className="btn btn-secondary" style={{ width: "100%", justifyContent: "flex-start", gap: "var(--sp-3)" }}>
+              <Link href="/projects" style={{ width: '100%' }}>
+                <button
+                  className="btn btn-secondary"
+                  style={{ width: '100%', justifyContent: 'flex-start', gap: 'var(--sp-3)' }}
+                >
                   <FolderOpen size={15} />
                   View All Projects
                 </button>
@@ -244,29 +261,43 @@ export default async function DashboardPage() {
             <div className="card-header">
               <div className="card-title">Status Breakdown</div>
             </div>
-            <div className="card-body" style={{ display: "flex", flexDirection: "column", gap: "var(--sp-3)" }}>
+            <div
+              className="card-body"
+              style={{ display: 'flex', flexDirection: 'column', gap: 'var(--sp-3)' }}
+            >
               {STATUS_ITEMS.map(({ status, icon: Icon, color }) => {
                 const count =
-                  status === "submitted"
+                  status === 'submitted'
                     ? submitted
-                    : status === "under_review"
-                    ? underReview
-                    : status === "need_clarification"
-                    ? needClarification
-                    : status === "accepted"
-                    ? accepted
-                    : rejected;
+                    : status === 'under_review'
+                      ? underReview
+                      : status === 'need_clarification'
+                        ? needClarification
+                        : status === 'accepted'
+                          ? accepted
+                          : rejected
                 return (
-                  <div key={status} style={{ display: "flex", alignItems: "center", gap: "var(--sp-3)" }}>
+                  <div
+                    key={status}
+                    style={{ display: 'flex', alignItems: 'center', gap: 'var(--sp-3)' }}
+                  >
                     <Icon size={15} style={{ color, flexShrink: 0 }} />
-                    <span style={{ flex: 1, fontSize: "var(--fs-sm)", color: "var(--text-secondary)" }}>
+                    <span
+                      style={{ flex: 1, fontSize: 'var(--fs-sm)', color: 'var(--text-secondary)' }}
+                    >
                       {STATUS_LABELS[status]}
                     </span>
-                    <span style={{ fontSize: "var(--fs-sm)", fontWeight: "var(--fw-semibold)", color: "var(--text-primary)" }}>
+                    <span
+                      style={{
+                        fontSize: 'var(--fs-sm)',
+                        fontWeight: 'var(--fw-semibold)',
+                        color: 'var(--text-primary)',
+                      }}
+                    >
                       {count}
                     </span>
                   </div>
-                );
+                )
               })}
             </div>
           </div>
@@ -277,58 +308,71 @@ export default async function DashboardPage() {
                 <div className="card-title">Company Profile</div>
               </div>
               <div className="card-body">
-                <div style={{ display: "flex", alignItems: "center", gap: "var(--sp-3)", marginBottom: "var(--sp-4)" }}>
+                <div
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 'var(--sp-3)',
+                    marginBottom: 'var(--sp-4)',
+                  }}
+                >
                   <div
                     style={{
-                      width: "44px",
-                      height: "44px",
-                      borderRadius: "var(--radius-md)",
-                      background: "var(--blue-100)",
-                      color: "var(--blue-700)",
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      fontWeight: "var(--fw-bold)",
-                      fontSize: "var(--fs-md)",
+                      width: '44px',
+                      height: '44px',
+                      borderRadius: 'var(--radius-md)',
+                      background: 'var(--blue-100)',
+                      color: 'var(--blue-700)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      fontWeight: 'var(--fw-bold)',
+                      fontSize: 'var(--fs-md)',
                       flexShrink: 0,
                     }}
                   >
                     {seller.companyName.slice(0, 2).toUpperCase()}
                   </div>
                   <div>
-                    <div style={{ fontWeight: "var(--fw-semibold)", fontSize: "var(--fs-sm)" }}>
+                    <div style={{ fontWeight: 'var(--fw-semibold)', fontSize: 'var(--fs-sm)' }}>
                       {seller.companyName}
                     </div>
-                    <div style={{ fontSize: "var(--fs-xs)", color: "var(--text-muted)" }}>
+                    <div style={{ fontSize: 'var(--fs-xs)', color: 'var(--text-muted)' }}>
                       {seller.industry}
                     </div>
                   </div>
                 </div>
                 {[
-                  { label: "Contact", value: seller.user?.email ?? "—" },
-                  { label: "Size", value: seller.companySize ?? "—" },
-                  { label: "Member since", value: formatDate(seller.createdAt) },
+                  { label: 'Contact', value: seller.user?.email ?? '—' },
+                  { label: 'Size', value: seller.companySize ?? '—' },
+                  { label: 'Member since', value: formatDate(seller.createdAt) },
                 ].map(({ label, value }) => (
                   <div
                     key={label}
                     style={{
-                      display: "flex",
-                      justifyContent: "space-between",
-                      alignItems: "center",
-                      padding: "var(--sp-2) 0",
-                      borderBottom: "1px solid var(--border-default)",
-                      gap: "var(--sp-2)",
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: 'center',
+                      padding: 'var(--sp-2) 0',
+                      borderBottom: '1px solid var(--border-default)',
+                      gap: 'var(--sp-2)',
                     }}
                   >
-                    <span style={{ fontSize: "var(--fs-xs)", color: "var(--text-muted)", flexShrink: 0 }}>
+                    <span
+                      style={{
+                        fontSize: 'var(--fs-xs)',
+                        color: 'var(--text-muted)',
+                        flexShrink: 0,
+                      }}
+                    >
                       {label}
                     </span>
                     <span
                       style={{
-                        fontSize: "var(--fs-xs)",
-                        color: "var(--text-secondary)",
-                        textAlign: "right",
-                        wordBreak: "break-word",
+                        fontSize: 'var(--fs-xs)',
+                        color: 'var(--text-secondary)',
+                        textAlign: 'right',
+                        wordBreak: 'break-word',
                       }}
                     >
                       {value}
@@ -341,5 +385,5 @@ export default async function DashboardPage() {
         </div>
       </div>
     </div>
-  );
+  )
 }
