@@ -15,6 +15,9 @@ COPY . .
 # Generate Drizzle schema (if needed) and build
 RUN bunx drizzle-kit generate
 
+# Set build-time environment
+ENV NODE_ENV=production
+
 # Build Next.js application
 RUN bun run build
 
