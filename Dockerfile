@@ -42,6 +42,11 @@ COPY --from=builder /app/.next/static ./.next/static
 # Salin hasil standalone (server.js ada di sini)
 COPY --from=builder /app/.next/standalone ./
 
+COPY --from=builder /app/scripts ./scripts
+COPY --from=builder /app/package.json ./package.json
+COPY --from=builder /app/drizzle.config.ts ./drizzle.config.ts 
+COPY --from=builder /app/drizzle ./drizzle
+
 # Berikan izin akses ke user nextjs
 RUN chown -R nextjs:nodejs /app
 
