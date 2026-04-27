@@ -5,24 +5,22 @@ FROM oven/bun:1-alpine AS builder
 
 WORKDIR /app
 
-# 1. Install dependencies (lebih cepat dengan bun)
+# Install dependencies
 COPY package.json bun.lock ./
 RUN bun install --frozen-lockfile
 
-# 2. Salin seluruh source code
+# Copy source code
 COPY . .
 
-# 3. Set environment untuk build
+# Set build-time environment
 ENV NODE_ENV=production
 
-# 4. Jalankan drizzle-kit (jika ada schema yang perlu di-generate)
+# Generate Drizzle schema & Build Next.js
 RUN bunx drizzle-kit generate
-
-# 5. Build Next.js
 RUN bun run build
 
 # ============================================================
-# Stage 2: Runner
+# Stage 2: Runner (Optimized & Small)
 # ============================================================
 FROM oven/bun:1-alpine AS runner
 
@@ -33,31 +31,36 @@ ENV NODE_ENV=production
 ENV PORT=3000
 ENV HOSTNAME="0.0.0.0"
 
-# 1. Keamanan: Buat non-root user
+# 1. Setup User demi keamanan
 RUN addgroup --system --gid 1001 nodejs && \
     adduser --system --uid 1001 nextjs
 
-# 2. Salin hasil output standalone Next.js
-# Folder standalone berisi file server.js dan node_modules minimal
+# 2. Salin hasil build standalone Next.js
 COPY --from=builder /app/.next/standalone ./
 COPY --from=builder /app/.next/static ./.next/static
 COPY --from=builder /app/public ./public
 
-# 3. Salin file tambahan untuk keperluan Seeding/Migration di terminal
+# 3. Salin file pendukung SEED agar script bisa jalan
+# Kita perlu 'src' karena seed.ts biasanya import dari '../src/db'
+COPY --from=builder /app/src ./src
 COPY --from=builder /app/scripts ./scripts
 COPY --from=builder /app/drizzle ./drizzle
 COPY --from=builder /app/drizzle.config.ts ./drizzle.config.ts
 COPY --from=builder /app/package.json ./package.json
+COPY --from=builder /app/bun.lock ./bun.lock
 
-# 4. Atur kepemilikan folder ke user nextjs
+# 4. TRICK UNTUK SIZE KECIL: 
+# Kita install ulang dependencies versi PRODUCTION saja di runner.
+# Ini akan menyertakan bcryptjs & library lain yang dibutuhkan seed,
+# tapi TANPA menyertakan devDependencies yang besar (TS, ESLint, dll).
+RUN bun install --production
+
+# 5. Berikan izin akses folder
 RUN chown -R nextjs:nodejs /app
 
-# 5. Gunakan user non-root
 USER nextjs
 
-# 6. Expose port 3000 sesuai ENV PORT
 EXPOSE 3000
 
-# 7. Jalankan aplikasi
-# Next.js standalone tetap menggunakan node (tersedia di image bun)
+# Jalankan server menggunakan node (bawaan dari image bun)
 CMD ["node", "server.js"]
