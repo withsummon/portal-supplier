@@ -1,53 +1,31 @@
-# ============================================================
-# Builder stage
-# ============================================================
-FROM oven/bun:1-alpine AS builder
-
-WORKDIR /app
-
-# Install dependencies using bun (faster than copying all files first)
-COPY package.json bun.lock ./
-RUN bun install --frozen-lockfile
-
-# Copy source code
-COPY . .
-
-# Generate Drizzle schema (if needed) and build
-RUN bunx drizzle-kit generate
-
-# Set build-time environment
-ENV NODE_ENV=production
-
-# Build Next.js application
-RUN bun run build
+# ... (Builder stage tetap sama)
 
 # ============================================================
 # Production stage
 # ============================================================
-FROM oven/bun:1-alpine AS runner
+FROM node:20-alpine AS runner
 
 WORKDIR /app
 
-# Set environment variables
 ENV NODE_ENV=production
 ENV PORT=3000
 ENV HOSTNAME="0.0.0.0"
 
-# Create non-root user for security
 RUN addgroup --system --gid 1001 nodejs && \
     adduser --system --uid 1001 nextjs
 
-# Copy built application from builder
+# Salin public dan static
 COPY --from=builder /app/public ./public
-COPY --from=builder /app/.next/standalone ./
 COPY --from=builder /app/.next/static ./.next/static
 
-# Set permissions
+# Salin hasil standalone (Isinya: server.js dan node_modules)
+COPY --from=builder /app/.next/standalone ./
+
 RUN chown -R nextjs:nodejs /app
 
 USER nextjs
 
 EXPOSE 3000
 
-# Start the application - use node directly for standalone server
-CMD ["node", ".next/standalone/server.js"]
+# Jalankan server.js yang sekarang ada di root /app
+CMD ["node", "server.js"]
