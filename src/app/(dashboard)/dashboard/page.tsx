@@ -42,18 +42,23 @@ const STATUS_ITEMS = [
   { status: 'rejected', icon: XCircle, color: 'var(--color-danger)' },
 ] as const
 
+import { requireRole } from '@/lib/auth/session'
+
 // ============================================================
 // PAGE (server component - parallel fetch, no inline db calls)
 // ============================================================
 
 export default async function DashboardPage() {
+  const user = await requireRole('SELLER')
+  const sellerId = user.seller?.id
+
   // Start promises early, await late — parallel fetching (async-parallel)
   const [allProjects, seller, monthlyData, categoryData, pipelineData] = await Promise.all([
-    getCachedAllProjects(),
-    getCachedSeller(),
-    getCachedMonthlyData(),
-    getCachedCategoryData(),
-    getCachedPipelineData(),
+    getCachedAllProjects(sellerId),
+    getCachedSeller(user.id),
+    getCachedMonthlyData(sellerId),
+    getCachedCategoryData(sellerId),
+    getCachedPipelineData(sellerId),
   ])
 
   const total = allProjects.length

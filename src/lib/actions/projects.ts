@@ -19,34 +19,7 @@ import { getCurrentUserRecord, requireRole } from '@/lib/auth/session'
 import { saveLocalUpload } from '@/lib/uploads'
 import { dbToMockQuoteStatus, dbToMockStatus, mockToDbPriority } from '@/lib/utils/data'
 
-// ============================================================
-// PROJECT STATUS LABELS
-// ============================================================
 
-export const projectStatusLabels: Record<string, string> = {
-  SUBMITTED: 'Submitted',
-  UNDER_REVIEW: 'Under Review',
-  ACCEPTED: 'Accepted',
-  REJECTED: 'Rejected',
-  NEED_CLARIFICATION: 'Need Clarification',
-  IN_PROGRESS: 'In Progress',
-  COMPLETED: 'Completed',
-  CANCELLED: 'Cancelled',
-}
-
-export const quoteStatusLabels: Record<string, string> = {
-  PENDING: 'Pending',
-  ACCEPTED: 'Accepted',
-  REJECTED: 'Rejected',
-  WITHDRAWN: 'Withdrawn',
-}
-
-export const priorityLabels: Record<string, string> = {
-  LOW: 'Low',
-  MEDIUM: 'Medium',
-  HIGH: 'High',
-  CRITICAL: 'Critical',
-}
 
 // ============================================================
 // PROJECT ACTIONS

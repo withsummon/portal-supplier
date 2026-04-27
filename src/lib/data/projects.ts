@@ -1,14 +1,15 @@
 import React from 'react'
 import { db } from '@/db'
-import { comments, projects, quotes } from '@/db/schema'
+import { comments, projects, quotes, sellers, vendors } from '@/db/schema'
 import { desc, eq, gte } from 'drizzle-orm'
 
 // ============================================================
 // PROJECTS
 // ============================================================
 
-export const getCachedAllProjects = React.cache(async () => {
+export const getCachedAllProjects = React.cache(async (sellerId?: string) => {
   return db.query.projects.findMany({
+    where: sellerId ? eq(projects.sellerId, sellerId) : undefined,
     with: { seller: true },
     orderBy: [desc(projects.createdAt)],
   })
@@ -43,7 +44,13 @@ export const getCachedProjectsBySeller = React.cache(async (sellerId: string) =>
 // SELLER
 // ============================================================
 
-export const getCachedSeller = React.cache(async () => {
+export const getCachedSeller = React.cache(async (userId?: string) => {
+  if (userId) {
+    return db.query.sellers.findFirst({
+      where: eq(sellers.userId, userId),
+      with: { user: true }
+    })
+  }
   return db.query.sellers.findFirst({ with: { user: true } })
 })
 
@@ -51,7 +58,13 @@ export const getCachedSeller = React.cache(async () => {
 // VENDOR
 // ============================================================
 
-export const getCachedVendor = React.cache(async () => {
+export const getCachedVendor = React.cache(async (userId?: string) => {
+  if (userId) {
+    return db.query.vendors.findFirst({
+      where: eq(vendors.userId, userId),
+      with: { user: true }
+    })
+  }
   return db.query.vendors.findFirst({ with: { user: true } })
 })
 
@@ -86,9 +99,14 @@ export const getCachedProjectQuotes = React.cache(async (projectId: string) => {
 // INSIGHTS
 // ============================================================
 
-export const getCachedMonthlyData = React.cache(async () => {
+export const getCachedMonthlyData = React.cache(async (sellerId?: string) => {
   const sixMonthsAgo = new Date()
   sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6)
+
+  const conditions = [gte(projects.createdAt, sixMonthsAgo)]
+  if (sellerId) {
+    conditions.push(eq(projects.sellerId, sellerId))
+  }
 
   const projectList = await db
     .select({
@@ -98,7 +116,7 @@ export const getCachedMonthlyData = React.cache(async () => {
       budgetMax: projects.budgetMax,
     })
     .from(projects)
-    .where(gte(projects.createdAt, sixMonthsAgo))
+    .where(conditions.length > 1 ? require('drizzle-orm').and(...conditions) : conditions[0])
 
   const monthlyMap: Record<string, { submissions: number; revenue: number }> = {}
   const now = new Date()
@@ -122,14 +140,20 @@ export const getCachedMonthlyData = React.cache(async () => {
   return Object.entries(monthlyMap).map(([month, data]) => ({ month, ...data }))
 })
 
-export const getCachedCategoryData = React.cache(async () => {
-  const projectList = await db
+export const getCachedCategoryData = React.cache(async (sellerId?: string) => {
+  const query = db
     .select({
       category: projects.category,
       budgetMin: projects.budgetMin,
       budgetMax: projects.budgetMax,
     })
     .from(projects)
+    
+  if (sellerId) {
+    query.where(eq(projects.sellerId, sellerId))
+  }
+  
+  const projectList = await query
 
   const categoryMap: Record<string, { count: number; revenue: number }> = {}
   for (const p of projectList) {
@@ -147,14 +171,20 @@ export const getCachedCategoryData = React.cache(async () => {
   }))
 })
 
-export const getCachedPipelineData = React.cache(async () => {
-  const projectList = await db
+export const getCachedPipelineData = React.cache(async (sellerId?: string) => {
+  const query = db
     .select({
       status: projects.status,
       budgetMin: projects.budgetMin,
       budgetMax: projects.budgetMax,
     })
     .from(projects)
+
+  if (sellerId) {
+    query.where(eq(projects.sellerId, sellerId))
+  }
+  
+  const projectList = await query
 
   const revenueMap: Record<string, number> = {}
   for (const p of projectList) {

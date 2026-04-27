@@ -18,6 +18,7 @@ function OnboardingWizard() {
   const role = searchParams.get('role') || 'seller'
 
   const [step, setStep] = useState(1)
+  const [volume, setVolume] = useState('')
 
   const totalSteps = 3
 
@@ -225,23 +226,29 @@ function OnboardingWizard() {
                       gap: 'var(--sp-2)',
                     }}
                   >
-                    {['< $50k', '$50k - $200k', '> $200k'].map((vol) => (
-                      <div
-                        key={vol}
-                        style={{
-                          padding: 'var(--sp-3) var(--sp-2)',
-                          textAlign: 'center',
-                          fontSize: 'var(--fs-sm)',
-                          border: '1px solid var(--border-default)',
-                          borderRadius: 'var(--radius-md)',
-                          cursor: 'pointer',
-                          fontWeight: 'var(--fw-medium)',
-                          color: 'var(--text-primary)',
-                        }}
-                      >
-                        {vol}
-                      </div>
-                    ))}
+                    {['< $50k', '$50k - $200k', '> $200k'].map((vol) => {
+                      const isSelected = volume === vol
+                      return (
+                        <div
+                          key={vol}
+                          onClick={() => setVolume(vol)}
+                          style={{
+                            padding: 'var(--sp-3) var(--sp-2)',
+                            textAlign: 'center',
+                            fontSize: 'var(--fs-sm)',
+                            border: isSelected ? '1px solid var(--blue-500)' : '1px solid var(--border-default)',
+                            background: isSelected ? 'var(--blue-50)' : 'transparent',
+                            borderRadius: 'var(--radius-md)',
+                            cursor: 'pointer',
+                            fontWeight: isSelected ? 'var(--fw-semibold)' : 'var(--fw-medium)',
+                            color: isSelected ? 'var(--blue-700)' : 'var(--text-primary)',
+                            transition: 'all 0.2s ease',
+                          }}
+                        >
+                          {vol}
+                        </div>
+                      )
+                    })}
                   </div>
                 </div>
               </div>
@@ -291,6 +298,7 @@ function OnboardingWizard() {
               </p>
 
               <div
+                onClick={() => document.getElementById('document-upload')?.click()}
                 style={{
                   border: '2px dashed var(--border-default)',
                   borderRadius: 'var(--radius-lg)',
@@ -301,7 +309,21 @@ function OnboardingWizard() {
                   cursor: 'pointer',
                   transition: 'all 0.2s ease',
                 }}
+                onMouseOver={(e) => (e.currentTarget.style.borderColor = 'var(--blue-400)')}
+                onMouseOut={(e) => (e.currentTarget.style.borderColor = 'var(--border-default)')}
               >
+                <input
+                  type="file"
+                  id="document-upload"
+                  accept=".pdf,.jpg,.png"
+                  style={{ display: 'none' }}
+                  onChange={(e) => {
+                    const file = e.target.files?.[0]
+                    if (file) {
+                      alert(`File selected: ${file.name}`)
+                    }
+                  }}
+                />
                 <UploadCloud
                   size={32}
                   color="var(--text-muted)"
