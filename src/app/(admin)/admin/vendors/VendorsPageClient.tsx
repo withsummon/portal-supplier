@@ -1,9 +1,11 @@
 'use client'
 
+import { useState } from 'react'
 import { CheckCircle, Eye, Mail, Search, Shield, XCircle } from 'lucide-react'
 import { useAdminDirectory } from '@/hooks/use-admin-directory'
 import type { VendorDirectoryDto } from '@/lib/data/admin'
 import { formatUSDtoIDR } from '@/lib/currency'
+import Modal from '@/components/ui/Modal'
 
 export default function VendorsPageClient({
   vendors,
@@ -16,6 +18,8 @@ export default function VendorsPageClient({
 }) {
   const { filteredItems, searchQuery, setSearchQuery, setStatusFilter, statusFilter } =
     useAdminDirectory(vendors, ['name', 'email', 'specialty'], 'status')
+
+  const [selectedVendor, setSelectedVendor] = useState<VendorDirectoryDto | null>(null)
 
   return (
     <div className="animate-in">
@@ -145,7 +149,11 @@ export default function VendorsPageClient({
                   <td>{formatUSDtoIDR(Number(vendor.revenue))}</td>
                   <td>
                     <div style={{ display: 'flex', gap: 'var(--sp-2)' }}>
-                      <button className="btn btn-ghost btn-sm" type="button">
+                      <button 
+                        className="btn btn-ghost btn-sm" 
+                        type="button"
+                        onClick={() => setSelectedVendor(vendor as VendorDirectoryDto)}
+                      >
                         <Eye size={14} />
                       </button>
                       <button className="btn btn-ghost btn-sm" type="button">
@@ -159,6 +167,76 @@ export default function VendorsPageClient({
           </table>
         </div>
       </div>
+
+      <Modal isOpen={!!selectedVendor} onClose={() => setSelectedVendor(null)} maxWidth="600px">
+        {selectedVendor && (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--sp-5)' }}>
+            <div style={{ borderBottom: '1px solid var(--border-default)', paddingBottom: 'var(--sp-4)' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                <div>
+                  <h2 style={{ fontSize: 'var(--fs-xl)', fontWeight: 'var(--fw-bold)', marginBottom: 'var(--sp-1)' }}>
+                    {selectedVendor.name}
+                  </h2>
+                  <div style={{ fontSize: 'var(--fs-sm)', color: 'var(--text-muted)' }}>
+                    {selectedVendor.email} • {selectedVendor.phone}
+                  </div>
+                </div>
+                <div style={{ 
+                  background: 'var(--blue-50)', 
+                  color: 'var(--blue-700)', 
+                  padding: '4px 12px', 
+                  borderRadius: 'var(--radius-full)',
+                  fontSize: 'var(--fs-xs)',
+                  fontWeight: 'var(--fw-semibold)'
+                }}>
+                  Tier {selectedVendor.tier}
+                </div>
+              </div>
+            </div>
+
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--sp-4)' }}>
+              <div>
+                <div style={{ fontSize: 'var(--fs-xs)', color: 'var(--text-muted)' }}>Specialty</div>
+                <div style={{ fontWeight: 'var(--fw-medium)' }}>{selectedVendor.specialty}</div>
+              </div>
+              <div>
+                <div style={{ fontSize: 'var(--fs-xs)', color: 'var(--text-muted)' }}>Location</div>
+                <div style={{ fontWeight: 'var(--fw-medium)' }}>{selectedVendor.location}</div>
+              </div>
+              <div>
+                <div style={{ fontSize: 'var(--fs-xs)', color: 'var(--text-muted)' }}>Status</div>
+                <div style={{ fontWeight: 'var(--fw-medium)', textTransform: 'capitalize' }}>{selectedVendor.status}</div>
+              </div>
+              <div>
+                <div style={{ fontSize: 'var(--fs-xs)', color: 'var(--text-muted)' }}>Joined</div>
+                <div style={{ fontWeight: 'var(--fw-medium)' }}>{new Date(selectedVendor.joinedAt).toLocaleDateString()}</div>
+              </div>
+              <div>
+                <div style={{ fontSize: 'var(--fs-xs)', color: 'var(--text-muted)' }}>Active Projects</div>
+                <div style={{ fontWeight: 'var(--fw-medium)' }}>{selectedVendor.activeProjects}</div>
+              </div>
+              <div>
+                <div style={{ fontSize: 'var(--fs-xs)', color: 'var(--text-muted)' }}>Projects Completed</div>
+                <div style={{ fontWeight: 'var(--fw-medium)' }}>{selectedVendor.projectsCompleted}</div>
+              </div>
+              <div>
+                <div style={{ fontSize: 'var(--fs-xs)', color: 'var(--text-muted)' }}>Rating</div>
+                <div style={{ fontWeight: 'var(--fw-medium)' }}>{selectedVendor.rating} / 5.0</div>
+              </div>
+              <div>
+                <div style={{ fontSize: 'var(--fs-xs)', color: 'var(--text-muted)' }}>Revenue Generated</div>
+                <div style={{ fontWeight: 'var(--fw-medium)' }}>{formatUSDtoIDR(selectedVendor.revenue)}</div>
+              </div>
+            </div>
+
+            <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 'var(--sp-3)', marginTop: 'var(--sp-2)' }}>
+              <button className="btn btn-secondary" type="button" onClick={() => setSelectedVendor(null)}>
+                Close
+              </button>
+            </div>
+          </div>
+        )}
+      </Modal>
     </div>
   )
 }

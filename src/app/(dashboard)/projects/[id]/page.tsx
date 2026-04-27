@@ -16,6 +16,7 @@ import {
 import StatusBadge from '@/components/projects/StatusBadge'
 import ProjectComments from '@/components/projects/ProjectComments'
 import { getCachedProjectsById } from '@/lib/data/projects'
+import { requireRole } from '@/lib/auth/session'
 import {
   formatDate,
   formatDateTime,
@@ -47,10 +48,13 @@ interface Props {
 }
 
 export default async function ProjectDetailPage({ params }: Props) {
+  const user = await requireRole('SELLER')
   const { id } = await params
   const project = await getCachedProjectsById(id)
 
-  if (!project) notFound()
+  if (!project || project.sellerId !== user.seller?.id) {
+    notFound()
+  }
 
   const mockStatus = dbToMockStatus[project.status] ?? project.status
   const latestClarificationNote = project.statusHistory.find(

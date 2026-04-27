@@ -16,6 +16,7 @@ import {
   X,
   XCircle,
 } from 'lucide-react'
+import Modal from '@/components/ui/Modal'
 import { useAdminProjects } from '@/hooks/use-admin-projects'
 import type { AdminProjectDto } from '@/lib/data/project-workflows'
 import { formatDate, formatDateTime, priorityLabels } from '@/lib/utils/data'
@@ -287,28 +288,9 @@ export default function AdminProjectsPageClient({
         </div>
       </div>
 
-      {selectedProject && (
-        <div
-          className="modal-backdrop"
-          onClick={closeProject}
-          onKeyDown={(e) => {
-            if (e.key === 'Enter' || e.key === ' ') {
-              e.preventDefault()
-              closeProject()
-            }
-          }}
-          role="button"
-          tabIndex={0}
-          aria-label="Close modal"
-        >
-          <div
-            className="modal-content"
-            onClick={(event) => event.stopPropagation()}
-            style={{ maxWidth: '960px' }}
-            role="dialog"
-            aria-modal="true"
-            aria-labelledby="project-detail-title"
-          >
+      <Modal isOpen={!!selectedProject} onClose={closeProject} maxWidth="960px">
+        {selectedProject && (
+          <>
             <div
               style={{
                 display: 'flex',
@@ -549,32 +531,13 @@ export default function AdminProjectsPageClient({
                 </div>
               </div>
             </div>
-          </div>
-        </div>
-      )}
+          </>
+        )}
+      </Modal>
 
-      {actionModal && (
-        <div
-          className="modal-backdrop"
-          onClick={closeActionModal}
-          onKeyDown={(e) => {
-            if (e.key === 'Enter' || e.key === ' ') {
-              e.preventDefault()
-              closeActionModal()
-            }
-          }}
-          role="button"
-          tabIndex={0}
-          aria-label="Close modal"
-        >
-          <div
-            className="modal-content"
-            onClick={(event) => event.stopPropagation()}
-            style={{ maxWidth: '520px' }}
-            role="dialog"
-            aria-modal="true"
-            aria-labelledby="action-modal-title"
-          >
+      <Modal isOpen={!!actionModal} onClose={closeActionModal} maxWidth="520px">
+        {actionModal && (
+          <>
             <h2
               id="action-modal-title"
               style={{
@@ -643,9 +606,10 @@ export default function AdminProjectsPageClient({
                 {isPending ? 'Saving...' : 'Confirm'}
               </button>
             </div>
-          </div>
-        </div>
-      )}
+            </div>
+          </>
+        )}
+      </Modal>
     </div>
   )
 }

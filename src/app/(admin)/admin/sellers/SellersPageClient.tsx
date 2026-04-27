@@ -1,13 +1,17 @@
 'use client'
 
+import { useState } from 'react'
 import { CheckCircle, Eye, Mail, Search, Shield, XCircle } from 'lucide-react'
 import { useAdminDirectory } from '@/hooks/use-admin-directory'
 import type { SellerDirectoryDto } from '@/lib/data/admin'
 import { formatUSDtoIDR } from '@/lib/currency'
+import Modal from '@/components/ui/Modal'
 
 export default function SellersPageClient({ sellers }: { sellers: SellerDirectoryDto[] }) {
   const { filteredItems, searchQuery, setSearchQuery, setStatusFilter, statusFilter } =
     useAdminDirectory(sellers, ['name', 'email', 'specialty'], 'status')
+  
+  const [selectedSeller, setSelectedSeller] = useState<SellerDirectoryDto | null>(null)
 
   return (
     <div className="animate-in">
@@ -137,7 +141,11 @@ export default function SellersPageClient({ sellers }: { sellers: SellerDirector
                   <td>{formatUSDtoIDR(Number(seller.revenue))}</td>
                   <td>
                     <div style={{ display: 'flex', gap: 'var(--sp-2)' }}>
-                      <button className="btn btn-ghost btn-sm" type="button">
+                      <button 
+                        className="btn btn-ghost btn-sm" 
+                        type="button" 
+                        onClick={() => setSelectedSeller(seller as SellerDirectoryDto)}
+                      >
                         <Eye size={14} />
                       </button>
                       <button className="btn btn-ghost btn-sm" type="button">
@@ -151,6 +159,54 @@ export default function SellersPageClient({ sellers }: { sellers: SellerDirector
           </table>
         </div>
       </div>
+
+      <Modal isOpen={!!selectedSeller} onClose={() => setSelectedSeller(null)} maxWidth="600px">
+        {selectedSeller && (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--sp-5)' }}>
+            <div style={{ borderBottom: '1px solid var(--border-default)', paddingBottom: 'var(--sp-4)' }}>
+              <h2 style={{ fontSize: 'var(--fs-xl)', fontWeight: 'var(--fw-bold)', marginBottom: 'var(--sp-1)' }}>
+                {selectedSeller.name}
+              </h2>
+              <div style={{ fontSize: 'var(--fs-sm)', color: 'var(--text-muted)' }}>
+                {selectedSeller.email} • {selectedSeller.phone}
+              </div>
+            </div>
+
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--sp-4)' }}>
+              <div>
+                <div style={{ fontSize: 'var(--fs-xs)', color: 'var(--text-muted)' }}>Specialty</div>
+                <div style={{ fontWeight: 'var(--fw-medium)' }}>{selectedSeller.specialty}</div>
+              </div>
+              <div>
+                <div style={{ fontSize: 'var(--fs-xs)', color: 'var(--text-muted)' }}>Location</div>
+                <div style={{ fontWeight: 'var(--fw-medium)' }}>{selectedSeller.location}</div>
+              </div>
+              <div>
+                <div style={{ fontSize: 'var(--fs-xs)', color: 'var(--text-muted)' }}>Status</div>
+                <div style={{ fontWeight: 'var(--fw-medium)', textTransform: 'capitalize' }}>{selectedSeller.status}</div>
+              </div>
+              <div>
+                <div style={{ fontSize: 'var(--fs-xs)', color: 'var(--text-muted)' }}>Joined</div>
+                <div style={{ fontWeight: 'var(--fw-medium)' }}>{new Date(selectedSeller.joinedAt).toLocaleDateString()}</div>
+              </div>
+              <div>
+                <div style={{ fontSize: 'var(--fs-xs)', color: 'var(--text-muted)' }}>Deals Closed</div>
+                <div style={{ fontWeight: 'var(--fw-medium)' }}>{selectedSeller.dealsClosed}</div>
+              </div>
+              <div>
+                <div style={{ fontSize: 'var(--fs-xs)', color: 'var(--text-muted)' }}>Revenue</div>
+                <div style={{ fontWeight: 'var(--fw-medium)' }}>{formatUSDtoIDR(selectedSeller.revenue)}</div>
+              </div>
+            </div>
+
+            <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 'var(--sp-3)', marginTop: 'var(--sp-2)' }}>
+              <button className="btn btn-secondary" type="button" onClick={() => setSelectedSeller(null)}>
+                Close
+              </button>
+            </div>
+          </div>
+        )}
+      </Modal>
     </div>
   )
 }

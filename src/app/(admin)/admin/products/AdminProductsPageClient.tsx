@@ -3,6 +3,7 @@
 import { Eye, EyeOff, Plus, Search, Trash2 } from 'lucide-react'
 import { PRODUCT_ICON_OPTIONS, getProductIcon } from '@/lib/product-icons'
 import { useAdminProducts, type ProductFormState } from '@/hooks/use-admin-products'
+import Modal from '@/components/ui/Modal'
 
 const CATEGORIES = [
   { id: 'all', label: 'All Products' },
@@ -229,38 +230,17 @@ export default function AdminProductsPageClient({
         </div>
       </div>
 
-      {showModal && (
-        <div
-          className="modal-backdrop"
-          onClick={() => setShowModal(false)}
-          onKeyDown={(e) => {
-            if (e.key === 'Enter' || e.key === ' ') {
-              e.preventDefault()
-              setShowModal(false)
-            }
+      <Modal isOpen={showModal} onClose={() => setShowModal(false)} maxWidth="760px">
+        <h2
+          id="product-modal-title"
+          style={{
+            fontSize: 'var(--fs-xl)',
+            fontWeight: 'var(--fw-bold)',
+            marginBottom: 'var(--sp-5)',
           }}
-          role="button"
-          tabIndex={0}
-          aria-label="Close modal"
         >
-          <div
-            className="modal-content"
-            onClick={(event) => event.stopPropagation()}
-            style={{ maxWidth: '760px' }}
-            role="dialog"
-            aria-modal="true"
-            aria-labelledby="product-modal-title"
-          >
-            <h2
-              id="product-modal-title"
-              style={{
-                fontSize: 'var(--fs-xl)',
-                fontWeight: 'var(--fw-bold)',
-                marginBottom: 'var(--sp-5)',
-              }}
-            >
-              Product Details
-            </h2>
+          Product Details
+        </h2>
 
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--sp-4)' }}>
               <input
@@ -623,9 +603,8 @@ export default function AdminProductsPageClient({
                 {isPending ? 'Saving...' : 'Save Product'}
               </button>
             </div>
-          </div>
-        </div>
-      )}
+            </div>
+      </Modal>
     </div>
   )
 }
