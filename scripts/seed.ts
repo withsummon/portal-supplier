@@ -1,4 +1,3 @@
-import 'dotenv/config'
 import { hash } from 'bcryptjs'
 import { sql } from 'drizzle-orm'
 import { db, pool } from '../src/db'
