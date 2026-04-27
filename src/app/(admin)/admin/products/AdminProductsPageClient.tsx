@@ -119,9 +119,13 @@ export default function AdminProductsPageClient({
             </thead>
             <tbody>
               {filteredProducts.map((product) => {
+                if (!product.id) {
+                  return null
+                }
+                const productId = product.id
                 const Icon = getProductIcon(product.icon)
                 return (
-                  <tr key={product.id}>
+                  <tr key={productId}>
                     <td>
                       <button
                         type="button"
@@ -176,11 +180,11 @@ export default function AdminProductsPageClient({
                       <button
                         className={`badge badge-${product.visible ? 'accepted' : 'rejected'}`}
                         type="button"
-                        onClick={() => setVisibility(product.id, !product.visible)}
+                        onClick={() => setVisibility(productId, !product.visible)}
                         onKeyDown={(e) => {
                           if (e.key === 'Enter' || e.key === ' ') {
                             e.preventDefault()
-                            setVisibility(product.id, !product.visible)
+                            setVisibility(productId, !product.visible)
                           }
                         }}
                       >
@@ -192,11 +196,11 @@ export default function AdminProductsPageClient({
                         <button
                           className="btn btn-ghost btn-sm"
                           type="button"
-                          onClick={() => setVisibility(product.id, !product.visible)}
+                          onClick={() => setVisibility(productId, !product.visible)}
                           onKeyDown={(e) => {
                             if (e.key === 'Enter' || e.key === ' ') {
                               e.preventDefault()
-                              setVisibility(product.id, !product.visible)
+                              setVisibility(productId, !product.visible)
                             }
                           }}
                         >
@@ -205,11 +209,11 @@ export default function AdminProductsPageClient({
                         <button
                           className="btn btn-ghost btn-sm"
                           type="button"
-                          onClick={() => removeProduct(product.id)}
+                          onClick={() => removeProduct(productId)}
                           onKeyDown={(e) => {
                             if (e.key === 'Enter' || e.key === ' ') {
                               e.preventDefault()
-                              removeProduct(product.id)
+                              removeProduct(productId)
                             }
                           }}
                         >
