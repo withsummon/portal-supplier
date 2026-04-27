@@ -5,11 +5,9 @@ import { compare, hash } from 'bcryptjs'
 import { db } from '@/db'
 import * as schema from '@/db/schema'
 
-const authBaseUrl =
-  process.env.BETTER_AUTH_URL ?? process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:3000'
+const authBaseUrl = process.env.BETTER_AUTH_URL
 
-const authSecret =
-  process.env.BETTER_AUTH_SECRET ?? 'dev-only-better-auth-secret-change-this-before-production'
+const authSecret = process.env.BETTER_AUTH_SECRET
 
 export const auth = betterAuth({
   baseURL: authBaseUrl,
