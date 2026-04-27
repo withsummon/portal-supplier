@@ -175,7 +175,17 @@ export default function Sidebar({
       </div>
 
       {/* Collapse toggle */}
-      <button className="sidebar-collapse-btn" onClick={onToggle} aria-label="Toggle sidebar">
+      <button
+        className="sidebar-collapse-btn"
+        onClick={onToggle}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault()
+            onToggle?.()
+          }
+        }}
+        aria-label="Toggle sidebar"
+      >
         {collapsed ? <ChevronRight size={12} /> : <ChevronLeft size={12} />}
       </button>
 
@@ -245,8 +255,17 @@ export default function Sidebar({
         <div
           className={`sidebar-user${isActive('/profile') ? ' active-profile' : ''}`}
           onClick={() => router.push(`${isAdmin ? '/admin' : isVendor ? '/vendor' : ''}/profile`)}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault()
+              router.push(`${isAdmin ? '/admin' : isVendor ? '/vendor' : ''}/profile`)
+            }
+          }}
           style={{ cursor: 'pointer' }}
           title={collapsed ? `${name}${company ? ` (${company})` : ''}` : undefined}
+          role="button"
+          tabIndex={0}
+          aria-label={`View ${name}'s profile`}
         >
           <div className="sidebar-avatar">{userInitial}</div>
           {!collapsed && (
@@ -260,6 +279,13 @@ export default function Sidebar({
               e.stopPropagation()
               handleLogout()
             }}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault()
+                e.stopPropagation()
+                handleLogout()
+              }
+            }}
             style={{
               background: 'none',
               border: 'none',
@@ -271,6 +297,7 @@ export default function Sidebar({
               marginLeft: 'auto',
             }}
             title="Sign Out"
+            type="button"
           >
             <LogOut size={14} />
           </button>

@@ -165,6 +165,15 @@ export default function CommandBar({ projects }: CommandBarProps) {
     <div
       className="modal-backdrop"
       onClick={() => updateOpenState(false)}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault()
+          updateOpenState(false)
+        }
+      }}
+      role="button"
+      tabIndex={0}
+      aria-label="Close command palette"
       style={{ alignItems: 'flex-start', paddingTop: '20vh' }}
     >
       <div className="command-bar" onClick={(e) => e.stopPropagation()}>

@@ -146,6 +146,12 @@ export default function RegisterPage() {
                     key={role.id}
                     type="button"
                     onClick={() => setSelectedRole(role.id)}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault()
+                        setSelectedRole(role.id)
+                      }
+                    }}
                     style={{
                       display: 'flex',
                       alignItems: 'flex-start',
@@ -296,6 +302,12 @@ export default function RegisterPage() {
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault()
+                        setShowPassword(!showPassword)
+                      }
+                    }}
                     style={{
                       position: 'absolute',
                       right: '12px',

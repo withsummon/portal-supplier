@@ -125,6 +125,12 @@ export default function AdminProjectsPageClient({
               type="button"
               className="card"
               onClick={() => setStatusFilter(statusFilter === status ? 'all' : status)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault()
+                  setStatusFilter(statusFilter === status ? 'all' : status)
+                }
+              }}
               style={{
                 padding: 'var(--sp-4)',
                 cursor: 'pointer',
@@ -249,6 +255,12 @@ export default function AdminProjectsPageClient({
                           className="btn btn-ghost btn-sm"
                           type="button"
                           onClick={() => openProject(project.id)}
+                          onKeyDown={(e) => {
+                            if (e.key === 'Enter' || e.key === ' ') {
+                              e.preventDefault()
+                              openProject(project.id)
+                            }
+                          }}
                         >
                           <Eye size={14} />
                         </button>
@@ -256,6 +268,12 @@ export default function AdminProjectsPageClient({
                           className="btn btn-ghost btn-sm"
                           type="button"
                           onClick={() => queueAction(project.id, 'clarify')}
+                          onKeyDown={(e) => {
+                            if (e.key === 'Enter' || e.key === ' ') {
+                              e.preventDefault()
+                              queueAction(project.id, 'clarify')
+                            }
+                          }}
                         >
                           <MessageSquare size={14} />
                         </button>
@@ -270,11 +288,26 @@ export default function AdminProjectsPageClient({
       </div>
 
       {selectedProject && (
-        <div className="modal-backdrop" onClick={closeProject}>
+        <div
+          className="modal-backdrop"
+          onClick={closeProject}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault()
+              closeProject()
+            }
+          }}
+          role="button"
+          tabIndex={0}
+          aria-label="Close modal"
+        >
           <div
             className="modal-content"
             onClick={(event) => event.stopPropagation()}
             style={{ maxWidth: '960px' }}
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="project-detail-title"
           >
             <div
               style={{
@@ -286,14 +319,28 @@ export default function AdminProjectsPageClient({
               }}
             >
               <div>
-                <h2 style={{ fontSize: 'var(--fs-2xl)', fontWeight: 'var(--fw-bold)' }}>
+                <h2
+                  id="project-detail-title"
+                  style={{ fontSize: 'var(--fs-2xl)', fontWeight: 'var(--fw-bold)' }}
+                >
                   {selectedProject.name}
                 </h2>
                 <div style={{ fontSize: 'var(--fs-sm)', color: 'var(--text-muted)' }}>
                   {selectedProject.projectId} · Submitted {formatDate(selectedProject.submittedAt)}
                 </div>
               </div>
-              <button className="btn btn-ghost btn-sm" type="button" onClick={closeProject}>
+              <button
+                className="btn btn-ghost btn-sm"
+                type="button"
+                onClick={closeProject}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault()
+                    closeProject()
+                  }
+                }}
+                aria-label="Close"
+              >
                 <X size={16} />
               </button>
             </div>
@@ -459,6 +506,12 @@ export default function AdminProjectsPageClient({
                     type="button"
                     disabled={isPending}
                     onClick={() => queueAction(selectedProject.id, 'accept')}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault()
+                        queueAction(selectedProject.id, 'accept')
+                      }
+                    }}
                   >
                     <CheckCircle size={14} />
                     Accept
@@ -468,6 +521,12 @@ export default function AdminProjectsPageClient({
                     type="button"
                     disabled={isPending}
                     onClick={() => queueAction(selectedProject.id, 'clarify')}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault()
+                        queueAction(selectedProject.id, 'clarify')
+                      }
+                    }}
                   >
                     <MessageSquare size={14} />
                     Clarify
@@ -477,6 +536,12 @@ export default function AdminProjectsPageClient({
                     type="button"
                     disabled={isPending}
                     onClick={() => queueAction(selectedProject.id, 'reject')}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault()
+                        queueAction(selectedProject.id, 'reject')
+                      }
+                    }}
                   >
                     <XCircle size={14} />
                     Reject
@@ -489,13 +554,29 @@ export default function AdminProjectsPageClient({
       )}
 
       {actionModal && (
-        <div className="modal-backdrop" onClick={closeActionModal}>
+        <div
+          className="modal-backdrop"
+          onClick={closeActionModal}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault()
+              closeActionModal()
+            }
+          }}
+          role="button"
+          tabIndex={0}
+          aria-label="Close modal"
+        >
           <div
             className="modal-content"
             onClick={(event) => event.stopPropagation()}
             style={{ maxWidth: '520px' }}
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="action-modal-title"
           >
             <h2
+              id="action-modal-title"
               style={{
                 fontSize: 'var(--fs-xl)',
                 fontWeight: 'var(--fw-bold)',
@@ -532,7 +613,18 @@ export default function AdminProjectsPageClient({
                 marginTop: 'var(--sp-5)',
               }}
             >
-              <button className="btn btn-secondary" type="button" onClick={closeActionModal}>
+              <button
+                className="btn btn-secondary"
+                type="button"
+                onClick={closeActionModal}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault()
+                    closeActionModal()
+                  }
+                }}
+                aria-label="Cancel"
+              >
                 Cancel
               </button>
               <button
@@ -540,6 +632,12 @@ export default function AdminProjectsPageClient({
                 type="button"
                 disabled={isPending}
                 onClick={submitAction}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault()
+                    submitAction()
+                  }
+                }}
               >
                 <Send size={14} />
                 {isPending ? 'Saving...' : 'Confirm'}

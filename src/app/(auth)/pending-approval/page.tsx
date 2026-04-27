@@ -234,7 +234,7 @@ function PendingApprovalContent() {
                 const Icon = benefit.icon
                 return (
                   <div
-                    key={i}
+                    key={benefit.title}
                     style={{
                       display: 'flex',
                       gap: 'var(--sp-4)',

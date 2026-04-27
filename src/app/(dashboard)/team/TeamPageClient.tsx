@@ -72,7 +72,17 @@ export default function TeamPageClient({
           <h1 className="page-title">Team</h1>
           <p className="page-subtitle">Manage your team members and their access.</p>
         </div>
-        <button className="btn btn-primary" type="button" onClick={() => setShowAddModal(true)}>
+        <button
+          className="btn btn-primary"
+          type="button"
+          onClick={() => setShowAddModal(true)}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault()
+              setShowAddModal(true)
+            }
+          }}
+        >
           <Plus size={15} />
           Add Member
         </button>
@@ -221,6 +231,12 @@ export default function TeamPageClient({
                       className="btn btn-ghost btn-sm"
                       type="button"
                       onClick={() => removeMember(member.id)}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter' || e.key === ' ') {
+                          e.preventDefault()
+                          removeMember(member.id)
+                        }
+                      }}
                     >
                       <Trash2 size={14} />
                     </button>
@@ -233,13 +249,29 @@ export default function TeamPageClient({
       </div>
 
       {showAddModal && (
-        <div className="modal-backdrop" onClick={() => setShowAddModal(false)}>
+        <div
+          className="modal-backdrop"
+          onClick={() => setShowAddModal(false)}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault()
+              setShowAddModal(false)
+            }
+          }}
+          role="button"
+          tabIndex={0}
+          aria-label="Close modal"
+        >
           <div
             className="modal-content"
             onClick={(event) => event.stopPropagation()}
             style={{ maxWidth: '480px' }}
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="add-member-title"
           >
             <h2
+              id="add-member-title"
               style={{
                 fontSize: 'var(--fs-xl)',
                 fontWeight: 'var(--fw-bold)',
@@ -300,6 +332,12 @@ export default function TeamPageClient({
                 className="btn btn-secondary"
                 type="button"
                 onClick={() => setShowAddModal(false)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault()
+                    setShowAddModal(false)
+                  }
+                }}
               >
                 Cancel
               </button>
@@ -308,6 +346,12 @@ export default function TeamPageClient({
                 type="button"
                 disabled={isPending}
                 onClick={submitNewMember}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault()
+                    submitNewMember()
+                  }
+                }}
               >
                 <Shield size={14} />
                 {isPending ? 'Saving...' : 'Add Member'}

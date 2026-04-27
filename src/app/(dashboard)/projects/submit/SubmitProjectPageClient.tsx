@@ -232,7 +232,17 @@ function Step2({
               }
             }}
           />
-          <button type="button" className="btn btn-secondary" onClick={addDeliverable}>
+          <button
+            type="button"
+            className="btn btn-secondary"
+            onClick={addDeliverable}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault()
+                addDeliverable()
+              }
+            }}
+          >
             <Plus size={14} />
             Add
           </button>
@@ -261,6 +271,15 @@ function Step2({
                     data.deliverables.filter((_, itemIndex) => itemIndex !== index),
                   )
                 }
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault()
+                    onChange(
+                      'deliverables',
+                      data.deliverables.filter((_, itemIndex) => itemIndex !== index),
+                    )
+                  }
+                }}
                 style={{
                   color: 'var(--text-muted)',
                   cursor: 'pointer',
@@ -285,6 +304,12 @@ function Step2({
               key={tech}
               type="button"
               onClick={() => toggleTech(tech)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault()
+                  toggleTech(tech)
+                }
+              }}
               className={`chip${data.techStack.includes(tech) ? ' selected' : ''}`}
               style={{ cursor: 'pointer' }}
             >
@@ -466,6 +491,14 @@ function Step4({
       <div
         className={`dropzone${dragging ? ' dragging' : ''}`}
         onClick={() => inputRef.current?.click()}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault()
+            inputRef.current?.click()
+          }
+        }}
+        role="button"
+        tabIndex={0}
         onDragOver={(event) => {
           event.preventDefault()
           setDragging(true)
@@ -523,6 +556,15 @@ function Step4({
                       data.files.filter((_, fileIndex) => fileIndex !== index),
                     )
                   }
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      e.preventDefault()
+                      onChange(
+                        'files',
+                        data.files.filter((_, fileIndex) => fileIndex !== index),
+                      )
+                    }
+                  }}
                 >
                   <X size={14} />
                 </button>
@@ -721,18 +763,44 @@ export default function SubmitProjectPageClient({ categories }: { categories: st
             <button
               className="btn btn-secondary"
               onClick={previousStep}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault()
+                  previousStep()
+                }
+              }}
               disabled={step === 0 || isPending}
             >
               <ArrowLeft size={14} />
               Previous
             </button>
             {step < 4 ? (
-              <button className="btn btn-primary" onClick={nextStep} disabled={isPending}>
+              <button
+                className="btn btn-primary"
+                onClick={nextStep}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault()
+                    nextStep()
+                  }
+                }}
+                disabled={isPending}
+              >
                 Next Step
                 <ArrowRight size={14} />
               </button>
             ) : (
-              <button className="btn btn-primary" onClick={submit} disabled={isPending}>
+              <button
+                className="btn btn-primary"
+                onClick={submit}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault()
+                    submit()
+                  }
+                }}
+                disabled={isPending}
+              >
                 {isPending ? 'Submitting...' : 'Submit Project'}
               </button>
             )}

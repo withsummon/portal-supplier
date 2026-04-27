@@ -76,8 +76,8 @@ export default function MyQuotesPage({ quotes }: Props) {
 
       {/* Quick Stats */}
       <div className="kpi-grid" style={{ marginBottom: 'var(--sp-6)' }}>
-        {stats.map((stat, i) => (
-          <div key={i} className="kpi-card">
+        {stats.map((stat) => (
+          <div key={stat.label} className="kpi-card">
             <div className="kpi-card-top">
               <div
                 className="kpi-icon"

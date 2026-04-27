@@ -112,6 +112,12 @@ export default function NotificationsPageClient({
           className="btn btn-secondary"
           type="button"
           onClick={handleMarkAllRead}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault()
+              handleMarkAllRead()
+            }
+          }}
           disabled={isPending || unreadCount === 0}
           style={{ gap: '6px' }}
         >
@@ -146,6 +152,12 @@ export default function NotificationsPageClient({
             className={`tab ${activeTab === tab ? 'active' : ''}`}
             type="button"
             onClick={() => setActiveTab(tab)}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault()
+                setActiveTab(tab)
+              }
+            }}
           >
             {tab}
             {tab !== 'All' && (

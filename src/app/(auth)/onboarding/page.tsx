@@ -380,9 +380,9 @@ function OnboardingWizard() {
                   'UI/UX Design',
                   'Digital Marketing',
                   'Data Analytics',
-                ].map((pref, i) => (
+                ].map((pref) => (
                   <label
-                    key={i}
+                    key={pref}
                     style={{
                       display: 'flex',
                       alignItems: 'center',

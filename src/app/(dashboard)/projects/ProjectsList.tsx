@@ -4,7 +4,7 @@ import { useState } from 'react'
 import Link from 'next/link'
 import { Search, Plus, ChevronRight, Filter } from 'lucide-react'
 import StatusBadge from '@/components/projects/StatusBadge'
-import {formatDate,dbToMockStatus,type MockProjectStatus} from '@/lib/utils/data'
+import { formatDate, dbToMockStatus, type MockProjectStatus } from '@/lib/utils/data'
 
 interface Project {
   id: string

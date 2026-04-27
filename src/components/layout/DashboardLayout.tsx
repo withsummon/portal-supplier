@@ -4,7 +4,11 @@ import { getCurrentUserRecord } from '@/lib/auth/session'
 
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
   const allProjects = await getCachedCommandBarProjects()
-  const user = await getCurrentUserRecord() ?? null
+  const user = (await getCurrentUserRecord()) ?? null
 
-  return <DashboardLayoutClient projects={allProjects} user={user}>{children}</DashboardLayoutClient>
+  return (
+    <DashboardLayoutClient projects={allProjects} user={user}>
+      {children}
+    </DashboardLayoutClient>
+  )
 }

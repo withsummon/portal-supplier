@@ -269,11 +269,26 @@ export default function AdminTeamPageClient({
       </div>
 
       {showAddModal && (
-        <div className="modal-backdrop" onClick={() => setShowAddModal(false)}>
+        <div
+          className="modal-backdrop"
+          onClick={() => setShowAddModal(false)}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault()
+              setShowAddModal(false)
+            }
+          }}
+          role="button"
+          tabIndex={0}
+          aria-label="Close modal"
+        >
           <div
             className="modal-content"
             onClick={(event) => event.stopPropagation()}
             style={{ maxWidth: '480px' }}
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="admin-add-team-title"
           >
             <div
               style={{
@@ -283,13 +298,23 @@ export default function AdminTeamPageClient({
                 marginBottom: 'var(--sp-5)',
               }}
             >
-              <h2 style={{ fontSize: 'var(--fs-xl)', fontWeight: 'var(--fw-bold)' }}>
+              <h2
+                id="admin-add-team-title"
+                style={{ fontSize: 'var(--fs-xl)', fontWeight: 'var(--fw-bold)' }}
+              >
                 Add Team Member
               </h2>
               <button
                 className="btn btn-ghost btn-sm"
                 type="button"
                 onClick={() => setShowAddModal(false)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault()
+                    setShowAddModal(false)
+                  }
+                }}
+                aria-label="Close"
               >
                 <MoreVertical size={18} />
               </button>

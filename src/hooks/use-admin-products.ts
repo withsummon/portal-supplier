@@ -65,8 +65,7 @@ export function useAdminProducts(initialProducts: ProductFormState[]) {
       const matchesSearch =
         product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
         product.description.toLowerCase().includes(searchQuery.toLowerCase())
-      const matchesCategory =
-        categoryFilter === 'all' || product.category === categoryFilter
+      const matchesCategory = categoryFilter === 'all' || product.category === categoryFilter
       return matchesSearch && matchesCategory
     })
   }, [categoryFilter, products, searchQuery])

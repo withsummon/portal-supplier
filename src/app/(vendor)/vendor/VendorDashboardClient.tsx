@@ -137,8 +137,8 @@ export default function VendorDashboardClient({ projects, quotes, vendor }: Prop
             icon: DollarSign,
             color: 'var(--color-purple)',
           },
-        ].map((stat, i) => (
-          <div key={i} className="kpi-card">
+        ].map((stat) => (
+          <div key={stat.label} className="kpi-card">
             <div className="kpi-card-top">
               <div
                 className="kpi-icon"

@@ -24,9 +24,37 @@ export default function ReportIssueModal({ isOpen, onClose }: ReportIssueModalPr
   }
 
   return (
-    <div className="modal-backdrop" onClick={onClose}>
-      <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-        <button className="modal-close" onClick={onClose}>
+    <div
+      className="modal-backdrop"
+      onClick={onClose}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault()
+          onClose()
+        }
+      }}
+      role="button"
+      tabIndex={0}
+      aria-label="Close modal"
+    >
+      <div
+        className="modal-content"
+        onClick={(e) => e.stopPropagation()}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="report-issue-title"
+      >
+        <button
+          className="modal-close"
+          onClick={onClose}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault()
+              onClose()
+            }
+          }}
+          aria-label="Close"
+        >
           <X size={20} />
         </button>
 
@@ -72,7 +100,12 @@ export default function ReportIssueModal({ isOpen, onClose }: ReportIssueModalPr
             </p>
           </div>
 
-          <h2 style={{ fontSize: 'var(--fs-xl)', marginBottom: 'var(--sp-1)' }}>Report an Issue</h2>
+          <h2
+            id="report-issue-title"
+            style={{ fontSize: 'var(--fs-xl)', marginBottom: 'var(--sp-1)' }}
+          >
+            Report an Issue
+          </h2>
           <p style={{ color: 'var(--text-secondary)', fontSize: 'var(--fs-sm)' }}>
             Describe the problem you&apos;re encountering and we&apos;ll help you fix it.
           </p>

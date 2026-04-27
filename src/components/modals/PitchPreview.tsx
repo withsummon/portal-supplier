@@ -21,11 +21,26 @@ export default function PitchPreview({
   onClose: () => void
 }) {
   return (
-    <div className="modal-backdrop" onClick={onClose}>
+    <div
+      className="modal-backdrop"
+      onClick={onClose}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault()
+          onClose()
+        }
+      }}
+      role="button"
+      tabIndex={0}
+      aria-label="Close modal"
+    >
       <div
         className="modal-content"
         onClick={(e) => e.stopPropagation()}
         style={{ maxWidth: '800px', maxHeight: '90vh', overflowY: 'auto', padding: 0 }}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="pitch-preview-title"
       >
         {/* Gradient Header */}
         <div
@@ -39,6 +54,12 @@ export default function PitchPreview({
         >
           <button
             onClick={onClose}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault()
+                onClose()
+              }
+            }}
             style={{
               position: 'absolute',
               top: 'var(--sp-4)',
@@ -54,6 +75,8 @@ export default function PitchPreview({
               border: 'none',
               cursor: 'pointer',
             }}
+            aria-label="Close"
+            type="button"
           >
             <X size={16} />
           </button>
@@ -69,7 +92,10 @@ export default function PitchPreview({
           >
             Client Pitch Deck Preview
           </div>
-          <h2 style={{ fontSize: 'var(--fs-3xl)', fontWeight: 800, marginBottom: 'var(--sp-2)' }}>
+          <h2
+            id="pitch-preview-title"
+            style={{ fontSize: 'var(--fs-3xl)', fontWeight: 800, marginBottom: 'var(--sp-2)' }}
+          >
             {product.name}
           </h2>
           <p style={{ fontSize: 'var(--fs-sm)', opacity: 0.8 }}>
@@ -151,9 +177,9 @@ export default function PitchPreview({
               Key Capabilities
             </h3>
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--sp-3)' }}>
-              {product.features.map((f, i) => (
+              {product.features.map((f) => (
                 <div
-                  key={i}
+                  key={f}
                   style={{
                     display: 'flex',
                     alignItems: 'center',
@@ -187,9 +213,9 @@ export default function PitchPreview({
               Ideal Use Cases
             </h3>
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: 'var(--sp-2)' }}>
-              {product.useCases.map((uc, i) => (
+              {product.useCases.map((uc) => (
                 <span
-                  key={i}
+                  key={uc}
                   style={{
                     padding: 'var(--sp-2) var(--sp-4)',
                     background: 'var(--blue-50)',

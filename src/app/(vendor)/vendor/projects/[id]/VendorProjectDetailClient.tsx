@@ -131,6 +131,12 @@ export default function VendorProjectDetailClient({
                 key={tab.key}
                 type="button"
                 onClick={() => setActiveTab(tab.key as typeof activeTab)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault()
+                    setActiveTab(tab.key as typeof activeTab)
+                  }
+                }}
                 style={{
                   padding: 'var(--sp-3) var(--sp-4)',
                   border: 'none',
@@ -361,10 +367,28 @@ export default function VendorProjectDetailClient({
           </div>
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--sp-3)' }}>
-            <button className="btn btn-primary btn-lg" onClick={() => setShowBidForm(true)}>
+            <button
+              className="btn btn-primary btn-lg"
+              onClick={() => setShowBidForm(true)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault()
+                  setShowBidForm(true)
+                }
+              }}
+            >
               Submit Proposal
             </button>
-            <button className="btn btn-secondary btn-lg" onClick={() => setShowChat(true)}>
+            <button
+              className="btn btn-secondary btn-lg"
+              onClick={() => setShowChat(true)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault()
+                  setShowChat(true)
+                }
+              }}
+            >
               <MessageSquare size={16} />
               Message Summon Team
             </button>
@@ -378,6 +402,16 @@ export default function VendorProjectDetailClient({
             setShowBidForm(false)
             setShowChat(false)
           }}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault()
+              setShowBidForm(false)
+              setShowChat(false)
+            }
+          }}
+          role="button"
+          tabIndex={0}
+          aria-label="Close modal"
           style={{
             position: 'fixed',
             inset: 0,
@@ -389,17 +423,36 @@ export default function VendorProjectDetailClient({
       )}
 
       {showBidForm && (
-        <div className="drawer-panel" style={{ zIndex: 1001 }}>
+        <div
+          className="drawer-panel"
+          style={{ zIndex: 1001 }}
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="bid-form-title"
+        >
           <div className="drawer-header">
             <div style={{ flex: 1 }}>
-              <h2 style={{ fontSize: 'var(--fs-lg)', fontWeight: 'var(--fw-bold)' }}>
+              <h2
+                id="bid-form-title"
+                style={{ fontSize: 'var(--fs-lg)', fontWeight: 'var(--fw-bold)' }}
+              >
                 Submit Proposal
               </h2>
               <p style={{ fontSize: 'var(--fs-xs)', color: 'var(--text-muted)' }}>
                 For: {project.name}
               </p>
             </div>
-            <button onClick={() => setShowBidForm(false)} className="btn btn-ghost btn-sm">
+            <button
+              onClick={() => setShowBidForm(false)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault()
+                  setShowBidForm(false)
+                }
+              }}
+              className="btn btn-ghost btn-sm"
+              aria-label="Close"
+            >
               <X size={20} />
             </button>
           </div>
@@ -470,6 +523,12 @@ export default function VendorProjectDetailClient({
               <button
                 className="btn btn-secondary"
                 onClick={() => setShowBidForm(false)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault()
+                    setShowBidForm(false)
+                  }
+                }}
                 style={{ flex: 1 }}
               >
                 Cancel
@@ -477,6 +536,12 @@ export default function VendorProjectDetailClient({
               <button
                 className="btn btn-primary"
                 onClick={submitBid}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault()
+                    submitBid()
+                  }
+                }}
                 style={{ flex: 1 }}
                 disabled={isPending}
               >
@@ -488,12 +553,21 @@ export default function VendorProjectDetailClient({
       )}
 
       {showChat && (
-        <div className="drawer-panel" style={{ zIndex: 1001, width: '420px' }}>
+        <div
+          className="drawer-panel"
+          style={{ zIndex: 1001, width: '420px' }}
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="chat-title"
+        >
           <div className="drawer-header">
             <div style={{ flex: 1 }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--sp-2)' }}>
                 <MessageCircle size={18} style={{ color: 'var(--blue-600)' }} />
-                <h2 style={{ fontSize: 'var(--fs-lg)', fontWeight: 'var(--fw-bold)' }}>
+                <h2
+                  id="chat-title"
+                  style={{ fontSize: 'var(--fs-lg)', fontWeight: 'var(--fw-bold)' }}
+                >
                   Chat with Summon Team
                 </h2>
               </div>
@@ -501,7 +575,17 @@ export default function VendorProjectDetailClient({
                 Re: {project.name}
               </p>
             </div>
-            <button onClick={() => setShowChat(false)} className="btn btn-ghost btn-sm">
+            <button
+              onClick={() => setShowChat(false)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault()
+                  setShowChat(false)
+                }
+              }}
+              className="btn btn-ghost btn-sm"
+              aria-label="Close"
+            >
               <X size={20} />
             </button>
           </div>
@@ -600,6 +684,12 @@ export default function VendorProjectDetailClient({
               <button
                 className="btn btn-primary"
                 onClick={sendMessage}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault()
+                    sendMessage()
+                  }
+                }}
                 disabled={!newMessage.trim() || isPending}
                 style={{ padding: '10px' }}
               >

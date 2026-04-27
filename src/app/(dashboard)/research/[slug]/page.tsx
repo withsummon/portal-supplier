@@ -335,9 +335,9 @@ export default function ArticlePage({ params }: { params: Promise<{ slug: string
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 260px', gap: 'var(--sp-10)' }}>
           {/* Article Body */}
           <div>
-            {article.content.map((p, i) => (
+            {article.content.map((p) => (
               <p
-                key={i}
+                key={p}
                 style={{
                   fontSize: 'var(--fs-md)',
                   color: 'var(--text-primary)',

@@ -31,8 +31,7 @@ export function useFactoryProducts(initialProducts: FactoryProduct[]) {
 
   const filteredProducts = useMemo(() => {
     return initialProducts.filter((product) => {
-      const matchesCategory =
-        activeCategory === 'all' || product.category === activeCategory
+      const matchesCategory = activeCategory === 'all' || product.category === activeCategory
       const matchesSearch =
         product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
         product.description.toLowerCase().includes(searchQuery.toLowerCase())
@@ -41,7 +40,9 @@ export function useFactoryProducts(initialProducts: FactoryProduct[]) {
   }, [activeCategory, initialProducts, searchQuery])
 
   const categories = useMemo(() => {
-    const productCategories = Array.from(new Set(initialProducts.map((product) => product.category)))
+    const productCategories = Array.from(
+      new Set(initialProducts.map((product) => product.category)),
+    )
     return [
       { id: 'all', label: 'All Products', count: initialProducts.length },
       ...productCategories.map((category) => ({

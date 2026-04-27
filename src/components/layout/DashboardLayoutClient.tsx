@@ -21,7 +21,11 @@ interface DashboardLayoutClientProps {
   user: UserProfile | null
 }
 
-export default function DashboardLayoutClient({ children, projects, user }: DashboardLayoutClientProps) {
+export default function DashboardLayoutClient({
+  children,
+  projects,
+  user,
+}: DashboardLayoutClientProps) {
   const [collapsed, setCollapsed] = useState(false)
 
   return (

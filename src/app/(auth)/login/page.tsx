@@ -122,6 +122,12 @@ export default function LoginPage() {
                     key={role.id}
                     type="button"
                     onClick={() => setSelectedRole(role.id)}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault()
+                        setSelectedRole(role.id)
+                      }
+                    }}
                     style={{
                       display: 'flex',
                       flexDirection: 'column',
@@ -241,6 +247,12 @@ export default function LoginPage() {
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault()
+                        setShowPassword(!showPassword)
+                      }
+                    }}
                     style={{
                       position: 'absolute',
                       right: '12px',

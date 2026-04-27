@@ -217,9 +217,9 @@ export default async function ProjectDetailPage({ params }: Props) {
                       Key Deliverables
                     </div>
                     <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--sp-2)' }}>
-                      {project.deliverables.map((d, i) => (
+                      {project.deliverables.map((d) => (
                         <div
-                          key={i}
+                          key={d}
                           style={{ display: 'flex', alignItems: 'flex-start', gap: 'var(--sp-3)' }}
                         >
                           <CheckCircle
