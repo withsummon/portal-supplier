@@ -322,7 +322,7 @@ export default function LoginPage() {
               href="/register"
               style={{ color: 'var(--text-accent)', fontWeight: 'var(--fw-semibold)' }}
             >
-              Register as Seller
+              Register here
             </Link>
           </p>
         </div>

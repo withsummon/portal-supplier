@@ -1723,13 +1723,17 @@ h6 {
   display: grid;
   grid-template-columns: 1fr 1fr;
   background: var(--surface-page);
+  width: 100%;
+  overflow-x: hidden;
 }
 
 .auth-panel {
   display: flex;
   flex-direction: column;
   justify-content: center;
+  align-items: center;
   padding: var(--sp-12);
+  padding-left: var(--sp-24);
 }
 
 .auth-brand {
@@ -1817,6 +1821,8 @@ h6 {
   padding: var(--sp-12);
   position: relative;
   overflow: hidden;
+  height: 100%;
+  width: 100%;
 }
 
 .auth-hero::before {

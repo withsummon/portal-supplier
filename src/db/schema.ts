@@ -82,16 +82,16 @@ export const categoryTypeEnum = pgEnum('category_type', ['PROJECT', 'PRODUCT'])
 export const users = pgTable('users', {
   id: uuid('id').defaultRandom().primaryKey(),
   email: text('email').notNull().unique(),
-  password: text('password').notNull(),
+  password: text('password'),
   name: text('name'),
   phone: text('phone'),
   location: text('location'),
   role: userRoleEnum('role').default('SELLER').notNull(),
-  emailVerified: timestamp('email_verified', { withTimezone: true }),
+  emailVerified: boolean('email_verified').default(false).notNull(),
   image: text('image'),
   preferences: jsonb('preferences').$type<Record<string, boolean>>().default({}),
-  createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
-  updatedAt: timestamp('updated_at', { withTimezone: true })
+  createdAt: timestamp('created_at', { mode: 'date', withTimezone: true }).defaultNow().notNull(),
+  updatedAt: timestamp('updated_at', { mode: 'date', withTimezone: true })
     .defaultNow()
     .notNull()
     .$onUpdate(() => new Date()),
@@ -104,20 +104,20 @@ export const accounts = pgTable(
     userId: uuid('user_id')
       .notNull()
       .references(() => users.id, { onDelete: 'cascade' }),
-    type: text('type').notNull(),
+    type: text('type'),
     providerId: text('provider').notNull(),
     accountId: text('provider_account_id').notNull(),
     refreshToken: text('refresh_token'),
     accessToken: text('access_token'),
-    accessTokenExpiresAt: timestamp('access_token_expires_at', { withTimezone: true }),
-    refreshTokenExpiresAt: timestamp('refresh_token_expires_at', { withTimezone: true }),
+    accessTokenExpiresAt: timestamp('access_token_expires_at', { mode: 'date', withTimezone: true }),
+    refreshTokenExpiresAt: timestamp('refresh_token_expires_at', { mode: 'date', withTimezone: true }),
     tokenType: text('token_type'),
     scope: text('scope'),
     idToken: text('id_token'),
     sessionState: text('session_state'),
     password: text('password'),
-    createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
-    updatedAt: timestamp('updated_at', { withTimezone: true })
+    createdAt: timestamp('created_at', { mode: 'date', withTimezone: true }).defaultNow().notNull(),
+    updatedAt: timestamp('updated_at', { mode: 'date', withTimezone: true })
       .defaultNow()
       .notNull()
       .$onUpdate(() => new Date()),
@@ -137,9 +137,9 @@ export const sessions = pgTable(
       .references(() => users.id, { onDelete: 'cascade' }),
     ipAddress: text('ip_address'),
     userAgent: text('user_agent'),
-    expiresAt: timestamp('expires', { withTimezone: true }).notNull(),
-    createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
-    updatedAt: timestamp('updated_at', { withTimezone: true })
+    expiresAt: timestamp('expires', { mode: 'date', withTimezone: true }).notNull(),
+    createdAt: timestamp('created_at', { mode: 'date', withTimezone: true }).defaultNow().notNull(),
+    updatedAt: timestamp('updated_at', { mode: 'date', withTimezone: true })
       .defaultNow()
       .notNull()
       .$onUpdate(() => new Date()),
@@ -155,9 +155,9 @@ export const verificationTokens = pgTable(
   {
     identifier: text('identifier').notNull(),
     token: text('token').notNull().unique(),
-    expiresAt: timestamp('expires', { withTimezone: true }).notNull(),
-    createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
-    updatedAt: timestamp('updated_at', { withTimezone: true })
+    expiresAt: timestamp('expires', { mode: 'date', withTimezone: true }).notNull(),
+    createdAt: timestamp('created_at', { mode: 'date', withTimezone: true }).defaultNow().notNull(),
+    updatedAt: timestamp('updated_at', { mode: 'date', withTimezone: true })
       .defaultNow()
       .notNull()
       .$onUpdate(() => new Date()),
