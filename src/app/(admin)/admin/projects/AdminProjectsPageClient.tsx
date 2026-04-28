@@ -606,7 +606,6 @@ export default function AdminProjectsPageClient({
                 {isPending ? 'Saving...' : 'Confirm'}
               </button>
             </div>
-            </div>
           </>
         )}
       </Modal>

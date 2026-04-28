@@ -603,7 +603,6 @@ export default function AdminProductsPageClient({
                 {isPending ? 'Saving...' : 'Save Product'}
               </button>
             </div>
-            </div>
       </Modal>
     </div>
   )

@@ -5,7 +5,7 @@ import { getCurrentUserRecord } from '@/lib/auth/session'
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
   const user = (await getCurrentUserRecord()) ?? null
   const sellerId = user?.seller?.id
-  const allProjects = await getCachedCommandBarProjects({ sellerId })
+  const allProjects = await getCachedCommandBarProjects(sellerId ? { sellerId } : {})
 
   return (
     <DashboardLayoutClient projects={allProjects} user={user}>
