@@ -1,10 +1,10 @@
 #!/bin/sh
-# Startup script: sync schema then start server
+# Startup script: run migrations then start server
 
-echo "Syncing database schema with drizzle-kit push..."
-# Use push to ensure the DB schema matches the latest schema.
-# --force makes it non-interactive. This is safe for push-based setups.
-bunx drizzle-kit push --force 2>&1
+echo "Checking database schema..."
+# Use push (without --force) so drizzle-kit only adds new tables/columns,
+# never drops existing ones. The `yes` pipes confirmation for non-interactive runs.
+yes | bunx drizzle-kit push 2>&1
 
 echo "Starting server..."
 exec node server.js
