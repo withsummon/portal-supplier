@@ -2,9 +2,10 @@
 
 import Link from 'next/link'
 import Image from 'next/image'
-import { ArrowRight, ChevronLeft, ChevronRight, Cpu, Download, Search } from 'lucide-react'
+import { ArrowRight, Cpu, Download, Search, X } from 'lucide-react'
 import { getProductIcon } from '@/lib/product-icons'
 import { useFactoryProducts } from '@/hooks/use-factory-products'
+import Modal from '@/components/ui/Modal'
 
 interface FactoryProduct {
   id: string
@@ -47,7 +48,7 @@ export default function FactoryPageClient({ products }: { products: FactoryProdu
         <div>
           <h1 className="page-title">Summon Factory</h1>
           <p className="page-subtitle">
-            Browse and resell Summon's enterprise AI solutions to your clients.
+            Browse and resell Summon&apos;s enterprise AI solutions to your clients.
           </p>
         </div>
       </div>
@@ -203,7 +204,7 @@ export default function FactoryPageClient({ products }: { products: FactoryProdu
                     }}
                   >
                     <span style={{ fontSize: 'var(--fs-sm)', fontWeight: 'var(--fw-semibold)' }}>
-                      {product.currency} {product.basePrice.toLocaleString()}
+                      Rp {product.basePrice.toLocaleString()}
                     </span>
                     <span
                       style={{
@@ -225,28 +226,25 @@ export default function FactoryPageClient({ products }: { products: FactoryProdu
         </div>
       </div>
 
-      {selectedProduct && (
-        <div
-          className="modal-backdrop"
-          onClick={() => setSelectedProductId(null)}
-          onKeyDown={(e) => {
-            if (e.key === 'Enter' || e.key === ' ') {
-              e.preventDefault()
-              setSelectedProductId(null)
-            }
-          }}
-          role="button"
-          tabIndex={0}
-          aria-label="Close modal"
-        >
-          <div
-            className="modal-content"
-            onClick={(event) => event.stopPropagation()}
-            style={{ maxWidth: '960px' }}
-            role="dialog"
-            aria-modal="true"
-            aria-labelledby="product-preview-title"
-          >
+      <Modal
+        isOpen={!!selectedProduct}
+        onClose={() => setSelectedProductId(null)}
+        maxWidth="960px"
+        noPadding
+      >
+        {selectedProduct && (
+          <div style={{ padding: 'var(--sp-6)' }}>
+            <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: 'var(--sp-3)' }}>
+              <button
+                className="btn btn-ghost btn-sm"
+                type="button"
+                onClick={() => setSelectedProductId(null)}
+                aria-label="Close"
+              >
+                <X size={18} />
+              </button>
+            </div>
+
             <div style={{ display: 'grid', gridTemplateColumns: '1.1fr 1fr', gap: 'var(--sp-6)' }}>
               <div>
                 <div
@@ -256,6 +254,7 @@ export default function FactoryPageClient({ products }: { products: FactoryProdu
                     background: 'var(--neutral-100)',
                     overflow: 'hidden',
                     marginBottom: 'var(--sp-4)',
+                    position: 'relative',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
@@ -274,30 +273,27 @@ export default function FactoryPageClient({ products }: { products: FactoryProdu
                   )}
                 </div>
                 {selectedProduct.images.length > 1 && (
-                  <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                    <button
-                      className="btn btn-secondary btn-sm"
-                      type="button"
-                      onClick={() =>
-                        setCurrentImageIndex(
-                          (currentImageIndex - 1 + selectedProduct.images.length) %
-                            selectedProduct.images.length,
-                        )
-                      }
-                    >
-                      <ChevronLeft size={14} />
-                    </button>
-                    <button
-                      className="btn btn-secondary btn-sm"
-                      type="button"
-                      onClick={() =>
-                        setCurrentImageIndex(
-                          (currentImageIndex + 1) % selectedProduct.images.length,
-                        )
-                      }
-                    >
-                      <ChevronRight size={14} />
-                    </button>
+                  <div style={{ display: 'flex', justifyContent: 'center', gap: 'var(--sp-2)' }}>
+                    {selectedProduct.images.map((_, i) => (
+                      <button
+                        key={i}
+                        type="button"
+                        onClick={() => setCurrentImageIndex(i)}
+                        style={{
+                          width: i === currentImageIndex ? '24px' : '8px',
+                          height: '8px',
+                          borderRadius: '4px',
+                          background:
+                            i === currentImageIndex
+                              ? 'var(--blue-500)'
+                              : 'var(--neutral-200)',
+                          border: 'none',
+                          cursor: 'pointer',
+                          padding: 0,
+                          transition: 'all 150ms',
+                        }}
+                      />
+                    ))}
                   </div>
                 )}
               </div>
@@ -317,7 +313,7 @@ export default function FactoryPageClient({ products }: { products: FactoryProdu
                   {selectedProduct.longDescription}
                 </p>
                 <div style={{ fontWeight: 'var(--fw-semibold)', marginBottom: 'var(--sp-4)' }}>
-                  {selectedProduct.currency} {selectedProduct.basePrice.toLocaleString()}
+                  Rp {selectedProduct.basePrice.toLocaleString()}
                 </div>
 
                 <div style={{ marginBottom: 'var(--sp-5)' }}>
@@ -362,19 +358,15 @@ export default function FactoryPageClient({ products }: { products: FactoryProdu
                       Pitch Deck
                     </Link>
                   )}
-                  <Link
-                    href="/projects/submit"
-                    className="btn btn-primary"
-                    onClick={() => setSelectedProductId(null)}
-                  >
+                  <Link href="/projects/submit" className="btn btn-primary">
                     Submit Client Opportunity
                   </Link>
                 </div>
               </div>
             </div>
           </div>
-        </div>
-      )}
+        )}
+      </Modal>
     </div>
   )
 }

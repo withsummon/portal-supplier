@@ -133,7 +133,7 @@ export default function VendorDashboardClient({ projects, quotes, vendor }: Prop
           },
           {
             label: 'Total Revenue',
-            value: `$${totalEarnings.toLocaleString()}`,
+            value: `Rp ${totalEarnings.toLocaleString()}`,
             icon: DollarSign,
             color: 'var(--color-purple)',
           },

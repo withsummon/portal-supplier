@@ -135,7 +135,7 @@ export default function MyQuotesPage({ quotes }: Props) {
                   </td>
                   <td>
                     <div style={{ fontWeight: 'var(--fw-bold)' }}>
-                      {quote.currency === 'USD' ? '$' : 'Rp'} {quote.amount.toLocaleString()}
+                      Rp {quote.amount.toLocaleString()}
                     </div>
                   </td>
                   <td>

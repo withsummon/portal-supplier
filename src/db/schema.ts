@@ -260,7 +260,7 @@ export const projects = pgTable(
     // Budget
     budgetMin: decimal('budget_min', { precision: 12, scale: 2 }),
     budgetMax: decimal('budget_max', { precision: 12, scale: 2 }),
-    budgetCurrency: text('budget_currency').default('USD').notNull(),
+    budgetCurrency: text('budget_currency').default('IDR').notNull(),
     budgetRange: text('budget_range'),
 
     // Timeline
@@ -349,7 +349,7 @@ export const quotes = pgTable(
       .notNull()
       .references(() => vendors.id, { onDelete: 'cascade' }),
     amount: decimal('amount', { precision: 12, scale: 2 }).notNull(),
-    currency: text('currency').default('USD').notNull(),
+    currency: text('currency').default('IDR').notNull(),
     duration: integer('duration'), // in days
     proposal: text('proposal'),
     status: quoteStatusEnum('status').default('PENDING').notNull(),
@@ -379,7 +379,7 @@ export const products = pgTable(
     longDescription: text('long_description'),
     category: text('category').notNull(),
     basePrice: decimal('base_price', { precision: 10, scale: 2 }).notNull(),
-    currency: text('currency').default('USD').notNull(),
+    currency: text('currency').default('IDR').notNull(),
     features: jsonb('features').$type<string[]>().default([]),
     useCases: jsonb('use_cases').$type<string[]>().default([]),
     clients: jsonb('clients').$type<string[]>().default([]),
@@ -579,7 +579,7 @@ export const offerTemplates = pgTable(
     defaultPricingType: offerTemplateTypeEnum('default_pricing_type').default('RANGE').notNull(),
     defaultMinAmount: decimal('default_min_amount', { precision: 12, scale: 2 }),
     defaultMaxAmount: decimal('default_max_amount', { precision: 12, scale: 2 }),
-    defaultCurrency: text('default_currency').default('USD'),
+    defaultCurrency: text('default_currency').default('IDR'),
     defaultDuration: integer('default_duration').default(30),
     defaultTerms: text('default_terms'),
     customFields:

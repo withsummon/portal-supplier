@@ -73,7 +73,7 @@ export function useSubmitProject() {
         startDate: formData.startDate,
         endDate: formData.endDate,
         budgetRange: formData.budgetRange,
-        budgetCurrency: formData.currency,
+        budgetCurrency: 'IDR',
         priority: formData.priority || 'medium',
         files: formData.files,
       })

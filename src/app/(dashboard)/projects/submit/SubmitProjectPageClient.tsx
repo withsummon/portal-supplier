@@ -27,42 +27,13 @@ const DEFAULT_CATEGORIES = [
   'Other',
 ]
 
-const BUDGET_RANGES: Record<string, { label: string; value: string }[]> = {
-  USD: [
-    { label: '$10K - $50K', value: '10K-50K' },
-    { label: '$50K - $100K', value: '50K-100K' },
-    { label: '$100K - $500K', value: '100K-500K' },
-    { label: '$500K - $1M', value: '500K-1M' },
-    { label: '$1M+', value: '1M+' },
-  ],
-  IDR: [
-    { label: 'Rp 150 Jt - Rp 500 Jt', value: '150Jt-500Jt' },
-    { label: 'Rp 500 Jt - Rp 1 M', value: '500Jt-1M' },
-    { label: 'Rp 1 M - Rp 5 M', value: '1M-5M' },
-    { label: 'Rp 5 M - Rp 15 M', value: '5M-15M' },
-    { label: 'Rp 15 M+', value: '15M+' },
-  ],
-  EUR: [
-    { label: 'EUR 10K - EUR 50K', value: '10K-50K' },
-    { label: 'EUR 50K - EUR 100K', value: '50K-100K' },
-    { label: 'EUR 100K - EUR 500K', value: '100K-500K' },
-    { label: 'EUR 500K - EUR 1M', value: '500K-1M' },
-    { label: 'EUR 1M+', value: '1M+' },
-  ],
-  SGD: [
-    { label: 'SGD 15K - SGD 75K', value: '15K-75K' },
-    { label: 'SGD 75K - SGD 150K', value: '75K-150K' },
-    { label: 'SGD 150K - SGD 750K', value: '150K-750K' },
-    { label: 'SGD 750K - SGD 1.5M', value: '750K-1.5M' },
-    { label: 'SGD 1.5M+', value: '1.5M+' },
-  ],
-}
-
-const CURRENCIES = [
-  { code: 'IDR', symbol: 'Rp' },
-  { code: 'USD', symbol: '$' },
-  { code: 'EUR', symbol: 'EUR' },
-  { code: 'SGD', symbol: 'SGD' },
+const BUDGET_RANGES = [
+  { label: 'Rp 5.000.000 - Rp 15.000.000', value: 'Rp 5.000.000 - Rp 15.000.000' },
+  { label: 'Rp 15.000.000 - Rp 50.000.000', value: 'Rp 15.000.000 - Rp 50.000.000' },
+  { label: 'Rp 50.000.000 - Rp 150.000.000', value: 'Rp 50.000.000 - Rp 150.000.000' },
+  { label: 'Rp 150.000.000 - Rp 500.000.000', value: 'Rp 150.000.000 - Rp 500.000.000' },
+  { label: 'Rp 500.000.000 - Rp 1.000.000.000', value: 'Rp 500.000.000 - Rp 1.000.000.000' },
+  { label: 'Rp 1.000.000.000+', value: 'Rp 1.000.000.000+' },
 ]
 
 const PRIORITIES = [
@@ -333,8 +304,6 @@ function Step3({
     value: SubmitProjectFormState[K],
   ) => void
 }) {
-  const budgetOptions = BUDGET_RANGES[data.currency] ?? BUDGET_RANGES.USD ?? []
-
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--sp-5)' }}>
       <div className="grid-2">
@@ -364,40 +333,20 @@ function Step3({
 
       <div className="form-group">
         <label className="form-label">
-          Budget and Currency <span className="form-required">*</span>
+          Budget Range <span className="form-required">*</span>
         </label>
-        <div style={{ display: 'flex', gap: 'var(--sp-4)' }}>
-          <div style={{ width: '140px' }}>
-            <select
-              className="select"
-              value={data.currency}
-              onChange={(event) => {
-                onChange('currency', event.target.value)
-                onChange('budgetRange', '')
-              }}
-            >
-              {CURRENCIES.map((currency) => (
-                <option key={currency.code} value={currency.code}>
-                  {currency.code} ({currency.symbol})
-                </option>
-              ))}
-            </select>
-          </div>
-          <div style={{ flex: 1 }}>
-            <select
-              className="select"
-              value={data.budgetRange}
-              onChange={(event) => onChange('budgetRange', event.target.value)}
-            >
-              <option value="">Select budget range...</option>
-              {budgetOptions.map((option) => (
-                <option key={option.value} value={option.label}>
-                  {option.label}
-                </option>
-              ))}
-            </select>
-          </div>
-        </div>
+        <select
+          className="select"
+          value={data.budgetRange}
+          onChange={(event) => onChange('budgetRange', event.target.value)}
+        >
+          <option value="">Select budget range...</option>
+          {BUDGET_RANGES.map((option) => (
+            <option key={option.value} value={option.value}>
+              {option.label}
+            </option>
+          ))}
+        </select>
       </div>
 
       <div className="form-group">
@@ -608,7 +557,7 @@ function Step5({ data }: { data: SubmitProjectFormState }) {
         { label: 'End Date', value: data.endDate || '-' },
         {
           label: 'Budget Range',
-          value: data.budgetRange ? `${data.currency} ${data.budgetRange}` : '-',
+          value: data.budgetRange || '-',
         },
         { label: 'Priority', value: data.priority || '-' },
       ],

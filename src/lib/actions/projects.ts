@@ -398,7 +398,9 @@ export async function getRevenuePipeline(sellerId?: string) {
 
 function parseBudgetAmount(value: string) {
   const normalized = value.replace(/\s+/g, '').replace(',', '.')
-  const numericValue = Number.parseFloat(normalized.replace(/[^\d.]/g, ''))
+  // Remove dots used as thousand separators (e.g. Rp 150.000.000 -> 150000000)
+  const withoutSeparators = normalized.replace(/\./g, '')
+  const numericValue = Number.parseFloat(withoutSeparators.replace(/[^\d.]/g, ''))
 
   if (Number.isNaN(numericValue)) {
     return undefined
@@ -408,11 +410,11 @@ function parseBudgetAmount(value: string) {
     return Math.round(numericValue * 1_000_000)
   }
 
-  if (/m/i.test(normalized)) {
+  if (/m\b/i.test(normalized)) {
     return Math.round(numericValue * 1_000_000)
   }
 
-  if (/k/i.test(normalized)) {
+  if (/k\b/i.test(normalized)) {
     return Math.round(numericValue * 1_000)
   }
 
@@ -571,6 +573,7 @@ export async function createProjectAsAdmin(input: {
   category: string
   description?: string
   requirements?: string
+  deliverables?: string[]
   vendorId?: string
   priority?: 'low' | 'medium' | 'high' | 'critical'
   budgetRange?: string
@@ -611,8 +614,9 @@ export async function createProjectAsAdmin(input: {
       category: input.category.trim(),
       description: input.description?.trim() || '',
       requirements: input.requirements?.trim() || null,
+      deliverables: (input.deliverables ?? []).filter((d) => d.trim()),
       budgetRange: input.budgetRange?.trim() || null,
-      budgetCurrency: input.budgetCurrency ?? 'USD',
+      budgetCurrency: input.budgetCurrency ?? 'IDR',
       budgetMin: min?.toString() ?? null,
       budgetMax: max?.toString() ?? null,
       priority: (mockToDbPriority[input.priority ?? 'medium'] ?? 'MEDIUM') as

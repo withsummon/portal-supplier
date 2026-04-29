@@ -172,7 +172,7 @@ export default function AdminProductsPageClient({
                     </td>
                     <td>{product.category}</td>
                     <td>
-                      {product.currency} {product.basePrice.toLocaleString()}
+                      Rp {product.basePrice.toLocaleString()}
                     </td>
                     <td style={{ fontSize: 'var(--fs-xs)', color: 'var(--text-muted)' }}>
                       {product.images.length} images{product.pitchDeckPdf ? ' · PDF' : ''}

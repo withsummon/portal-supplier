@@ -54,9 +54,12 @@ export default function QuoteCalculator() {
   }, 0)
 
   const formatCurrency = (val: number) => {
-    if (val >= 1000000) return `$${(val / 1000000).toFixed(1)}M`
-    if (val >= 1000) return `$${(val / 1000).toFixed(0)}K`
-    return `$${val}`
+    const str = Math.round(val).toString()
+    const parts: string[] = []
+    for (let i = str.length; i > 0; i -= 3) {
+      parts.unshift(str.slice(Math.max(0, i - 3), i))
+    }
+    return `Rp ${parts.join('.')}`
   }
 
   return (

@@ -356,7 +356,7 @@ export default function VendorProjectDetailClient({
                     Existing Proposal
                   </div>
                   <div style={{ fontSize: 'var(--fs-sm)', fontWeight: 'var(--fw-medium)' }}>
-                    {existingQuote.currency} {existingQuote.amount.toLocaleString()}
+                    Rp {existingQuote.amount.toLocaleString()}
                   </div>
                   <div style={{ fontSize: 'var(--fs-xs)', color: 'var(--text-muted)' }}>
                     {existingQuote.duration} days · {projectStatusLabels[existingQuote.status]}
@@ -459,7 +459,7 @@ export default function VendorProjectDetailClient({
           <div className="drawer-body">
             <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--sp-6)' }}>
               <div className="form-group">
-                <label className="form-label">Bid Amount (USD)</label>
+                <label className="form-label">Bid Amount (Rp)</label>
                 <input
                   className="input"
                   type="number"

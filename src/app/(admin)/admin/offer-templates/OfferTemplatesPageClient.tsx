@@ -28,7 +28,7 @@ export default function OfferTemplatesPageClient({
     defaultPricingType: 'RANGE' as 'FIXED' | 'RANGE' | 'CUSTOM',
     defaultMinAmount: '',
     defaultMaxAmount: '',
-    defaultCurrency: 'USD',
+    defaultCurrency: 'IDR',
     defaultDuration: '30',
     defaultTerms: '',
     isActive: true,
@@ -42,7 +42,7 @@ export default function OfferTemplatesPageClient({
       defaultPricingType: 'RANGE',
       defaultMinAmount: '',
       defaultMaxAmount: '',
-      defaultCurrency: 'USD',
+      defaultCurrency: 'IDR',
       defaultDuration: '30',
       defaultTerms: '',
       isActive: true,
@@ -136,10 +136,10 @@ export default function OfferTemplatesPageClient({
 
   function formatPricing(t: OfferTemplateDto) {
     if (t.defaultPricingType === 'FIXED') {
-      return `${t.defaultCurrency} ${t.defaultMinAmount?.toLocaleString()}`
+      return `Rp ${t.defaultMinAmount?.toLocaleString()}`
     }
     if (t.defaultPricingType === 'RANGE') {
-      return `${t.defaultCurrency} ${t.defaultMinAmount?.toLocaleString()} – ${t.defaultMaxAmount?.toLocaleString()}`
+      return `Rp ${t.defaultMinAmount?.toLocaleString()} – Rp ${t.defaultMaxAmount?.toLocaleString()}`
     }
     return 'Custom pricing'
   }
@@ -248,10 +248,7 @@ export default function OfferTemplatesPageClient({
                       value={form.defaultCurrency}
                       onChange={(e) => setForm((f) => ({ ...f, defaultCurrency: e.target.value }))}
                     >
-                      <option value="USD">USD</option>
-                      <option value="IDR">IDR</option>
-                      <option value="EUR">EUR</option>
-                      <option value="SGD">SGD</option>
+                      <option value="IDR">IDR (Rp)</option>
                     </select>
                   </div>
                 </div>

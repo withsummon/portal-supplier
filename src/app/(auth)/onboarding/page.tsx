@@ -226,7 +226,7 @@ function OnboardingWizard() {
                       gap: 'var(--sp-2)',
                     }}
                   >
-                    {['< $50k', '$50k - $200k', '> $200k'].map((vol) => {
+                    {['< Rp 250.000.000', 'Rp 250.000.000 - Rp 1.000.000.000', '> Rp 1.000.000.000'].map((vol) => {
                       const isSelected = volume === vol
                       return (
                         <div

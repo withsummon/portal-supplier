@@ -88,11 +88,11 @@ function getDaysRemaining(endDate: string | null): number {
 
 function getBudgetValue(budgetRange: string | null): string {
   if (!budgetRange) return '0'
-  // Extract the upper bound or the single value
-  const match = budgetRange.match(/\$?([\d,]+)K?/g)
+  // Extract numbers from Rp format (e.g. "Rp 150.000.000 - Rp 500.000.000")
+  const match = budgetRange.match(/Rp\s*([\d.]+)/g)
   if (match) {
     const last = match[match.length - 1] ?? '0'
-    const normalized = last.replace(/[,$K]/g, '')
+    const normalized = last.replace(/[Rp.\s]/g, '')
     return normalized
   }
   return '0'
@@ -561,7 +561,7 @@ export default function ProjectMarketplace({ projects }: Props) {
                           {budgetNum}
                         </span>
                         <span style={{ fontSize: 'var(--fs-xs)', color: 'var(--text-muted)' }}>
-                          USD
+                          IDR
                         </span>
                       </div>
                       <div
@@ -740,7 +740,7 @@ export default function ProjectMarketplace({ projects }: Props) {
                         </span>
                       </div>
                       <div style={{ fontSize: 'var(--fs-xs)', color: 'var(--text-muted)' }}>
-                        USD
+                        IDR
                       </div>
                     </div>
 
