@@ -2,7 +2,7 @@
 
 import { auth } from '@/lib/auth'
 import { db } from '@/db'
-import { users, sellers, vendors } from '@/db/schema'
+import { users, sellers, vendors, notifications } from '@/db/schema'
 import { eq } from 'drizzle-orm'
 import { redirect } from 'next/navigation'
 import { headers } from 'next/headers'
@@ -56,14 +56,37 @@ export async function registerUser(data: {
       website: data.website,
     }
 
+    let newProfileId: string | null = null
+
     if (data.role === 'SELLER') {
-      await db.insert(sellers).values({
-        ...profileValues,
-      })
+      const [seller] = await db.insert(sellers).values(profileValues).returning({ id: sellers.id })
+      newProfileId = seller?.id ?? null
     } else if (data.role === 'VENDOR') {
-      await db.insert(vendors).values({
-        ...profileValues,
-      })
+      const [vendor] = await db.insert(vendors).values(profileValues).returning({ id: vendors.id })
+      newProfileId = vendor?.id ?? null
+    }
+
+    // Notify all admins of the new registration
+    const adminUsers = await db.select({ id: users.id }).from(users).where(eq(users.role, 'ADMIN'))
+    if (newProfileId) {
+      const notificationType: 'SELLER_REGISTRATION' | 'VENDOR_REGISTRATION' =
+        data.role === 'SELLER' ? 'SELLER_REGISTRATION' : 'VENDOR_REGISTRATION'
+      const title =
+        data.role === 'SELLER'
+          ? `New seller registration: ${data.companyName}`
+          : `New vendor registration: ${data.companyName}`
+      const adminLink = data.role === 'SELLER' ? '/admin/sellers' : '/admin/vendors'
+
+      await db.insert(notifications).values(
+        adminUsers.map((admin) => ({
+          userId: admin.id,
+          type: notificationType,
+          title,
+          content: `A new ${data.role.toLowerCase()} registration requires your review.`,
+          link: adminLink,
+          meta: JSON.stringify({ profileId: newProfileId, role: data.role }),
+        })),
+      )
     }
 
     return { success: true, userId: user.id }

@@ -91,10 +91,7 @@ const adminNavItems: NavSection[] = [
   },
   {
     section: 'Manage',
-    items: [
-      { label: 'Summon Factory', href: '/admin/products', icon: Factory },
-      { label: 'Offer Templates', href: '/admin/offer-templates', icon: FileText },
-    ],
+    items: [{ label: 'Summon Factory', href: '/admin/products', icon: Factory }],
   },
   {
     section: 'Communication',

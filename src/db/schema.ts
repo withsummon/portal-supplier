@@ -70,6 +70,8 @@ export const notificationTypeEnum = pgEnum('notification_type', [
   'PROJECT_CLARIFICATION',
   'MESSAGE_RECEIVED',
   'QUOTE_RECEIVED',
+  'SELLER_REGISTRATION',
+  'VENDOR_REGISTRATION',
   'SYSTEM',
 ])
 
@@ -455,6 +457,7 @@ export const notifications = pgTable(
     title: text('title').notNull(),
     content: text('content'),
     link: text('link'),
+    meta: jsonb('meta'),
     read: boolean('read').default(false).notNull(),
     createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
   },

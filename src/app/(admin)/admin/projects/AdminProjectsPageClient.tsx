@@ -78,8 +78,12 @@ const STATUS_CONFIG: Record<
 
 export default function AdminProjectsPageClient({
   initialProjects,
+  initialHighlight,
+  initialStatus,
 }: {
   initialProjects: AdminProjectDto[]
+  initialHighlight?: string
+  initialStatus?: string
 }) {
   const {
     actionModal,
@@ -98,7 +102,7 @@ export default function AdminProjectsPageClient({
     setStatusFilter,
     statusFilter,
     submitAction,
-  } = useAdminProjects(initialProjects)
+  } = useAdminProjects(initialProjects, initialHighlight, initialStatus)
 
   return (
     <div className="animate-in">

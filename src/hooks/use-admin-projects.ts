@@ -4,11 +4,17 @@ import { useMemo, useState, useTransition } from 'react'
 import { reviewProjectSubmission } from '@/lib/actions/projects'
 import type { AdminProjectDto, ProjectReviewNoteDto } from '@/lib/data/project-workflows'
 
-export function useAdminProjects(initialProjects: AdminProjectDto[]) {
+export function useAdminProjects(
+  initialProjects: AdminProjectDto[],
+  initialHighlight?: string,
+  initialStatus?: string,
+) {
   const [projects, setProjects] = useState(initialProjects)
   const [searchQuery, setSearchQuery] = useState('')
-  const [statusFilter, setStatusFilter] = useState('all')
-  const [selectedProjectId, setSelectedProjectId] = useState<string | null>(null)
+  const [statusFilter, setStatusFilter] = useState<string>(initialStatus ?? 'all')
+  const [selectedProjectId, setSelectedProjectId] = useState<string | null>(
+    initialHighlight ?? null,
+  )
   const [actionModal, setActionModal] = useState<{
     projectId: string
     action: 'accept' | 'reject' | 'clarify'

@@ -571,7 +571,7 @@ export async function createProjectAsAdmin(input: {
   category: string
   description?: string
   requirements?: string
-  vendorId: string
+  vendorId?: string
   priority?: 'low' | 'medium' | 'high' | 'critical'
   budgetRange?: string
   budgetCurrency?: string
@@ -580,12 +580,14 @@ export async function createProjectAsAdmin(input: {
 }) {
   const user = await requireRole('ADMIN')
 
-  const vendor = await db.query.vendors.findFirst({
-    where: eq(vendors.id, input.vendorId),
-  })
+  if (input.vendorId) {
+    const vendor = await db.query.vendors.findFirst({
+      where: eq(vendors.id, input.vendorId),
+    })
 
-  if (!vendor) {
-    return { error: 'Vendor not found.' } as const
+    if (!vendor) {
+      return { error: 'Vendor not found.' } as const
+    }
   }
 
   const name = input.name.trim()
@@ -598,6 +600,8 @@ export async function createProjectAsAdmin(input: {
   const projectId = `PRJ-${String(nextNumber).padStart(3, '0')}`
 
   const { min, max } = parseBudgetRange(input.budgetRange ?? '')
+
+  const status = input.vendorId ? 'ACCEPTED' : 'SUBMITTED'
 
   const [project] = await db
     .insert(projects)
@@ -616,7 +620,7 @@ export async function createProjectAsAdmin(input: {
         | 'MEDIUM'
         | 'HIGH'
         | 'CRITICAL',
-      status: 'ACCEPTED',
+      status,
       source: 'ADMIN',
       startDate: input.startDate ? new Date(input.startDate) : null,
       endDate: input.endDate ? new Date(input.endDate) : null,
@@ -630,8 +634,10 @@ export async function createProjectAsAdmin(input: {
 
   await db.insert(statusHistory).values({
     projectId: project.id,
-    status: 'ACCEPTED',
-    note: 'Project created by admin.',
+    status,
+    note: input.vendorId
+      ? 'Project created by admin and assigned to vendor.'
+      : 'Project created by admin and opened for bidding.',
     changedBy: user.id,
   })
 

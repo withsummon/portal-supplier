@@ -38,6 +38,7 @@ export interface NotificationDto {
   title: string
   description: string
   link: string | null
+  meta: Record<string, unknown> | null
   unread: boolean
   createdAt: string
 }
@@ -58,6 +59,10 @@ function getNotificationTab(role: 'ADMIN' | 'SELLER' | 'VENDOR', type: string) {
     }
     if (type === 'MESSAGE_RECEIVED') return 'Messages'
     return 'System'
+  }
+
+  if (role === 'ADMIN') {
+    if (type === 'SELLER_REGISTRATION' || type === 'VENDOR_REGISTRATION') return 'Registrations'
   }
 
   if (type === 'MESSAGE_RECEIVED') return 'Messages'
@@ -223,6 +228,7 @@ export const getCachedUserNotifications = React.cache(
         title: notifications.title,
         content: notifications.content,
         link: notifications.link,
+        meta: notifications.meta,
         read: notifications.read,
         createdAt: notifications.createdAt,
       })
@@ -237,6 +243,7 @@ export const getCachedUserNotifications = React.cache(
       title: row.title,
       description: row.content ?? '',
       link: row.link,
+      meta: typeof row.meta === 'string' ? JSON.parse(row.meta) : (row.meta ?? null),
       unread: !row.read,
       createdAt: toIsoString(row.createdAt),
     })) satisfies NotificationDto[]
