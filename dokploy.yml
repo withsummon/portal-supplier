@@ -1,0 +1,50 @@
+# Dokploy Configuration
+# https://dokploy.com
+
+version: '1'
+
+services:
+  app:
+    build:
+      dockerfile: ./Dockerfile
+      context: ./
+    environment:
+      - DATABASE_URL=${DATABASE_URL}
+      - BETTER_AUTH_URL=${BETTER_AUTH_URL}
+      - BETTER_AUTH_SECRET=${BETTER_AUTH_SECRET}
+      - NODE_ENV=production
+    port: 3000
+    domains:
+      - name: ${APP_DOMAIN}
+        ssl: true
+    healthcheck:
+      path: /
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    networks:
+      - dokploy-network
+
+  db:
+    image: postgres:16-alpine
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - dokploy-network
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+networks:
+  dokploy-network:
+    driver: bridge
+
+volumes:
+  postgres_data:
+    driver: local

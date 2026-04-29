@@ -69,7 +69,7 @@ export function useVendorProjectDetail(initialProject: VendorProjectDetailDto) {
 
     startTransition(() => {
       void addProjectComment({ projectId: initialProject.id, message }).then((comment) => {
-        setComments((current) => [...current, comment as ProjectCommentDto])
+        setComments((current) => [...current, comment])
         setNewMessage('')
       })
     })

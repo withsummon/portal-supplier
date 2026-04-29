@@ -109,8 +109,14 @@ export const accounts = pgTable(
     accountId: text('provider_account_id').notNull(),
     refreshToken: text('refresh_token'),
     accessToken: text('access_token'),
-    accessTokenExpiresAt: timestamp('access_token_expires_at', { mode: 'date', withTimezone: true }),
-    refreshTokenExpiresAt: timestamp('refresh_token_expires_at', { mode: 'date', withTimezone: true }),
+    accessTokenExpiresAt: timestamp('access_token_expires_at', {
+      mode: 'date',
+      withTimezone: true,
+    }),
+    refreshTokenExpiresAt: timestamp('refresh_token_expires_at', {
+      mode: 'date',
+      withTimezone: true,
+    }),
     tokenType: text('token_type'),
     scope: text('scope'),
     idToken: text('id_token'),
@@ -265,9 +271,7 @@ export const projects = pgTable(
     source: text('source').default('SUMMON'),
 
     // Relations
-    sellerId: uuid('seller_id')
-      .notNull()
-      .references(() => sellers.id),
+    sellerId: uuid('seller_id').references(() => sellers.id),
 
     createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
     updatedAt: timestamp('updated_at', { withTimezone: true })
@@ -555,6 +559,46 @@ export const categories = pgTable(
     uniqueIndex('categories_slug_idx').on(table.slug),
   ],
 )
+
+// ============================================================
+// OFFER TEMPLATES (Per-category offer/quote defaults)
+// ============================================================
+
+export const offerTemplateTypeEnum = pgEnum('offer_template_type', ['FIXED', 'RANGE', 'CUSTOM'])
+
+export const offerTemplates = pgTable(
+  'offer_templates',
+  {
+    id: uuid('id').defaultRandom().primaryKey(),
+    categoryId: uuid('category_id').references(() => categories.id, { onDelete: 'set null' }),
+    name: text('name').notNull(),
+    description: text('description'),
+    defaultPricingType: offerTemplateTypeEnum('default_pricing_type').default('RANGE').notNull(),
+    defaultMinAmount: decimal('default_min_amount', { precision: 12, scale: 2 }),
+    defaultMaxAmount: decimal('default_max_amount', { precision: 12, scale: 2 }),
+    defaultCurrency: text('default_currency').default('USD'),
+    defaultDuration: integer('default_duration').default(30),
+    defaultTerms: text('default_terms'),
+    customFields:
+      jsonb('custom_fields').$type<
+        Array<{ label: string; type: string; required: boolean; options?: string[] }>
+      >(),
+    isActive: boolean('is_active').default(true).notNull(),
+    createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
+    updatedAt: timestamp('updated_at', { withTimezone: true })
+      .defaultNow()
+      .notNull()
+      .$onUpdate(() => new Date()),
+  },
+  (table) => [index('offer_templates_category_idx').on(table.categoryId)],
+)
+
+export const offerTemplatesRelations = relations(offerTemplates, ({ one }) => ({
+  category: one(categories, {
+    fields: [offerTemplates.categoryId],
+    references: [categories.id],
+  }),
+}))
 
 // ============================================================
 // RELATIONS

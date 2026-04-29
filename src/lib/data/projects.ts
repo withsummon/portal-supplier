@@ -48,7 +48,7 @@ export const getCachedSeller = React.cache(async (userId?: string) => {
   if (userId) {
     return db.query.sellers.findFirst({
       where: eq(sellers.userId, userId),
-      with: { user: true }
+      with: { user: true },
     })
   }
   return db.query.sellers.findFirst({ with: { user: true } })
@@ -62,7 +62,7 @@ export const getCachedVendor = React.cache(async (userId?: string) => {
   if (userId) {
     return db.query.vendors.findFirst({
       where: eq(vendors.userId, userId),
-      with: { user: true }
+      with: { user: true },
     })
   }
   return db.query.vendors.findFirst({ with: { user: true } })
@@ -148,11 +148,11 @@ export const getCachedCategoryData = React.cache(async (sellerId?: string) => {
       budgetMax: projects.budgetMax,
     })
     .from(projects)
-    
+
   if (sellerId) {
     query.where(eq(projects.sellerId, sellerId))
   }
-  
+
   const projectList = await query
 
   const categoryMap: Record<string, { count: number; revenue: number }> = {}
@@ -183,7 +183,7 @@ export const getCachedPipelineData = React.cache(async (sellerId?: string) => {
   if (sellerId) {
     query.where(eq(projects.sellerId, sellerId))
   }
-  
+
   const projectList = await query
 
   const revenueMap: Record<string, number> = {}

@@ -355,7 +355,7 @@ export const getCachedVendorProjectDetailForUser = React.cache(
       },
     })
 
-    if (!project?.seller.user) {
+    if (!project?.seller?.user) {
       return null
     }
 

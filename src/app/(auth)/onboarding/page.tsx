@@ -236,7 +236,9 @@ function OnboardingWizard() {
                             padding: 'var(--sp-3) var(--sp-2)',
                             textAlign: 'center',
                             fontSize: 'var(--fs-sm)',
-                            border: isSelected ? '1px solid var(--blue-500)' : '1px solid var(--border-default)',
+                            border: isSelected
+                              ? '1px solid var(--blue-500)'
+                              : '1px solid var(--border-default)',
                             background: isSelected ? 'var(--blue-50)' : 'transparent',
                             borderRadius: 'var(--radius-md)',
                             cursor: 'pointer',

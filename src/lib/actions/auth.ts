@@ -89,6 +89,7 @@ export async function signIn(data: {
 
     const userRecord = await db.query.users.findFirst({
       where: eq(users.id, result.user.id),
+      with: { seller: true, vendor: true },
     })
 
     if (data.expectedRole && userRecord?.role !== data.expectedRole) {
@@ -97,6 +98,14 @@ export async function signIn(data: {
       })
 
       return { error: 'This account does not match the selected workspace' }
+    }
+
+    // Check if seller/vendor is pending approval
+    if (userRecord?.role === 'SELLER' && userRecord.seller?.status === 'PENDING') {
+      return { pending: true, error: 'Your account is pending approval.' }
+    }
+    if (userRecord?.role === 'VENDOR' && userRecord.vendor?.status === 'PENDING') {
+      return { pending: true, error: 'Your account is pending approval.' }
     }
 
     return { success: true, user: userRecord ?? result.user }

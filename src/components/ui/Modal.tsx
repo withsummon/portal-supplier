@@ -11,7 +11,13 @@ interface ModalProps {
   noPadding?: boolean
 }
 
-export default function Modal({ isOpen, onClose, children, maxWidth = '600px', noPadding = false }: ModalProps) {
+export default function Modal({
+  isOpen,
+  onClose,
+  children,
+  maxWidth = '600px',
+  noPadding = false,
+}: ModalProps) {
   const [mounted, setMounted] = useState(false)
 
   useEffect(() => {
@@ -66,6 +72,6 @@ export default function Modal({ isOpen, onClose, children, maxWidth = '600px', n
         {children}
       </div>
     </div>,
-    document.body
+    document.body,
   )
 }

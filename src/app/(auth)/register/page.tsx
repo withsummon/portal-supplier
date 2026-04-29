@@ -2,15 +2,7 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
-import {
-  CheckCircle,
-  Zap,
-  Shield,
-  TrendingUp,
-  Building2,
-  Users,
-  ArrowRight,
-} from 'lucide-react'
+import { CheckCircle, Zap, Shield, TrendingUp, Building2, Users, ArrowRight } from 'lucide-react'
 
 type UserRole = 'seller' | 'vendor'
 

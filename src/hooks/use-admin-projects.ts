@@ -81,6 +81,7 @@ export function useAdminProjects(initialProjects: AdminProjectDto[]) {
         )
         setActionModal(null)
         setActionNote('')
+        setSelectedProjectId(null)
       })
     })
   }

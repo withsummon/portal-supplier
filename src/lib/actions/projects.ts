@@ -19,8 +19,6 @@ import { getCurrentUserRecord, requireRole } from '@/lib/auth/session'
 import { saveLocalUpload } from '@/lib/uploads'
 import { dbToMockQuoteStatus, dbToMockStatus, mockToDbPriority } from '@/lib/utils/data'
 
-
-
 // ============================================================
 // PROJECT ACTIONS
 // ============================================================
@@ -567,6 +565,84 @@ export async function submitProjectWithFiles(input: {
   }
 }
 
+export async function createProjectAsAdmin(input: {
+  name: string
+  clientName?: string
+  category: string
+  description?: string
+  requirements?: string
+  vendorId: string
+  priority?: 'low' | 'medium' | 'high' | 'critical'
+  budgetRange?: string
+  budgetCurrency?: string
+  startDate?: string
+  endDate?: string
+}) {
+  const user = await requireRole('ADMIN')
+
+  const vendor = await db.query.vendors.findFirst({
+    where: eq(vendors.id, input.vendorId),
+  })
+
+  if (!vendor) {
+    return { error: 'Vendor not found.' } as const
+  }
+
+  const name = input.name.trim()
+  if (!name) {
+    return { error: 'Project name is required.' } as const
+  }
+
+  const countResult = await db.select({ count: count() }).from(projects)
+  const nextNumber = (countResult[0]?.count ?? 0) + 1
+  const projectId = `PRJ-${String(nextNumber).padStart(3, '0')}`
+
+  const { min, max } = parseBudgetRange(input.budgetRange ?? '')
+
+  const [project] = await db
+    .insert(projects)
+    .values({
+      name,
+      clientName: input.clientName?.trim() || null,
+      category: input.category.trim(),
+      description: input.description?.trim() || '',
+      requirements: input.requirements?.trim() || null,
+      budgetRange: input.budgetRange?.trim() || null,
+      budgetCurrency: input.budgetCurrency ?? 'USD',
+      budgetMin: min?.toString() ?? null,
+      budgetMax: max?.toString() ?? null,
+      priority: (mockToDbPriority[input.priority ?? 'medium'] ?? 'MEDIUM') as
+        | 'LOW'
+        | 'MEDIUM'
+        | 'HIGH'
+        | 'CRITICAL',
+      status: 'ACCEPTED',
+      source: 'ADMIN',
+      startDate: input.startDate ? new Date(input.startDate) : null,
+      endDate: input.endDate ? new Date(input.endDate) : null,
+      projectId,
+    })
+    .returning()
+
+  if (!project) {
+    return { error: 'Failed to create project.' } as const
+  }
+
+  await db.insert(statusHistory).values({
+    projectId: project.id,
+    status: 'ACCEPTED',
+    note: 'Project created by admin.',
+    changedBy: user.id,
+  })
+
+  revalidatePath('/projects')
+  revalidatePath('/admin/projects')
+  revalidatePath('/vendor/projects')
+  revalidatePath('/dashboard')
+
+  return { success: true, id: project.id, projectId: project.projectId } as const
+}
+
 export async function reviewProjectSubmission(input: {
   projectId: string
   action: 'accept' | 'reject' | 'clarify'
@@ -616,23 +692,25 @@ export async function reviewProjectSubmission(input: {
       type: input.action === 'clarify' ? 'CLARIFICATION' : 'STATUS_CHANGE',
       createdBy: user.id,
     })
-    await tx.insert(notifications).values({
-      userId: project.seller.user.id,
-      type:
-        input.action === 'accept'
-          ? 'PROJECT_ACCEPTED'
-          : input.action === 'reject'
-            ? 'PROJECT_REJECTED'
-            : 'PROJECT_CLARIFICATION',
-      title:
-        input.action === 'accept'
-          ? 'Project accepted'
-          : input.action === 'reject'
-            ? 'Project rejected'
-            : 'Clarification requested',
-      content: `${project.name}: ${note}`,
-      link: `/projects/${project.id}`,
-    })
+    if (project.seller?.user) {
+      await tx.insert(notifications).values({
+        userId: project.seller.user.id,
+        type:
+          input.action === 'accept'
+            ? 'PROJECT_ACCEPTED'
+            : input.action === 'reject'
+              ? 'PROJECT_REJECTED'
+              : 'PROJECT_CLARIFICATION',
+        title:
+          input.action === 'accept'
+            ? 'Project accepted'
+            : input.action === 'reject'
+              ? 'Project rejected'
+              : 'Clarification requested',
+        content: `${project.name}: ${note}`,
+        link: `/projects/${project.id}`,
+      })
+    }
   })
 
   revalidatePath('/admin/projects')
@@ -715,6 +793,7 @@ export async function addProjectComment(input: { projectId: string; message: str
     }
 
     if (recipientSet.size > 0) {
+      const sellerUserId = project.seller?.user?.id
       const notificationRows: Array<typeof notifications.$inferInsert> = Array.from(
         recipientSet,
       ).map((recipientId) => ({
@@ -723,7 +802,7 @@ export async function addProjectComment(input: { projectId: string; message: str
         title: 'New project message',
         content: `${project.name}: ${message}`,
         link:
-          recipientId === project.seller.user.id
+          recipientId === sellerUserId
             ? `/projects/${project.id}`
             : `/vendor/projects/${project.id}`,
       }))

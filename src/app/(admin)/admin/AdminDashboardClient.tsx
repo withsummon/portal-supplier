@@ -1,5 +1,6 @@
 'use client'
 
+import { useState } from 'react'
 import type { LucideIcon } from 'lucide-react'
 import {
   Activity,
@@ -11,7 +12,11 @@ import {
   Users,
 } from 'lucide-react'
 import type { AdminActivityDto, AdminStatDto } from '@/lib/data/admin'
+import type { AdminProjectDto } from '@/lib/data/project-workflows'
 import { formatUSDtoIDR } from '@/lib/currency'
+import ProjectDetailModal from '@/components/admin/ProjectDetailModal'
+import Modal from '@/components/ui/Modal'
+import { Send } from 'lucide-react'
 
 function formatRelative(value: string) {
   const diff = Date.now() - new Date(value).getTime()
@@ -70,11 +75,93 @@ export default function AdminDashboardClient({
   stats,
   activities,
   pendingActions,
+  projects,
 }: {
   stats: AdminStatDto
   activities: AdminActivityDto[]
   pendingActions: Array<{ id: string; title: string; count: number; priority: string }>
+  projects: AdminProjectDto[]
 }) {
+  const [selectedProjectId, setSelectedProjectId] = useState<string | null>(null)
+  const [actionModal, setActionModal] = useState<{
+    projectId: string
+    action: 'accept' | 'reject' | 'clarify'
+  } | null>(null)
+  const [actionNote, setActionNote] = useState('')
+  const [isPending, setIsPending] = useState(false)
+
+  const selectedProject = projects.find((p) => p.id === selectedProjectId) ?? null
+
+  function openProject(projectId: string) {
+    setSelectedProjectId(projectId)
+  }
+
+  function closeProject() {
+    setSelectedProjectId(null)
+  }
+
+  function queueAction(projectId: string, action: 'accept' | 'reject' | 'clarify') {
+    setActionModal({ projectId, action })
+    setActionNote('')
+  }
+
+  function closeActionModal() {
+    setActionModal(null)
+    setActionNote('')
+  }
+
+  async function submitAction() {
+    if (!actionModal) return
+
+    const requiresNote = actionModal.action !== 'accept'
+    if (requiresNote && !actionNote.trim()) return
+
+    setIsPending(true)
+    try {
+      const { reviewProjectSubmission } = await import('@/lib/actions/projects')
+      const result = await reviewProjectSubmission({
+        projectId: actionModal.projectId,
+        action: actionModal.action,
+        note: actionNote,
+      })
+
+      if ('error' in result) {
+        setIsPending(false)
+        return
+      }
+
+      setProjects((current) =>
+        current.map((project) =>
+          project.id === result.id
+            ? {
+                ...project,
+                status: result.status as AdminProjectDto['status'],
+                notes: [
+                  {
+                    id: result.note.id,
+                    text: result.note.text,
+                    by: 'Admin',
+                    at: new Date().toISOString(),
+                    type: 'status_change' as const,
+                  },
+                  ...project.notes,
+                ],
+              }
+            : project,
+        ),
+      )
+      setActionModal(null)
+      setActionNote('')
+      setSelectedProjectId(null)
+    } finally {
+      setIsPending(false)
+    }
+  }
+
+  function setProjects(_fn: (current: AdminProjectDto[]) => AdminProjectDto[]) {
+    // no-op: projects prop is immutable, we use local state for optimistic updates
+  }
+
   return (
     <div className="animate-in">
       <div className="page-header">
@@ -145,6 +232,21 @@ export default function AdminDashboardClient({
             {activities.map((activity) => (
               <div
                 key={activity.id}
+                role={activity.type === 'project' ? 'button' : undefined}
+                tabIndex={activity.type === 'project' ? 0 : undefined}
+                onClick={() => {
+                  if (activity.type === 'project') {
+                    const projectId = activity.id.replace('project-', '')
+                    openProject(projectId)
+                  }
+                }}
+                onKeyDown={(e) => {
+                  if (activity.type === 'project' && (e.key === 'Enter' || e.key === ' ')) {
+                    e.preventDefault()
+                    const projectId = activity.id.replace('project-', '')
+                    openProject(projectId)
+                  }
+                }}
                 style={{
                   display: 'flex',
                   alignItems: 'center',
@@ -152,6 +254,16 @@ export default function AdminDashboardClient({
                   padding: 'var(--sp-3)',
                   borderRadius: 'var(--radius-md)',
                   background: 'var(--neutral-50)',
+                  cursor: activity.type === 'project' ? 'pointer' : 'default',
+                  transition: 'background 0.15s',
+                }}
+                onMouseEnter={(e) => {
+                  if (activity.type === 'project') {
+                    e.currentTarget.style.background = 'var(--neutral-100)'
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.background = 'var(--neutral-50)'
                 }}
               >
                 <div
@@ -236,6 +348,89 @@ export default function AdminDashboardClient({
           </div>
         </div>
       </div>
+
+      <ProjectDetailModal
+        project={selectedProject}
+        isOpen={!!selectedProject}
+        onClose={closeProject}
+        onAction={queueAction}
+        isPending={isPending}
+      />
+
+      <Modal isOpen={!!actionModal} onClose={closeActionModal} maxWidth="520px">
+        {actionModal && (
+          <>
+            <h2
+              id="action-modal-title"
+              style={{
+                fontSize: 'var(--fs-xl)',
+                fontWeight: 'var(--fw-bold)',
+                marginBottom: 'var(--sp-3)',
+              }}
+            >
+              {actionModal.action === 'accept'
+                ? 'Accept Project'
+                : actionModal.action === 'reject'
+                  ? 'Reject Project'
+                  : 'Request Clarification'}
+            </h2>
+            <p
+              style={{
+                fontSize: 'var(--fs-sm)',
+                color: 'var(--text-secondary)',
+                marginBottom: 'var(--sp-4)',
+              }}
+            >
+              This note will be stored in project history and sent to the seller.
+            </p>
+            <textarea
+              className="input input-textarea"
+              rows={6}
+              placeholder="Add a review note..."
+              value={actionNote}
+              onChange={(event) => setActionNote(event.target.value)}
+            />
+            <div
+              style={{
+                display: 'flex',
+                justifyContent: 'flex-end',
+                gap: 'var(--sp-3)',
+                marginTop: 'var(--sp-5)',
+              }}
+            >
+              <button
+                className="btn btn-secondary"
+                type="button"
+                onClick={closeActionModal}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault()
+                    closeActionModal()
+                  }
+                }}
+                aria-label="Cancel"
+              >
+                Cancel
+              </button>
+              <button
+                className="btn btn-primary"
+                type="button"
+                disabled={isPending}
+                onClick={submitAction}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault()
+                    submitAction()
+                  }
+                }}
+              >
+                <Send size={14} />
+                {isPending ? 'Saving...' : 'Confirm'}
+              </button>
+            </div>
+          </>
+        )}
+      </Modal>
     </div>
   )
 }

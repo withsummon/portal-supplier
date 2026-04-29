@@ -93,27 +93,36 @@ export default function RegisterVendorPage() {
       return
     }
 
-    window.location.href = `/onboarding?role=vendor`
+    window.location.href = '/pending-approval?role=vendor'
   }, [state])
 
   return (
     <div className="auth-layout">
       {/* Form Panel */}
       <div className="auth-panel" style={{ overflowY: 'auto' }}>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 'var(--sp-8)' }}>
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            marginBottom: 'var(--sp-8)',
+          }}
+        >
           <div className="auth-brand" style={{ marginBottom: 0 }}>
-            <div className="auth-logo" style={{ background: 'var(--color-purple)' }}>S</div>
+            <div className="auth-logo" style={{ background: 'var(--color-purple)' }}>
+              S
+            </div>
             <span className="auth-brand-name">Summon</span>
           </div>
-          <Link 
-            href="/register" 
-            style={{ 
-              display: 'flex', 
-              alignItems: 'center', 
-              gap: '4px', 
-              fontSize: 'var(--fs-xs)', 
+          <Link
+            href="/register"
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '4px',
+              fontSize: 'var(--fs-xs)',
               color: 'var(--text-muted)',
-              fontWeight: 'var(--fw-medium)'
+              fontWeight: 'var(--fw-medium)',
             }}
           >
             <ChevronLeft size={14} /> Change Role
@@ -343,11 +352,11 @@ export default function RegisterVendorPage() {
               <button
                 type="submit"
                 className="btn btn-lg"
-                style={{ 
-                  width: '100%', 
-                  background: 'var(--color-purple)', 
+                style={{
+                  width: '100%',
+                  background: 'var(--color-purple)',
                   color: 'white',
-                  border: 'none'
+                  border: 'none',
                 }}
                 disabled={isPending}
               >
@@ -390,7 +399,12 @@ export default function RegisterVendorPage() {
       </div>
 
       {/* Hero Panel */}
-      <div className="auth-hero" style={{ background: 'linear-gradient(135deg, var(--color-purple) 0%, #4c1d95 60%, #2e1065 100%)' }}>
+      <div
+        className="auth-hero"
+        style={{
+          background: 'linear-gradient(135deg, var(--color-purple) 0%, #4c1d95 60%, #2e1065 100%)',
+        }}
+      >
         <div className="auth-hero-content">
           <div className="auth-hero-eyebrow">
             <Zap size={11} />
@@ -398,8 +412,8 @@ export default function RegisterVendorPage() {
           </div>
           <h2 className="auth-hero-title">Expand your reach with Summon.</h2>
           <p className="auth-hero-desc">
-            Gain access to high-quality project leads from top companies. Our platform manages 
-            the workflow so you can focus on execution.
+            Gain access to high-quality project leads from top companies. Our platform manages the
+            workflow so you can focus on execution.
           </p>
 
           <div className="auth-feature-list">

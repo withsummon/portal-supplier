@@ -1,5 +1,6 @@
 'use client'
 
+import Link from 'next/link'
 import type { LucideIcon } from 'lucide-react'
 import {
   AlertCircle,
@@ -13,13 +14,13 @@ import {
   Search,
   Send,
   User,
-  X,
   XCircle,
 } from 'lucide-react'
 import Modal from '@/components/ui/Modal'
+import ProjectDetailModal from '@/components/admin/ProjectDetailModal'
 import { useAdminProjects } from '@/hooks/use-admin-projects'
 import type { AdminProjectDto } from '@/lib/data/project-workflows'
-import { formatDate, formatDateTime, priorityLabels } from '@/lib/utils/data'
+import { priorityLabels } from '@/lib/utils/data'
 
 const STATUS_CONFIG: Record<
   AdminProjectDto['status'],
@@ -106,6 +107,9 @@ export default function AdminProjectsPageClient({
           <h1 className="page-title">Projects</h1>
           <p className="page-subtitle">Review and manage supplier project submissions.</p>
         </div>
+        <Link href="/admin/projects/new" className="btn btn-primary">
+          + New Project
+        </Link>
       </div>
 
       <div
@@ -288,252 +292,13 @@ export default function AdminProjectsPageClient({
         </div>
       </div>
 
-      <Modal isOpen={!!selectedProject} onClose={closeProject} maxWidth="960px">
-        {selectedProject && (
-          <>
-            <div
-              style={{
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'flex-start',
-                gap: 'var(--sp-4)',
-                marginBottom: 'var(--sp-5)',
-              }}
-            >
-              <div>
-                <h2
-                  id="project-detail-title"
-                  style={{ fontSize: 'var(--fs-2xl)', fontWeight: 'var(--fw-bold)' }}
-                >
-                  {selectedProject.name}
-                </h2>
-                <div style={{ fontSize: 'var(--fs-sm)', color: 'var(--text-muted)' }}>
-                  {selectedProject.projectId} · Submitted {formatDate(selectedProject.submittedAt)}
-                </div>
-              </div>
-              <button
-                className="btn btn-ghost btn-sm"
-                type="button"
-                onClick={closeProject}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter' || e.key === ' ') {
-                    e.preventDefault()
-                    closeProject()
-                  }
-                }}
-                aria-label="Close"
-              >
-                <X size={16} />
-              </button>
-            </div>
-
-            <div
-              style={{ display: 'grid', gridTemplateColumns: '1.15fr 0.85fr', gap: 'var(--sp-6)' }}
-            >
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--sp-5)' }}>
-                <div className="card" style={{ margin: 0 }}>
-                  <div className="card-header">
-                    <div className="card-title">Overview</div>
-                  </div>
-                  <div className="card-body">
-                    <p style={{ color: 'var(--text-secondary)', lineHeight: 'var(--lh-relaxed)' }}>
-                      {selectedProject.description}
-                    </p>
-                    {selectedProject.requirements && (
-                      <>
-                        <div
-                          style={{
-                            fontSize: 'var(--fs-xs)',
-                            color: 'var(--text-muted)',
-                            textTransform: 'uppercase',
-                            marginTop: 'var(--sp-5)',
-                            marginBottom: 'var(--sp-2)',
-                          }}
-                        >
-                          Requirements
-                        </div>
-                        <p
-                          style={{
-                            color: 'var(--text-secondary)',
-                            lineHeight: 'var(--lh-relaxed)',
-                          }}
-                        >
-                          {selectedProject.requirements}
-                        </p>
-                      </>
-                    )}
-                  </div>
-                </div>
-
-                <div className="card" style={{ margin: 0 }}>
-                  <div className="card-header">
-                    <div className="card-title">Discussion</div>
-                  </div>
-                  <div className="card-body">
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--sp-3)' }}>
-                      {selectedProject.comments.length === 0 ? (
-                        <div style={{ color: 'var(--text-muted)', fontSize: 'var(--fs-sm)' }}>
-                          No messages yet.
-                        </div>
-                      ) : (
-                        selectedProject.comments.map((comment) => (
-                          <div
-                            key={comment.id}
-                            style={{
-                              paddingBottom: 'var(--sp-3)',
-                              borderBottom: '1px solid var(--border-default)',
-                            }}
-                          >
-                            <div
-                              style={{
-                                fontSize: 'var(--fs-xs)',
-                                color: 'var(--text-muted)',
-                                marginBottom: '4px',
-                              }}
-                            >
-                              {comment.authorName} · {formatDateTime(comment.createdAt)}
-                            </div>
-                            <div style={{ fontSize: 'var(--fs-sm)' }}>{comment.message}</div>
-                          </div>
-                        ))
-                      )}
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--sp-5)' }}>
-                <div className="card" style={{ margin: 0 }}>
-                  <div className="card-header">
-                    <div className="card-title">Quick Info</div>
-                  </div>
-                  <div className="card-body">
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--sp-4)' }}>
-                      {[
-                        { icon: User, label: 'Seller', value: selectedProject.supplier },
-                        { icon: FileText, label: 'Category', value: selectedProject.category },
-                        { icon: DollarSign, label: 'Budget', value: selectedProject.budget || '-' },
-                        {
-                          icon: Calendar,
-                          label: 'Timeline',
-                          value: `${formatDate(selectedProject.startDate)} - ${formatDate(selectedProject.endDate)}`,
-                        },
-                      ].map(({ icon: Icon, label, value }) => (
-                        <div key={label} style={{ display: 'flex', gap: 'var(--sp-3)' }}>
-                          <Icon
-                            size={16}
-                            style={{ color: 'var(--text-muted)', marginTop: '2px' }}
-                          />
-                          <div>
-                            <div style={{ fontSize: 'var(--fs-xs)', color: 'var(--text-muted)' }}>
-                              {label}
-                            </div>
-                            <div
-                              style={{ fontSize: 'var(--fs-sm)', fontWeight: 'var(--fw-medium)' }}
-                            >
-                              {value}
-                            </div>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-
-                <div className="card" style={{ margin: 0 }}>
-                  <div className="card-header">
-                    <div className="card-title">Review Notes</div>
-                  </div>
-                  <div className="card-body">
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--sp-3)' }}>
-                      {selectedProject.notes.length === 0 ? (
-                        <div style={{ color: 'var(--text-muted)', fontSize: 'var(--fs-sm)' }}>
-                          No review notes yet.
-                        </div>
-                      ) : (
-                        selectedProject.notes.map((note) => (
-                          <div
-                            key={note.id}
-                            style={{
-                              paddingBottom: 'var(--sp-3)',
-                              borderBottom: '1px solid var(--border-default)',
-                            }}
-                          >
-                            <div
-                              style={{
-                                fontSize: 'var(--fs-xs)',
-                                color: 'var(--text-muted)',
-                                marginBottom: '4px',
-                              }}
-                            >
-                              {note.by} · {formatDateTime(note.at)}
-                            </div>
-                            <div style={{ fontSize: 'var(--fs-sm)' }}>{note.text}</div>
-                          </div>
-                        ))
-                      )}
-                    </div>
-                  </div>
-                </div>
-
-                <div
-                  style={{
-                    display: 'grid',
-                    gridTemplateColumns: 'repeat(3, 1fr)',
-                    gap: 'var(--sp-3)',
-                  }}
-                >
-                  <button
-                    className="btn btn-primary"
-                    type="button"
-                    disabled={isPending}
-                    onClick={() => queueAction(selectedProject.id, 'accept')}
-                    onKeyDown={(e) => {
-                      if (e.key === 'Enter' || e.key === ' ') {
-                        e.preventDefault()
-                        queueAction(selectedProject.id, 'accept')
-                      }
-                    }}
-                  >
-                    <CheckCircle size={14} />
-                    Accept
-                  </button>
-                  <button
-                    className="btn btn-secondary"
-                    type="button"
-                    disabled={isPending}
-                    onClick={() => queueAction(selectedProject.id, 'clarify')}
-                    onKeyDown={(e) => {
-                      if (e.key === 'Enter' || e.key === ' ') {
-                        e.preventDefault()
-                        queueAction(selectedProject.id, 'clarify')
-                      }
-                    }}
-                  >
-                    <MessageSquare size={14} />
-                    Clarify
-                  </button>
-                  <button
-                    className="btn btn-secondary"
-                    type="button"
-                    disabled={isPending}
-                    onClick={() => queueAction(selectedProject.id, 'reject')}
-                    onKeyDown={(e) => {
-                      if (e.key === 'Enter' || e.key === ' ') {
-                        e.preventDefault()
-                        queueAction(selectedProject.id, 'reject')
-                      }
-                    }}
-                  >
-                    <XCircle size={14} />
-                    Reject
-                  </button>
-                </div>
-              </div>
-            </div>
-          </>
-        )}
-      </Modal>
+      <ProjectDetailModal
+        project={selectedProject}
+        isOpen={!!selectedProject}
+        onClose={closeProject}
+        onAction={queueAction}
+        isPending={isPending}
+      />
 
       <Modal isOpen={!!actionModal} onClose={closeActionModal} maxWidth="520px">
         {actionModal && (

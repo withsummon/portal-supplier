@@ -86,11 +86,15 @@ const adminNavItems: NavSection[] = [
       { label: 'Sellers', href: '/admin/sellers', icon: Users },
       { label: 'Vendors', href: '/admin/vendors', icon: Store },
       { label: 'Projects', href: '/admin/projects', icon: FolderOpen },
+      { label: 'New Project', href: '/admin/projects/new', icon: PlusCircle },
     ],
   },
   {
     section: 'Manage',
-    items: [{ label: 'Summon Factory', href: '/admin/products', icon: Factory }],
+    items: [
+      { label: 'Summon Factory', href: '/admin/products', icon: Factory },
+      { label: 'Offer Templates', href: '/admin/offer-templates', icon: FileText },
+    ],
   },
   {
     section: 'Communication',

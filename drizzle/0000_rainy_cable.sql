@@ -314,4 +314,5 @@ CREATE INDEX "sessions_ip_address_idx" ON "sessions" USING btree ("ip_address");
 CREATE INDEX "status_history_project_id_idx" ON "status_history" USING btree ("project_id");--> statement-breakpoint
 CREATE INDEX "team_members_seller_id_idx" ON "team_members" USING btree ("seller_id");--> statement-breakpoint
 CREATE INDEX "vendors_user_id_idx" ON "vendors" USING btree ("user_id");--> statement-breakpoint
-CREATE UNIQUE INDEX "verification_tokens_identifier_token_idx" ON "verification_tokens" USING btree ("identifier","token");
+CREATE UNIQUE INDEX "verification_tokens_identifier_token_idx" ON "verification_tokens" USING btree ("identifier","token");--> statement-breakpoint
+ALTER TABLE "users" ALTER COLUMN "email_verified" TYPE boolean USING (email_verified IS NOT NULL);

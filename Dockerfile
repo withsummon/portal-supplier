@@ -41,7 +41,6 @@ COPY --from=builder /app/.next/static ./.next/static
 COPY --from=builder /app/public ./public
 
 # 3. Salin file pendukung SEED agar script bisa jalan
-# Kita perlu 'src' karena seed.ts biasanya import dari '../src/db'
 COPY --from=builder /app/src ./src
 COPY --from=builder /app/scripts ./scripts
 COPY --from=builder /app/drizzle ./drizzle
@@ -49,18 +48,20 @@ COPY --from=builder /app/drizzle.config.ts ./drizzle.config.ts
 COPY --from=builder /app/package.json ./package.json
 COPY --from=builder /app/bun.lock ./bun.lock
 
-# 4. TRICK UNTUK SIZE KECIL: 
-# Kita install ulang dependencies versi PRODUCTION saja di runner.
-# Ini akan menyertakan bcryptjs & library lain yang dibutuhkan seed,
-# tapi TANPA menyertakan devDependencies yang besar (TS, ESLint, dll).
-RUN bun install --production
+# 4. Install dependencies (including bcryptjs for auth, drizzle-orm for db)
+# We use bun install (not --production) so drizzle-kit CLI is available for migrations at startup.
+RUN bun install
 
-# 5. Berikan izin akses folder
+# 5. Copy startup script
+COPY --from=builder /app/start.sh ./start.sh
+RUN chmod +x start.sh
+
+# 6. Berikan izin akses folder
 RUN chown -R nextjs:nodejs /app
 
 USER nextjs
 
 EXPOSE 3000
 
-# Jalankan server menggunakan node (bawaan dari image bun)
-CMD ["node", "server.js"]
+# Jalankan server: migrate dulu, baru start
+CMD ["./start.sh"]

@@ -314,7 +314,7 @@ export default async function ProjectDetailPage({ params }: Props) {
           {/* Messages & Clarifications */}
           <ProjectComments
             projectId={project.id}
-            projectStatus={mockStatus as MockProjectStatus}
+            projectStatus={mockStatus}
             initialComments={project.comments.map((comment) => ({
               id: comment.id,
               authorId: comment.authorId,

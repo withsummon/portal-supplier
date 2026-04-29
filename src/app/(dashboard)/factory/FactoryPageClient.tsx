@@ -362,7 +362,11 @@ export default function FactoryPageClient({ products }: { products: FactoryProdu
                       Pitch Deck
                     </Link>
                   )}
-                  <Link href="/projects/submit" className="btn btn-primary">
+                  <Link
+                    href="/projects/submit"
+                    className="btn btn-primary"
+                    onClick={() => setSelectedProductId(null)}
+                  >
                     Submit Client Opportunity
                   </Link>
                 </div>

@@ -12,10 +12,10 @@ export const getCachedCommandBarProjects = React.cache(async (filters?: { seller
       clientName: projects.clientName,
     })
     .from(projects)
-    
+
   if (filters?.sellerId) {
     query = query.where(require('drizzle-orm').eq(projects.sellerId, filters.sellerId)) as any
   }
-  
+
   return query.orderBy(asc(projects.projectId))
 })

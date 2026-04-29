@@ -93,27 +93,34 @@ export default function RegisterSellerPage() {
       return
     }
 
-    window.location.href = `/onboarding?role=seller`
+    window.location.href = '/pending-approval?role=seller'
   }, [state])
 
   return (
     <div className="auth-layout">
       {/* Form Panel */}
       <div className="auth-panel" style={{ overflowY: 'auto' }}>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 'var(--sp-8)' }}>
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            marginBottom: 'var(--sp-8)',
+          }}
+        >
           <div className="auth-brand" style={{ marginBottom: 0 }}>
             <div className="auth-logo">S</div>
             <span className="auth-brand-name">Summon</span>
           </div>
-          <Link 
-            href="/register" 
-            style={{ 
-              display: 'flex', 
-              alignItems: 'center', 
-              gap: '4px', 
-              fontSize: 'var(--fs-xs)', 
+          <Link
+            href="/register"
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '4px',
+              fontSize: 'var(--fs-xs)',
               color: 'var(--text-muted)',
-              fontWeight: 'var(--fw-medium)'
+              fontWeight: 'var(--fw-medium)',
             }}
           >
             <ChevronLeft size={14} /> Change Role

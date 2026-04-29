@@ -45,6 +45,7 @@ const roles = [
 type SignInState = {
   error?: string
   success?: boolean
+  pending?: boolean
 } | null
 
 const redirectMap: Record<UserRole, string> = {
@@ -70,6 +71,10 @@ async function handleSignIn(_prevState: SignInState, formData: FormData) {
     return { error: result.error }
   }
 
+  if (result.pending) {
+    return { pending: true, error: result.error }
+  }
+
   return { success: true }
 }
 
@@ -82,7 +87,13 @@ export default function LoginPage() {
   const [state, formAction, isPending] = useActionState(handleSignIn, null)
 
   useEffect(() => {
-    if (!state?.success) {
+    if (!state?.success && !state?.pending) {
+      return
+    }
+
+    if (state?.pending) {
+      const roleParam = selectedRole === 'seller' ? 'seller' : 'vendor'
+      router.push(`/pending-approval?role=${roleParam}`)
       return
     }
 
