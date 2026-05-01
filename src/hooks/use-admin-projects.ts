@@ -1,8 +1,10 @@
 'use client'
 
 import { useMemo, useState, useTransition } from 'react'
-import { reviewProjectSubmission } from '@/lib/actions/projects'
+import { reviewProjectSubmission, updateProjectStatus, markProjectPaid, updateQuoteStatus } from '@/lib/actions/projects'
 import type { AdminProjectDto, ProjectReviewNoteDto } from '@/lib/data/project-workflows'
+
+type ActionType = 'accept' | 'reject' | 'clarify' | 'start' | 'complete' | 'lunas' | 'acceptQuote' | 'rejectQuote'
 
 export function useAdminProjects(
   initialProjects: AdminProjectDto[],
@@ -17,7 +19,8 @@ export function useAdminProjects(
   )
   const [actionModal, setActionModal] = useState<{
     projectId: string
-    action: 'accept' | 'reject' | 'clarify'
+    action: ActionType
+    quoteId?: string
   } | null>(null)
   const [actionNote, setActionNote] = useState('')
   const [isPending, startTransition] = useTransition()
@@ -48,8 +51,8 @@ export function useAdminProjects(
     setSelectedProjectId(null)
   }
 
-  function queueAction(projectId: string, action: 'accept' | 'reject' | 'clarify') {
-    setActionModal({ projectId, action })
+  function queueAction(projectId: string, action: ActionType, quoteId?: string) {
+    setActionModal(quoteId !== undefined ? { projectId, action, quoteId } : { projectId, action })
     setActionNote('')
   }
 
@@ -63,32 +66,93 @@ export function useAdminProjects(
       return
     }
 
-    const requiresNote = actionModal.action !== 'accept'
+    const requiresNote = actionModal.action !== 'accept' && actionModal.action !== 'start'
     if (requiresNote && !actionNote.trim()) {
       return
     }
 
     startTransition(() => {
-      void reviewProjectSubmission({
-        projectId: actionModal.projectId,
-        action: actionModal.action,
-        note: actionNote,
-      }).then((result) => {
-        setProjects((current) =>
-          current.map((project) =>
-            project.id === result.id
-              ? {
-                  ...project,
-                  status: result.status as AdminProjectDto['status'],
-                  notes: [result.note as ProjectReviewNoteDto, ...project.notes],
-                }
-              : project,
-          ),
-        )
+      void (async () => {
+        const { projectId, action, quoteId } = actionModal
+
+        if (action === 'acceptQuote' && quoteId) {
+          const result = await updateQuoteStatus(quoteId, 'ACCEPTED')
+          setProjects((current) =>
+            current.map((project) =>
+              project.id === projectId
+                ? {
+                    ...project,
+                    quotes: project.quotes.map((q) =>
+                      q.id === quoteId ? { ...q, status: 'accepted' as const } : q,
+                    ),
+                  }
+                : project,
+            ),
+          )
+        } else if (action === 'rejectQuote' && quoteId) {
+          const result = await updateQuoteStatus(quoteId, 'REJECTED')
+          setProjects((current) =>
+            current.map((project) =>
+              project.id === projectId
+                ? {
+                    ...project,
+                    quotes: project.quotes.map((q) =>
+                      q.id === quoteId ? { ...q, status: 'rejected' as const } : q,
+                    ),
+                  }
+                : project,
+            ),
+          )
+        } else if (action === 'start') {
+          const result = await updateProjectStatus(projectId, 'IN_PROGRESS', actionNote || undefined)
+          setProjects((current) =>
+            current.map((project) =>
+              project.id === projectId
+                ? { ...project, status: result.status as AdminProjectDto['status'] }
+                : project,
+            ),
+          )
+        } else if (action === 'complete') {
+          const result = await updateProjectStatus(projectId, 'COMPLETED', actionNote || undefined)
+          setProjects((current) =>
+            current.map((project) =>
+              project.id === projectId
+                ? { ...project, status: result.status as AdminProjectDto['status'] }
+                : project,
+            ),
+          )
+        } else if (action === 'lunas') {
+          const result = await markProjectPaid(projectId)
+          setProjects((current) =>
+            current.map((project) =>
+              project.id === projectId
+                ? { ...project, status: result.status as AdminProjectDto['status'] }
+                : project,
+            ),
+          )
+        } else {
+          const result = await reviewProjectSubmission({
+            projectId,
+            action: action as 'accept' | 'reject' | 'clarify',
+            note: actionNote,
+          })
+          setProjects((current) =>
+            current.map((project) =>
+              project.id === result.id
+                ? {
+                    ...project,
+                    status: result.status as AdminProjectDto['status'],
+                    notes: [result.note as ProjectReviewNoteDto, ...project.notes],
+                  }
+                : project,
+            ),
+          )
+        }
+
         setActionModal(null)
         setActionNote('')
         setSelectedProjectId(null)
-      })
+      })()
     })
   }
 

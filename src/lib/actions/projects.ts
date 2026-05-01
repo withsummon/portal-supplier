@@ -6,6 +6,7 @@ import {
   comments,
   notifications,
   notes,
+  payments,
   projectFiles,
   projects,
   quotes,
@@ -160,26 +161,112 @@ export async function createProject(data: {
   return project
 }
 
+type ProjectStatus = typeof projects.$inferSelect.status
+
+const VALID_TRANSITIONS: Record<ProjectStatus, ProjectStatus[]> = {
+  ACCEPTED: ['IN_PROGRESS', 'CANCELLED'],
+  IN_PROGRESS: ['COMPLETED', 'CANCELLED'],
+  COMPLETED: ['PAID'],
+  SUBMITTED: ['UNDER_REVIEW', 'CANCELLED'],
+  UNDER_REVIEW: ['ACCEPTED', 'REJECTED', 'CANCELLED'],
+  REJECTED: [],
+  NEED_CLARIFICATION: ['SUBMITTED', 'CANCELLED'],
+  PAID: ['CANCELLED'],
+  CANCELLED: [],
+}
+
 export async function updateProjectStatus(
   projectId: string,
-  status: typeof projects.$inferSelect.status,
+  newStatus: ProjectStatus,
   note?: string,
-  changedBy?: string,
 ) {
-  const [updated] = await db
-    .update(projects)
-    .set({ status })
-    .where(eq(projects.id, projectId))
-    .returning()
+  const user = await requireRole('ADMIN')
 
-  await db.insert(statusHistory).values({
-    projectId,
-    status,
-    note,
-    changedBy: changedBy ?? 'system',
+  const project = await db.query.projects.findFirst({
+    where: eq(projects.id, projectId),
+    with: {
+      seller: { with: { user: true } },
+      quotes: { with: { vendor: { with: { user: true } } } },
+    },
   })
 
-  return updated
+  if (!project) {
+    throw new Error('Project not found.')
+  }
+
+  const allowed = VALID_TRANSITIONS[project.status] ?? []
+  if (!allowed.includes(newStatus)) {
+    throw new Error(
+      `Invalid status transition: cannot go from '${project.status}' to '${newStatus}'.`,
+    )
+  }
+
+  const defaultNote =
+    newStatus === 'IN_PROGRESS'
+      ? 'Project started.'
+      : newStatus === 'COMPLETED'
+        ? 'Project marked as complete.'
+        : newStatus === 'PAID'
+          ? 'Payment received. Project fully paid.'
+          : newStatus === 'CANCELLED'
+            ? 'Project cancelled.'
+            : (note ?? `Status changed to ${newStatus}.`)
+
+  await db.transaction(async (tx) => {
+    await tx.update(projects).set({ status: newStatus }).where(eq(projects.id, projectId))
+    await tx.insert(statusHistory).values({
+      projectId,
+      status: newStatus,
+      note: defaultNote,
+      changedBy: user.id,
+    })
+
+    const notifyUserIds: string[] = []
+    if (project.seller?.user) notifyUserIds.push(project.seller.user.id)
+    for (const quote of project.quotes) {
+      if (quote.vendor?.user) notifyUserIds.push(quote.vendor.user.id)
+    }
+
+    const notificationType =
+      newStatus === 'IN_PROGRESS'
+        ? 'PROJECT_STARTED'
+        : newStatus === 'COMPLETED'
+          ? 'PROJECT_COMPLETED'
+          : newStatus === 'PAID'
+            ? 'PROJECT_PAID'
+            : 'SYSTEM'
+
+    const notificationTitle =
+      newStatus === 'IN_PROGRESS'
+        ? 'Project started'
+        : newStatus === 'COMPLETED'
+          ? 'Project completed'
+          : newStatus === 'PAID'
+            ? 'Payment received'
+            : `Project status updated`
+
+    for (const userId of [...new Set(notifyUserIds)]) {
+      await tx.insert(notifications).values({
+        userId,
+        type: notificationType,
+        title: notificationTitle,
+        content: `${project.name}: ${defaultNote}`,
+        link: `/projects/${projectId}`,
+      })
+    }
+  })
+
+  revalidatePath('/projects')
+  revalidatePath(`/projects/${projectId}`)
+  revalidatePath('/admin/projects')
+  revalidatePath('/vendor/projects')
+  revalidatePath('/dashboard')
+
+  return {
+    id: projectId,
+    status: dbToMockStatus[newStatus] ?? newStatus.toLowerCase(),
+    note: defaultNote,
+  }
 }
 
 export async function getProjectStats(sellerId?: string) {
@@ -257,6 +344,11 @@ export async function updateQuoteStatus(
     .set({ status })
     .where(eq(quotes.id, quoteId))
     .returning()
+
+  revalidatePath('/admin/projects')
+  revalidatePath('/projects')
+  revalidatePath('/vendor/projects')
+  revalidatePath('/vendor/quotes')
 
   return updated
 }
@@ -935,4 +1027,77 @@ export async function submitVendorProjectQuote(input: {
     status: dbToMockQuoteStatus[quote.status] ?? quote.status.toLowerCase(),
     submittedAt: quote.createdAt.toISOString(),
   }
+}
+
+// ============================================================
+
+export async function markProjectPaid(
+  projectId: string,
+  paymentData?: { amount?: number; paymentMethod?: string; notes?: string },
+) {
+  const user = await requireRole('ADMIN')
+
+  const project = await db.query.projects.findFirst({
+    where: eq(projects.id, projectId),
+    with: {
+      seller: { with: { user: true } },
+      quotes: { with: { vendor: { with: { user: true } } } },
+    },
+  })
+
+  if (!project) {
+    throw new Error('Project not found.')
+  }
+
+  if (project.status !== 'COMPLETED') {
+    throw new Error('Only completed projects can be marked as paid.')
+  }
+
+  const paidAmount = paymentData?.amount ?? null
+  const paidAt = new Date()
+
+  await db.transaction(async (tx) => {
+    if (paidAmount !== null) {
+      await tx.insert(payments).values({
+        projectId,
+        amount: paidAmount.toString(),
+        currency: 'IDR',
+        paymentMethod: paymentData?.paymentMethod ?? null,
+        notes: paymentData?.notes ?? null,
+        paidAt,
+      })
+    }
+
+    await tx.update(projects).set({ status: 'PAID' }).where(eq(projects.id, projectId))
+    await tx.insert(statusHistory).values({
+      projectId,
+      status: 'PAID',
+      note: paymentData?.notes ?? 'Payment received. Project fully paid.',
+      changedBy: user.id,
+    })
+
+    const notifyUserIds: string[] = []
+    if (project.seller?.user) notifyUserIds.push(project.seller.user.id)
+    for (const quote of project.quotes) {
+      if (quote.vendor?.user) notifyUserIds.push(quote.vendor.user.id)
+    }
+
+    for (const userId of [...new Set(notifyUserIds)]) {
+      await tx.insert(notifications).values({
+        userId,
+        type: 'PROJECT_PAID',
+        title: 'Payment received',
+        content: `${project.name}: ${paymentData?.notes ?? 'Project fully paid (lunas).'}`,
+        link: `/projects/${projectId}`,
+      })
+    }
+  })
+
+  revalidatePath('/projects')
+  revalidatePath(`/projects/${projectId}`)
+  revalidatePath('/admin/projects')
+  revalidatePath('/vendor/projects')
+  revalidatePath('/dashboard')
+
+  return { id: projectId, status: 'paid' }
 }

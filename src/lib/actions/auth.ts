@@ -23,11 +23,12 @@ export async function registerUser(data: {
   website?: string | undefined
 }) {
   try {
-    const existing = await db.query.users.findFirst({
-      where: eq(users.email, data.email),
-    })
+    const existing = await db
+      .select({ id: users.id })
+      .from(users)
+      .where(eq(users.email, data.email))
 
-    if (existing) {
+    if (existing.length > 0) {
       return { error: 'Email already registered' }
     }
 

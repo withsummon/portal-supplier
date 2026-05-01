@@ -66,6 +66,7 @@ export interface AdminProjectDto {
     | 'need_clarification'
     | 'in_progress'
     | 'completed'
+    | 'paid'
     | 'cancelled'
   submittedAt: string
   files: ProjectFileDto[]
@@ -93,6 +94,7 @@ export interface VendorProjectDetailDto {
     | 'need_clarification'
     | 'in_progress'
     | 'completed'
+    | 'paid'
     | 'cancelled'
   createdAt: string
   updatedAt: string
@@ -141,7 +143,7 @@ interface AdminProjectRecord {
       name: string | null
       email: string
     } | null
-  }
+  } | null
   files: Array<{
     id: string
     name: string
@@ -238,12 +240,13 @@ function serializeQuote(quote: {
 }
 
 function serializeAdminProject(project: AdminProjectRecord): AdminProjectDto {
+  const seller = project.seller
   return {
     id: project.id,
     projectId: project.projectId,
     name: project.name,
-    supplier: project.seller.user?.name ?? project.seller.companyName,
-    supplierEmail: project.seller.user?.email ?? '',
+    supplier: seller ? (seller.user?.name ?? seller.companyName) : 'Admin Created',
+    supplierEmail: seller ? (seller.user?.email ?? '') : '',
     category: project.category,
     description: project.description,
     requirements: project.requirements ?? '',
@@ -263,8 +266,8 @@ function serializeAdminProject(project: AdminProjectRecord): AdminProjectDto {
       id: note.id,
       text: note.text,
       by:
-        note.createdBy === project.seller.userId
-          ? (project.seller.user?.name ?? project.seller.companyName)
+        seller && note.createdBy === seller.userId
+          ? (seller.user?.name ?? seller.companyName)
           : 'Admin',
       at: note.createdAt.toISOString(),
       type:

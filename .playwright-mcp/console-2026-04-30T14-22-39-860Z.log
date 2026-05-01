@@ -1,0 +1,450 @@
+[     298ms] [INFO] %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_f3530cac._.js:2297
+[     303ms] [LOG] %c%s%c Query: select "vendors"."id", "vendors"."company_name", "users"."email", "users"."phone", "vendors"."location", "vendors"."status", "vendors"."active_projects", "vendors"."revenue", "vendors"."created_at", "vendors"."industry", "vendors"."tier" from "vendors" inner join "users" on "vendors"."user_id" = "users"."id" order by "vendors"."created_at" desc background: #e6e6e6;background: light-dark(rgba(0,0,0,0.1), rgba(255,255,255,0.25));color: #000000;color: light-dark(#000000, #ffffff);border-radius: 2px  Server   @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_f3530cac._.js:2297
+[     306ms] [LOG] %c%s%c Query: select "id", "session_token", "user_id", "ip_address", "user_agent", "expires", "created_at", "updated_at" from "sessions" where "sessions"."session_token" = $1 -- params: ["l7iQZcks9Hs3xvaJ5xbx6jWGxnEAmd05"] background: #e6e6e6;background: light-dark(rgba(0,0,0,0.1), rgba(255,255,255,0.25));color: #000000;color: light-dark(#000000, #ffffff);border-radius: 2px  Server   @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_f3530cac._.js:2297
+[     306ms] [LOG] %c%s%c Query: select "id", "email", "password", "name", "phone", "location", "role", "email_verified", "image", "preferences", "created_at", "updated_at" from "users" where "users"."id" = $1 -- params: ["fda03028-2ec9-4fe5-860e-b685d01bd5a3"] background: #e6e6e6;background: light-dark(rgba(0,0,0,0.1), rgba(255,255,255,0.25));color: #000000;color: light-dark(#000000, #ffffff);border-radius: 2px  Server   @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_f3530cac._.js:2297
+[     306ms] [LOG] %c%s%c Query: select "users"."id", "users"."email", "users"."password", "users"."name", "users"."phone", "users"."location", "users"."role", "users"."email_verified", "users"."image", "users"."preferences", "users"."created_at", "users"."updated_at", "users_seller"."data" as "seller", "users_vendor"."data" as "vendor", "users_adminTeam"."data" as "adminTeam" from "users" "users" left join lateral (select json_build_array("users_seller"."id", "users_seller"."user_id", "users_seller"."company_name", "users_seller"."industry", "users_seller"."company_size", "users_seller"."website", "users_seller"."description", "users_seller"."location", "users_seller"."logo_url", "users_seller"."status", "users_seller"."tier", "users_seller"."deals_closed", "users_seller"."revenue", "users_seller"."created_at", "users_seller"."updated_at") as "data" from (select * from "sellers" "users_seller" where "users_seller"."user_id" = "users"."id" limit $1) "users_seller") "users_seller" on true left join lateral (select json_build_array("users_vendor"."id", "users_vendor"."user_id", "users_vendor"."company_name", "users_vendor"."industry", "users_vendor"."company_size", "users_vendor"."website", "users_vendor"."description", "users_vendor"."location", "users_vendor"."logo_url", "users_vendor"."status", "users_vendor"."tier", "users_vendor"."active_projects", "users_vendor"."revenue", "users_vendor"."created_at", "users_vendor"."updated_at") as "data" from (select * from "vendors" "users_vendor" where "users_vendor"."user_id" = "users"."id" limit $2) "users_vendor") "users_vendor" on true left join lateral (select json_build_array("users_adminTeam"."id", "users_adminTeam"."user_id", "users_adminTeam"."department", "users_adminTeam"."role", "users_adminTeam"."status", "users_adminTeam"."verified", "users_adminTeam"."is_active", "users_adminTeam"."created_at", "users_adminTeam"."updated_at") as "data" from (select * from "admin_team_members" "users_adminTeam" where "users_adminTeam"."user_id" = "users"."id" limit $3) "users_adminTeam") "users_adminTeam" on true where "users"."id" = $4 limit $5 -- params: [1, 1, 1, "fda03028-2ec9-4fe5-860e-b685d01bd5a3", 1] background: #e6e6e6;background: light-dark(rgba(0,0,0,0.1), rgba(255,255,255,0.25));color: #000000;color: light-dark(#000000, #ffffff);border-radius: 2px  Server   @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_f3530cac._.js:2297
+[     307ms] [LOG] %c%s%c Query: select "id", "session_token", "user_id", "ip_address", "user_agent", "expires", "created_at", "updated_at" from "sessions" where "sessions"."session_token" = $1 -- params: ["l7iQZcks9Hs3xvaJ5xbx6jWGxnEAmd05"] background: #e6e6e6;background: light-dark(rgba(0,0,0,0.1), rgba(255,255,255,0.25));color: #000000;color: light-dark(#000000, #ffffff);border-radius: 2px  Server   @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_f3530cac._.js:2297
+[     307ms] [LOG] %c%s%c Query: select "id", "email", "password", "name", "phone", "location", "role", "email_verified", "image", "preferences", "created_at", "updated_at" from "users" where "users"."id" = $1 -- params: ["fda03028-2ec9-4fe5-860e-b685d01bd5a3"] background: #e6e6e6;background: light-dark(rgba(0,0,0,0.1), rgba(255,255,255,0.25));color: #000000;color: light-dark(#000000, #ffffff);border-radius: 2px  Server   @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_f3530cac._.js:2297
+[     307ms] [LOG] %c%s%c Query: select "users"."id", "users"."email", "users"."password", "users"."name", "users"."phone", "users"."location", "users"."role", "users"."email_verified", "users"."image", "users"."preferences", "users"."created_at", "users"."updated_at", "users_seller"."data" as "seller", "users_vendor"."data" as "vendor", "users_adminTeam"."data" as "adminTeam" from "users" "users" left join lateral (select json_build_array("users_seller"."id", "users_seller"."user_id", "users_seller"."company_name", "users_seller"."industry", "users_seller"."company_size", "users_seller"."website", "users_seller"."description", "users_seller"."location", "users_seller"."logo_url", "users_seller"."status", "users_seller"."tier", "users_seller"."deals_closed", "users_seller"."revenue", "users_seller"."created_at", "users_seller"."updated_at") as "data" from (select * from "sellers" "users_seller" where "users_seller"."user_id" = "users"."id" limit $1) "users_seller") "users_seller" on true left join lateral (select json_build_array("users_vendor"."id", "users_vendor"."user_id", "users_vendor"."company_name", "users_vendor"."industry", "users_vendor"."company_size", "users_vendor"."website", "users_vendor"."description", "users_vendor"."location", "users_vendor"."logo_url", "users_vendor"."status", "users_vendor"."tier", "users_vendor"."active_projects", "users_vendor"."revenue", "users_vendor"."created_at", "users_vendor"."updated_at") as "data" from (select * from "vendors" "users_vendor" where "users_vendor"."user_id" = "users"."id" limit $2) "users_vendor") "users_vendor" on true left join lateral (select json_build_array("users_adminTeam"."id", "users_adminTeam"."user_id", "users_adminTeam"."department", "users_adminTeam"."role", "users_adminTeam"."status", "users_adminTeam"."verified", "users_adminTeam"."is_active", "users_adminTeam"."created_at", "users_adminTeam"."updated_at") as "data" from (select * from "admin_team_members" "users_adminTeam" where "users_adminTeam"."user_id" = "users"."id" limit $3) "users_adminTeam") "users_adminTeam" on true where "users"."id" = $4 limit $5 -- params: [1, 1, 1, "fda03028-2ec9-4fe5-860e-b685d01bd5a3", 1] background: #e6e6e6;background: light-dark(rgba(0,0,0,0.1), rgba(255,255,255,0.25));color: #000000;color: light-dark(#000000, #ffffff);border-radius: 2px  Server   @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_f3530cac._.js:2297
+[     307ms] [LOG] %c%s%c Query: select "id", "name", "project_id", "client_name" from "projects" order by "projects"."project_id" asc background: #e6e6e6;background: light-dark(rgba(0,0,0,0.1), rgba(255,255,255,0.25));color: #000000;color: light-dark(#000000, #ffffff);border-radius: 2px  Server   @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_f3530cac._.js:2297
+[     316ms] [LOG] [HMR] connected @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_f3530cac._.js:2297
+[  130110ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_f3530cac._.js:2297
+[  130226ms] [LOG] [Fast Refresh] done in 217ms @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_f3530cac._.js:2297
+[  161060ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_f3530cac._.js:2297
+[  161187ms] [LOG] [Fast Refresh] done in 228ms @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_f3530cac._.js:2297
+[  191553ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_f3530cac._.js:2297
+[  191665ms] [LOG] [Fast Refresh] done in 212ms @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_f3530cac._.js:2297
+[  236786ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_f3530cac._.js:2297
+[  236911ms] [LOG] [Fast Refresh] done in 226ms @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_f3530cac._.js:2297
+[  267400ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_f3530cac._.js:2297
+[  267511ms] [LOG] [Fast Refresh] done in 211ms @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_f3530cac._.js:2297
+[  270689ms] [ERROR] Executing inline script violates the following Content Security Policy directive 'script-src 'self' 'sha256-LnMFPWZxTgVOr2VYwIh9mhQ3l/l3+a3SfNOLERnuHfY=' 'sha256-4Z2xtr1B9QQugoojE/nbpOViG+8l2B7CZVlKgC78AeQ=' 'sha256-903UI9my1I7mqHoiVeZSc56yd50YoRJTB2269QqL76w=' 'sha256-EytE6o1N8rwzpVFMrF+WvBZr2y5UhFLw79o1/4VqS0s=' 'wasm-unsafe-eval' https://www.youtube.com https://static.cloudflareinsights.com https://vercel.live https://challenges.cloudflare.com https://abacus.worldmonitor.app https://*.clerk.accounts.dev https://*.dodopayments.com https://js.stripe.com'. Either the 'unsafe-inline' keyword, a hash ('sha256-LuDp9a6YTEBu5grwJa/9mHs7S0Q6G43hE6XZCsokUPQ='), or a nonce ('nonce-...') is required to enable inline execution. The action has been blocked. @ http://localhost:3000/admin/projects/new:124
+[  285946ms] [ERROR] [feeds] DEFAULT_ENABLED name "Breaking Defense" not found in FULL_FEEDS! @ http://localhost:3000/src/config/feeds.ts:1173
+[  285946ms] [LOG] [feeds] 107 unique default-enabled sources / 204 total @ http://localhost:3000/src/config/feeds.ts:1175
+[  286057ms] [WARNING] THREE.THREE.Clock: This module has been deprecated. Please use THREE.Timer instead. @ http://localhost:3000/node_modules/.vite/deps/chunk-JENIRZW7.js?v=69158681:296
+[  286063ms] [ERROR] Loading the script 'https://va.vercel-scripts.com/v1/script.debug.js' violates the following Content Security Policy directive: "script-src 'self' 'sha256-LnMFPWZxTgVOr2VYwIh9mhQ3l/l3+a3SfNOLERnuHfY=' 'sha256-4Z2xtr1B9QQugoojE/nbpOViG+8l2B7CZVlKgC78AeQ=' 'sha256-903UI9my1I7mqHoiVeZSc56yd50YoRJTB2269QqL76w=' 'sha256-EytE6o1N8rwzpVFMrF+WvBZr2y5UhFLw79o1/4VqS0s=' 'wasm-unsafe-eval' https://www.youtube.com https://static.cloudflareinsights.com https://vercel.live https://challenges.cloudflare.com https://abacus.worldmonitor.app https://*.clerk.accounts.dev https://*.dodopayments.com https://js.stripe.com". Note that 'script-src-elem' was not explicitly set, so 'script-src' is used as a fallback. The action has been blocked. @ http://localhost:3000/node_modules/.vite/deps/@vercel_analytics.js?v=d6348e4c:185
+[  286064ms] [LOG] [App] Variant check: stored="null", current="indonesia" @ http://localhost:3000/src/App.ts:393
+[  286064ms] [LOG] [App] Variant changed - seeding new defaults, disabling cross-variant panels @ http://localhost:3000/src/App.ts:395
+[  286066ms] [LOG] [entitlements] No VITE_CONVEX_URL — skipping Convex subscription @ http://localhost:3000/src/services/entitlements.ts:11
+[  286066ms] [WARNING] [billing] No VITE_CONVEX_URL -- skipping subscription watch @ http://localhost:3000/src/services/billing.ts:19
+[  286075ms] [LOG] [Vercel Web Analytics] Failed to load script from https://va.vercel-scripts.com/v1/script.debug.js. Please check if any ad blockers are enabled and try again. @ http://localhost:3000/node_modules/.vite/deps/@vercel_analytics.js?v=d6348e4c:181
+[  286126ms] [ERROR] The script has an unsupported MIME type ('text/html'). @ :0
+[  286129ms] [WARNING] [PWA] Service worker registration failed: SecurityError: Failed to register a ServiceWorker for scope ('http://localhost:3000/') with script ('http://localhost:3000/sw.js'): The script has an unsupported MIME type ('text/html'). @ http://localhost:3000/src/main.ts:564
+[  286131ms] [INFO] 🌐 i18next is made possible by our own product, Locize — consider powering your project with managed localization (AI, CDN, integrations): https://locize.com 💙 @ http://localhost:3000/node_modules/.vite/deps/i18next.js?v=e1ab2c38:1803
+[  286132ms] [LOG] i18next: languageChanged en-US @ http://localhost:3000/node_modules/.vite/deps/i18next.js?v=e1ab2c38:207
+[  286132ms] [LOG] i18next: initialized {debug: true, initAsync: true, ns: Array(1), defaultNS: Array(1), fallbackLng: Array(1)} @ http://localhost:3000/node_modules/.vite/deps/i18next.js?v=e1ab2c38:207
+[  286142ms] [WARNING] [clerk] VITE_CLERK_PUBLISHABLE_KEY not set, auth disabled @ http://localhost:3000/src/services/clerk.ts:62
+[  286170ms] [LOG] [MapContainer] Initializing deck.gl map (desktop mode) @ http://localhost:3000/src/components/MapContainer.ts:110
+[  286202ms] [LOG] i18next::translator: missingKey en-US translation components.deckgl.layers.commodityPorts components.deckgl.layers.commodityPorts @ http://localhost:3000/node_modules/.vite/deps/i18next.js?v=e1ab2c38:207
+[  286202ms] [LOG] i18next::translator: missingKey en-US translation components.deckgl.layers.webcams components.deckgl.layers.webcams @ http://localhost:3000/node_modules/.vite/deps/i18next.js?v=e1ab2c38:207
+[  286202ms] [LOG] i18next::translator: missingKey en-US translation components.deckgl.layers.miningSites components.deckgl.layers.miningSites @ http://localhost:3000/node_modules/.vite/deps/i18next.js?v=e1ab2c38:207
+[  286202ms] [LOG] i18next::translator: missingKey en-US translation components.deckgl.layers.processingPlants components.deckgl.layers.processingPlants @ http://localhost:3000/node_modules/.vite/deps/i18next.js?v=e1ab2c38:207
+[  286202ms] [LOG] i18next::translator: missingKey en-US translation components.deckgl.layers.resilienceScore components.deckgl.layers.resilienceScore @ http://localhost:3000/node_modules/.vite/deps/i18next.js?v=e1ab2c38:207
+[  286202ms] [LOG] i18next::translator: missingKey en-US translation components.deckgl.layers.diseaseOutbreaks components.deckgl.layers.diseaseOutbreaks @ http://localhost:3000/node_modules/.vite/deps/i18next.js?v=e1ab2c38:207
+[  286202ms] [LOG] i18next::translator: missingKey en-US translation components.deckgl.layers.sanctions components.deckgl.layers.sanctions @ http://localhost:3000/node_modules/.vite/deps/i18next.js?v=e1ab2c38:207
+[  286206ms] [LOG] i18next::translator: missingKey en-US translation panels.cctvIpStream.infoTooltip panels.cctvIpStream.infoTooltip @ http://localhost:3000/node_modules/.vite/deps/i18next.js?v=e1ab2c38:207
+[  286245ms] [LOG] i18next::translator: missingKey en-US translation panels.disasters panels.disasters @ http://localhost:3000/node_modules/.vite/deps/i18next.js?v=e1ab2c38:207
+[  286245ms] [LOG] i18next::translator: missingKey en-US translation panels.positiveFeed panels.positiveFeed @ http://localhost:3000/node_modules/.vite/deps/i18next.js?v=e1ab2c38:207
+[  286245ms] [LOG] i18next::translator: missingKey en-US translation panels.progress panels.progress @ http://localhost:3000/node_modules/.vite/deps/i18next.js?v=e1ab2c38:207
+[  286245ms] [LOG] i18next::translator: missingKey en-US translation panels.counters panels.counters @ http://localhost:3000/node_modules/.vite/deps/i18next.js?v=e1ab2c38:207
+[  286245ms] [LOG] i18next::translator: missingKey en-US translation panels.spotlight panels.spotlight @ http://localhost:3000/node_modules/.vite/deps/i18next.js?v=e1ab2c38:207
+[  286245ms] [LOG] i18next::translator: missingKey en-US translation panels.breakthroughs panels.breakthroughs @ http://localhost:3000/node_modules/.vite/deps/i18next.js?v=e1ab2c38:207
+[  286245ms] [LOG] i18next::translator: missingKey en-US translation panels.digest panels.digest @ http://localhost:3000/node_modules/.vite/deps/i18next.js?v=e1ab2c38:207
+[  286245ms] [LOG] i18next::translator: missingKey en-US translation panels.species panels.species @ http://localhost:3000/node_modules/.vite/deps/i18next.js?v=e1ab2c38:207
+[  286245ms] [LOG] i18next::translator: missingKey en-US translation panels.renewable panels.renewable @ http://localhost:3000/node_modules/.vite/deps/i18next.js?v=e1ab2c38:207
+[  286245ms] [LOG] i18next::translator: missingKey en-US translation panels.commodityNews panels.commodityNews @ http://localhost:3000/node_modules/.vite/deps/i18next.js?v=e1ab2c38:207
+[  286245ms] [LOG] i18next::translator: missingKey en-US translation panels.liquidityShifts panels.liquidityShifts @ http://localhost:3000/node_modules/.vite/deps/i18next.js?v=e1ab2c38:207
+[  286245ms] [LOG] i18next::translator: missingKey en-US translation panels.positioning-247 panels.positioning-247 @ http://localhost:3000/node_modules/.vite/deps/i18next.js?v=e1ab2c38:207
+[  286245ms] [LOG] i18next::translator: missingKey en-US translation panels.goldSilver panels.goldSilver @ http://localhost:3000/node_modules/.vite/deps/i18next.js?v=e1ab2c38:207
+[  286246ms] [LOG] i18next::translator: missingKey en-US translation panels.miningNews panels.miningNews @ http://localhost:3000/node_modules/.vite/deps/i18next.js?v=e1ab2c38:207
+[  286246ms] [LOG] i18next::translator: missingKey en-US translation panels.criticalMinerals panels.criticalMinerals @ http://localhost:3000/node_modules/.vite/deps/i18next.js?v=e1ab2c38:207
+[  286246ms] [LOG] i18next::translator: missingKey en-US translation panels.baseMetals panels.baseMetals @ http://localhost:3000/node_modules/.vite/deps/i18next.js?v=e1ab2c38:207
+[  286246ms] [LOG] i18next::translator: missingKey en-US translation panels.miningCompanies panels.miningCompanies @ http://localhost:3000/node_modules/.vite/deps/i18next.js?v=e1ab2c38:207
+[  286246ms] [LOG] i18next::translator: missingKey en-US translation panels.commodityRegulation panels.commodityRegulation @ http://localhost:3000/node_modules/.vite/deps/i18next.js?v=e1ab2c38:207
+[  286246ms] [LOG] i18next::translator: missingKey en-US translation panels.pipelineStatus panels.pipelineStatus @ http://localhost:3000/node_modules/.vite/deps/i18next.js?v=e1ab2c38:207
+[  286246ms] [LOG] i18next::translator: missingKey en-US translation panels.sanctionsPressure panels.sanctionsPressure @ http://localhost:3000/node_modules/.vite/deps/i18next.js?v=e1ab2c38:207
+[  286246ms] [LOG] i18next::translator: missingKey en-US translation panels.worldClock panels.worldClock @ http://localhost:3000/node_modules/.vite/deps/i18next.js?v=e1ab2c38:207
+[  286246ms] [LOG] i18next::translator: missingKey en-US translation panels.latestBrief panels.latestBrief @ http://localhost:3000/node_modules/.vite/deps/i18next.js?v=e1ab2c38:207
+[  286246ms] [LOG] i18next::translator: missingKey en-US translation panels.energyRiskOverview panels.energyRiskOverview @ http://localhost:3000/node_modules/.vite/deps/i18next.js?v=e1ab2c38:207
+[  286246ms] [LOG] i18next::translator: missingKey en-US translation panels.chokepointStrip panels.chokepointStrip @ http://localhost:3000/node_modules/.vite/deps/i18next.js?v=e1ab2c38:207
+[  286246ms] [LOG] i18next::translator: missingKey en-US translation panels.storageFacilityMap panels.storageFacilityMap @ http://localhost:3000/node_modules/.vite/deps/i18next.js?v=e1ab2c38:207
+[  286246ms] [LOG] i18next::translator: missingKey en-US translation panels.fuelShortages panels.fuelShortages @ http://localhost:3000/node_modules/.vite/deps/i18next.js?v=e1ab2c38:207
+[  286246ms] [LOG] i18next::translator: missingKey en-US translation panels.energyDisruptions panels.energyDisruptions @ http://localhost:3000/node_modules/.vite/deps/i18next.js?v=e1ab2c38:207
+[  286246ms] [LOG] i18next::translator: missingKey en-US translation panels.hormuzTracker panels.hormuzTracker @ http://localhost:3000/node_modules/.vite/deps/i18next.js?v=e1ab2c38:207
+[  286246ms] [LOG] i18next::translator: missingKey en-US translation panels.aiRegulation panels.aiRegulation @ http://localhost:3000/node_modules/.vite/deps/i18next.js?v=e1ab2c38:207
+[  286247ms] [LOG] i18next::translator: missingKey en-US translation panels.stockAnalysis panels.stockAnalysis @ http://localhost:3000/node_modules/.vite/deps/i18next.js?v=e1ab2c38:207
+[  286247ms] [LOG] i18next::translator: missingKey en-US translation panels.stockBacktest panels.stockBacktest @ http://localhost:3000/node_modules/.vite/deps/i18next.js?v=e1ab2c38:207
+[  286247ms] [LOG] i18next::translator: missingKey en-US translation panels.dailyMarketBrief panels.dailyMarketBrief @ http://localhost:3000/node_modules/.vite/deps/i18next.js?v=e1ab2c38:207
+[  286247ms] [LOG] i18next::translator: missingKey en-US translation panels.marketsNews panels.marketsNews @ http://localhost:3000/node_modules/.vite/deps/i18next.js?v=e1ab2c38:207
+[  286247ms] [LOG] i18next::translator: missingKey en-US translation panels.forex panels.forex @ http://localhost:3000/node_modules/.vite/deps/i18next.js?v=e1ab2c38:207
+[  286247ms] [LOG] i18next::translator: missingKey en-US translation panels.bonds panels.bonds @ http://localhost:3000/node_modules/.vite/deps/i18next.js?v=e1ab2c38:207
+[  286247ms] [LOG] i18next::translator: missingKey en-US translation panels.commoditiesNews panels.commoditiesNews @ http://localhost:3000/node_modules/.vite/deps/i18next.js?v=e1ab2c38:207
+[  286247ms] [LOG] i18next::translator: missingKey en-US translation panels.cryptoNews panels.cryptoNews @ http://localhost:3000/node_modules/.vite/deps/i18next.js?v=e1ab2c38:207
+[  286247ms] [LOG] i18next::translator: missingKey en-US translation panels.cryptoHeatmap panels.cryptoHeatmap @ http://localhost:3000/node_modules/.vite/deps/i18next.js?v=e1ab2c38:207
+[  286247ms] [LOG] i18next::translator: missingKey en-US translation panels.defiTokens panels.defiTokens @ http://localhost:3000/node_modules/.vite/deps/i18next.js?v=e1ab2c38:207
+[  286247ms] [LOG] i18next::translator: missingKey en-US translation panels.aiTokens panels.aiTokens @ http://localhost:3000/node_modules/.vite/deps/i18next.js?v=e1ab2c38:207
+[  286247ms] [LOG] i18next::translator: missingKey en-US translation panels.otherTokens panels.otherTokens @ http://localhost:3000/node_modules/.vite/deps/i18next.js?v=e1ab2c38:207
+[  286247ms] [LOG] i18next::translator: missingKey en-US translation panels.centralbanks panels.centralbanks @ http://localhost:3000/node_modules/.vite/deps/i18next.js?v=e1ab2c38:207
+[  286247ms] [LOG] i18next::translator: missingKey en-US translation panels.economicNews panels.economicNews @ http://localhost:3000/node_modules/.vite/deps/i18next.js?v=e1ab2c38:207
+[  286247ms] [LOG] i18next::translator: missingKey en-US translation panels.macroTiles panels.macroTiles @ http://localhost:3000/node_modules/.vite/deps/i18next.js?v=e1ab2c38:207
+[  286247ms] [LOG] i18next::translator: missingKey en-US translation panels.aaiiSentiment panels.aaiiSentiment @ http://localhost:3000/node_modules/.vite/deps/i18next.js?v=e1ab2c38:207
+[  286247ms] [LOG] i18next::translator: missingKey en-US translation panels.fsi panels.fsi @ http://localhost:3000/node_modules/.vite/deps/i18next.js?v=e1ab2c38:207
+[  286247ms] [LOG] i18next::translator: missingKey en-US translation panels.yieldCurve panels.yieldCurve @ http://localhost:3000/node_modules/.vite/deps/i18next.js?v=e1ab2c38:207
+[  286247ms] [LOG] i18next::translator: missingKey en-US translation panels.earningsCalendar panels.earningsCalendar @ http://localhost:3000/node_modules/.vite/deps/i18next.js?v=e1ab2c38:207
+[  286247ms] [LOG] i18next::translator: missingKey en-US translation panels.economicCalendar panels.economicCalendar @ http://localhost:3000/node_modules/.vite/deps/i18next.js?v=e1ab2c38:207
+[  286247ms] [LOG] i18next::translator: missingKey en-US translation panels.cotPositioning panels.cotPositioning @ http://localhost:3000/node_modules/.vite/deps/i18next.js?v=e1ab2c38:207
+[  286247ms] [LOG] i18next::translator: missingKey en-US translation panels.derivatives panels.derivatives @ http://localhost:3000/node_modules/.vite/deps/i18next.js?v=e1ab2c38:207
+[  286247ms] [LOG] i18next::translator: missingKey en-US translation panels.fintech panels.fintech @ http://localhost:3000/node_modules/.vite/deps/i18next.js?v=e1ab2c38:207
+[  286248ms] [LOG] i18next::translator: missingKey en-US translation panels.institutional panels.institutional @ http://localhost:3000/node_modules/.vite/deps/i18next.js?v=e1ab2c38:207
+[  286248ms] [LOG] i18next::translator: missingKey en-US translation panels.analysis panels.analysis @ http://localhost:3000/node_modules/.vite/deps/i18next.js?v=e1ab2c38:207
+[  286248ms] [LOG] i18next::translator: missingKey en-US translation panels.gccNews panels.gccNews @ http://localhost:3000/node_modules/.vite/deps/i18next.js?v=e1ab2c38:207
+[  286248ms] [LOG] i18next::translator: missingKey en-US translation panels.forecast panels.forecast @ http://localhost:3000/node_modules/.vite/deps/i18next.js?v=e1ab2c38:207
+[  286248ms] [LOG] i18next::translator: missingKey en-US translation panels.militaryCorrelation panels.militaryCorrelation @ http://localhost:3000/node_modules/.vite/deps/i18next.js?v=e1ab2c38:207
+[  286248ms] [LOG] i18next::translator: missingKey en-US translation panels.escalationCorrelation panels.escalationCorrelation @ http://localhost:3000/node_modules/.vite/deps/i18next.js?v=e1ab2c38:207
+[  286248ms] [LOG] i18next::translator: missingKey en-US translation panels.economicCorrelation panels.economicCorrelation @ http://localhost:3000/node_modules/.vite/deps/i18next.js?v=e1ab2c38:207
+[  286248ms] [LOG] i18next::translator: missingKey en-US translation panels.disasterCorrelation panels.disasterCorrelation @ http://localhost:3000/node_modules/.vite/deps/i18next.js?v=e1ab2c38:207
+[  286248ms] [LOG] i18next::translator: missingKey en-US translation panels.chatAnalyst panels.chatAnalyst @ http://localhost:3000/node_modules/.vite/deps/i18next.js?v=e1ab2c38:207
+[  286248ms] [LOG] i18next::translator: missingKey en-US translation panels.diseaseOutbreaks panels.diseaseOutbreaks @ http://localhost:3000/node_modules/.vite/deps/i18next.js?v=e1ab2c38:207
+[  286248ms] [LOG] i18next::translator: missingKey en-US translation panels.socialVelocity panels.socialVelocity @ http://localhost:3000/node_modules/.vite/deps/i18next.js?v=e1ab2c38:207
+[  286248ms] [LOG] i18next::translator: missingKey en-US translation panels.defensePatents panels.defensePatents @ http://localhost:3000/node_modules/.vite/deps/i18next.js?v=e1ab2c38:207
+[  286248ms] [LOG] i18next::translator: missingKey en-US translation panels.radiationWatch panels.radiationWatch @ http://localhost:3000/node_modules/.vite/deps/i18next.js?v=e1ab2c38:207
+[  286248ms] [LOG] i18next::translator: missingKey en-US translation panels.thermalEscalation panels.thermalEscalation @ http://localhost:3000/node_modules/.vite/deps/i18next.js?v=e1ab2c38:207
+[  286248ms] [LOG] i18next::translator: missingKey en-US translation panels.nationalDebt panels.nationalDebt @ http://localhost:3000/node_modules/.vite/deps/i18next.js?v=e1ab2c38:207
+[  286248ms] [LOG] i18next::translator: missingKey en-US translation panels.crossSourceSignals panels.crossSourceSignals @ http://localhost:3000/node_modules/.vite/deps/i18next.js?v=e1ab2c38:207
+[  286248ms] [LOG] i18next::translator: missingKey en-US translation panels.regionalIntelligence panels.regionalIntelligence @ http://localhost:3000/node_modules/.vite/deps/i18next.js?v=e1ab2c38:207
+[  286397ms] [WARNING] Image "circle-11" could not be loaded. Please make sure you have added the image with map.addImage() or a "sprite" property in your style. You can provide missing images by listening for the "styleimagemissing" map event. @ http://localhost:3000/node_modules/.vite/deps/maplibre-gl.js?v=0c570391:312
+[  286737ms] [WARNING] [clerk] getClerkToken: no session (clerkInstance=false, user=false) @ http://localhost:3000/src/services/clerk.ts:127
+[  287038ms] [ERROR] Failed to load resource: the server responded with a status of 503 (Service Unavailable) @ http://localhost:3000/api/gpsjam:0
+[  287038ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:3000/api/health/v1/list-disease-outbreaks:0
+[  287039ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:3000/api/radiation/v1/list-radiation-observations?max_items=18:0
+[  287039ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:3000/api/thermal/v1/list-thermal-escalations?max_items=12:0
+[  287040ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:3000/api/sanctions/v1/list-sanctions-pressure?max_items=30:0
+[  287228ms] [ERROR] [App] Telegram intel fetch failed: SyntaxError: Unexpected token 'i', "import { g"... is not valid JSON @ http://localhost:3000/src/app/data-loader.ts:2939
+[  287229ms] [ERROR] [NWS Weather] Failed: SyntaxError: Unexpected token 'i', "import { g"... is not valid JSON @ http://localhost:3000/src/utils/circuit-breaker.ts:298
+[  287230ms] [ERROR] [App] Telegram intel fetch failed: SyntaxError: Unexpected token 'i', "import { g"... is not valid JSON @ http://localhost:3000/src/app/data-loader.ts:2939
+[  287237ms] [ERROR] [Polymarket] Failed: Error: No markets returned — upstream may be down @ http://localhost:3000/src/utils/circuit-breaker.ts:298
+[  287239ms] [ERROR] [Military Flight Tracking] Failed: Error: No flights returned — upstream may be down @ http://localhost:3000/src/utils/circuit-breaker.ts:298
+[  287240ms] [ERROR] [Radiation Watch] Failed: ApiError: Request failed with status 404 @ http://localhost:3000/src/utils/circuit-breaker.ts:298
+[  287240ms] [ERROR] [Thermal Escalation] Failed: ApiError: Request failed with status 404 @ http://localhost:3000/src/utils/circuit-breaker.ts:298
+[  287241ms] [ERROR] [Sanctions Pressure] Failed: ApiError: Request failed with status 404 @ http://localhost:3000/src/utils/circuit-breaker.ts:298
+[  287268ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:3000/api/forecast/v1/get-forecasts:0
+[  287268ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:3000/api/forecast/v1/get-simulation-outcome:0
+[  287973ms] [WARNING] Failed to execute 'postMessage' on 'DOMWindow': The target origin provided ('https://www.youtube.com') does not match the recipient window's origin ('http://localhost:3000'). @ https://www.youtube.com/s/player/0980151a/www-widgetapi.vflset/www-widgetapi.js:209
+[  288171ms] [WARNING] [News] Digest fetch failed, using fallback: TypeError: Failed to fetch
+    at window.fetch (http://localhost:3000/src/services/runtime.ts:655:18)
+    at async DataLoaderManager.tryFetchDigest (http://localhost:3000/src/app/data-loader.ts:292:20)
+    at async DataLoaderManager.loadNews (http://localhost:3000/src/app/data-loader.ts:916:20)
+    at async runGuarded (http://localhost:3000/src/app/data-loader.ts:357:9)
+    at async Promise.allSettled (index 0)
+    at async DataLoaderManager.loadAllData (http://localhost:3000/src/app/data-loader.ts:516:23)
+    at async Promise.all (index 0)
+    at async App.init (http://localhost:3000/src/App.ts:931:5) @ http://localhost:3000/src/app/data-loader.ts:304
+[  288172ms] [ERROR] [HDX HAPI Batch] Failed: TypeError: Failed to fetch @ http://localhost:3000/src/utils/circuit-breaker.ts:298
+[  288172ms] [ERROR] [UNHCR Displacement] Failed: TypeError: Failed to fetch @ http://localhost:3000/src/utils/circuit-breaker.ts:298
+[  288172ms] [WARNING] [DeckGLMap] map error: AJAXError: Failed to fetch (0): https://tilecache.rainviewer.com/v2/radar/c4e1f973ec10/256/5/26/15/6/1_1.png @ http://localhost:3000/src/components/DeckGLMap.ts:667
+[  288172ms] [WARNING] [DeckGLMap] map error: AJAXError: Failed to fetch (0): https://tilecache.rainviewer.com/v2/radar/c4e1f973ec10/256/5/27/15/6/1_1.png @ http://localhost:3000/src/components/DeckGLMap.ts:667
+[  288172ms] [WARNING] [DeckGLMap] map error: AJAXError: Failed to fetch (0): https://tilecache.rainviewer.com/v2/radar/c4e1f973ec10/256/5/28/15/6/1_1.png @ http://localhost:3000/src/components/DeckGLMap.ts:667
+[  288172ms] [WARNING] [DeckGLMap] map error: AJAXError: Failed to fetch (0): https://tilecache.rainviewer.com/v2/radar/c4e1f973ec10/256/5/25/16/6/1_1.png @ http://localhost:3000/src/components/DeckGLMap.ts:667
+[  288172ms] [WARNING] [DeckGLMap] map error: AJAXError: Failed to fetch (0): https://tilecache.rainviewer.com/v2/radar/c4e1f973ec10/256/5/28/16/6/1_1.png @ http://localhost:3000/src/components/DeckGLMap.ts:667
+[  288172ms] [WARNING] [DeckGLMap] map error: AJAXError: Failed to fetch (0): https://tilecache.rainviewer.com/v2/radar/c4e1f973ec10/256/5/24/16/6/1_1.png @ http://localhost:3000/src/components/DeckGLMap.ts:667
+[  288172ms] [WARNING] [DeckGLMap] map error: AJAXError: Failed to fetch (0): https://tilecache.rainviewer.com/v2/radar/c4e1f973ec10/256/5/24/15/6/1_1.png @ http://localhost:3000/src/components/DeckGLMap.ts:667
+[  288172ms] [WARNING] [DeckGLMap] map error: AJAXError: Failed to fetch (0): https://tilecache.rainviewer.com/v2/radar/c4e1f973ec10/256/5/25/15/6/1_1.png @ http://localhost:3000/src/components/DeckGLMap.ts:667
+[  288172ms] [WARNING] [DeckGLMap] map error: AJAXError: Failed to fetch (0): https://tilecache.rainviewer.com/v2/radar/c4e1f973ec10/256/5/27/16/6/1_1.png @ http://localhost:3000/src/components/DeckGLMap.ts:667
+[  288172ms] [WARNING] [DeckGLMap] map error: AJAXError: Failed to fetch (0): https://tilecache.rainviewer.com/v2/radar/c4e1f973ec10/256/5/26/16/6/1_1.png @ http://localhost:3000/src/components/DeckGLMap.ts:667
+[  288173ms] [LOG] [Intelligence] All signals loaded for CII calculation @ http://localhost:3000/src/app/data-loader.ts:1966
+[  288181ms] [ERROR] Executing inline script violates the following Content Security Policy directive 'script-src 'self' 'sha256-LnMFPWZxTgVOr2VYwIh9mhQ3l/l3+a3SfNOLERnuHfY=' 'sha256-4Z2xtr1B9QQugoojE/nbpOViG+8l2B7CZVlKgC78AeQ=' 'sha256-903UI9my1I7mqHoiVeZSc56yd50YoRJTB2269QqL76w=' 'sha256-EytE6o1N8rwzpVFMrF+WvBZr2y5UhFLw79o1/4VqS0s=' 'wasm-unsafe-eval' https://www.youtube.com https://static.cloudflareinsights.com https://vercel.live https://challenges.cloudflare.com https://abacus.worldmonitor.app https://*.clerk.accounts.dev https://*.dodopayments.com https://js.stripe.com'. Either the 'unsafe-inline' keyword, a hash ('sha256-LuDp9a6YTEBu5grwJa/9mHs7S0Q6G43hE6XZCsokUPQ='), or a nonce ('nonce-...') is required to enable inline execution. The action has been blocked. @ http://localhost:3000/admin/projects/new?lat=-2.0000&lon=118.0000&zoom=1.00&view=indonesia&timeRange=7d&layers=conflicts%2Cbases%2Chotspots%2Cnuclear%2Csanctions%2Cweather%2Ceconomic%2Cwaterways%2Coutages%2Cmilitary%2Cnatural:124
+[  297064ms] [LOG] [vite] server connection lost. Polling for restart... @ http://localhost:3000/@vite/client:963
+[  297070ms] [ERROR] WebSocket connection to 'ws://localhost:3000/' failed: Connection closed before receiving a handshake response @ http://localhost:3000/@vite/client:1034
+[  298074ms] [ERROR] WebSocket connection to 'ws://localhost:3000/' failed: Connection closed before receiving a handshake response @ http://localhost:3000/@vite/client:1034
+[  299077ms] [ERROR] WebSocket connection to 'ws://localhost:3000/' failed: Connection closed before receiving a handshake response @ http://localhost:3000/@vite/client:1034
+[  300082ms] [ERROR] WebSocket connection to 'ws://localhost:3000/' failed: Connection closed before receiving a handshake response @ http://localhost:3000/@vite/client:1034
+[  301085ms] [ERROR] WebSocket connection to 'ws://localhost:3000/' failed: Connection closed before receiving a handshake response @ http://localhost:3000/@vite/client:1034
+[  302091ms] [ERROR] WebSocket connection to 'ws://localhost:3000/' failed: Connection closed before receiving a handshake response @ http://localhost:3000/@vite/client:1034
+[  303095ms] [ERROR] WebSocket connection to 'ws://localhost:3000/' failed: Connection closed before receiving a handshake response @ http://localhost:3000/@vite/client:1034
+[  303248ms] [ERROR] [feeds] DEFAULT_ENABLED name "Breaking Defense" not found in FULL_FEEDS! @ http://localhost:3000/src/config/feeds.ts:1173
+[  303248ms] [LOG] [feeds] 107 unique default-enabled sources / 204 total @ http://localhost:3000/src/config/feeds.ts:1175
+[  303364ms] [WARNING] THREE.THREE.Clock: This module has been deprecated. Please use THREE.Timer instead. @ http://localhost:3000/node_modules/.vite/deps/chunk-JENIRZW7.js?v=d584b076:296
+[  303369ms] [ERROR] Loading the script 'https://va.vercel-scripts.com/v1/script.debug.js' violates the following Content Security Policy directive: "script-src 'self' 'sha256-LnMFPWZxTgVOr2VYwIh9mhQ3l/l3+a3SfNOLERnuHfY=' 'sha256-4Z2xtr1B9QQugoojE/nbpOViG+8l2B7CZVlKgC78AeQ=' 'sha256-903UI9my1I7mqHoiVeZSc56yd50YoRJTB2269QqL76w=' 'sha256-EytE6o1N8rwzpVFMrF+WvBZr2y5UhFLw79o1/4VqS0s=' 'wasm-unsafe-eval' https://www.youtube.com https://static.cloudflareinsights.com https://vercel.live https://challenges.cloudflare.com https://abacus.worldmonitor.app https://*.clerk.accounts.dev https://*.dodopayments.com https://js.stripe.com". Note that 'script-src-elem' was not explicitly set, so 'script-src' is used as a fallback. The action has been blocked. @ http://localhost:3000/node_modules/.vite/deps/@vercel_analytics.js?v=d584b076:185
+[  303369ms] [LOG] [App] Variant check: stored="null", current="indonesia" @ http://localhost:3000/src/App.ts:393
+[  303369ms] [LOG] [App] Variant changed - seeding new defaults, disabling cross-variant panels @ http://localhost:3000/src/App.ts:395
+[  303370ms] [LOG] [entitlements] No VITE_CONVEX_URL — skipping Convex subscription @ http://localhost:3000/src/services/entitlements.ts:11
+[  303370ms] [WARNING] [billing] No VITE_CONVEX_URL -- skipping subscription watch @ http://localhost:3000/src/services/billing.ts:19
+[  303376ms] [LOG] [Vercel Web Analytics] Failed to load script from https://va.vercel-scripts.com/v1/script.debug.js. Please check if any ad blockers are enabled and try again. @ http://localhost:3000/node_modules/.vite/deps/@vercel_analytics.js?v=d584b076:181
+[  303417ms] [INFO] 🌐 i18next is made possible by our own product, Locize — consider powering your project with managed localization (AI, CDN, integrations): https://locize.com 💙 @ http://localhost:3000/node_modules/.vite/deps/i18next.js?v=d584b076:1803
+[  303418ms] [LOG] i18next: languageChanged en-US @ http://localhost:3000/node_modules/.vite/deps/i18next.js?v=d584b076:207
+[  303418ms] [LOG] i18next: initialized {debug: true, initAsync: true, ns: Array(1), defaultNS: Array(1), fallbackLng: Array(1)} @ http://localhost:3000/node_modules/.vite/deps/i18next.js?v=d584b076:207
+[  303545ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:3000/favico/indonesia/favicon.ico:0
+[  303546ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:3000/api/bootstrap?tier=slow:0
+[  303547ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:3000/api/bootstrap?tier=fast:0
+[  303547ms] [WARNING] [clerk] VITE_CLERK_PUBLISHABLE_KEY not set, auth disabled @ http://localhost:3000/src/services/clerk.ts:62
+[  303611ms] [ERROR] A bad HTTP response code (404) was received when fetching the script. @ :0
+[  303612ms] [WARNING] [PWA] Service worker registration failed: TypeError: Failed to register a ServiceWorker for scope ('http://localhost:3000/') with script ('http://localhost:3000/sw.js'): A bad HTTP response code (404) was received when fetching the script. @ http://localhost:3000/src/main.ts:564
+[  303618ms] [LOG] [MapContainer] Initializing deck.gl map (desktop mode) @ http://localhost:3000/src/components/MapContainer.ts:110
+[  303629ms] [LOG] i18next::translator: missingKey en-US translation components.deckgl.layers.commodityPorts components.deckgl.layers.commodityPorts @ http://localhost:3000/node_modules/.vite/deps/i18next.js?v=d584b076:207
+[  303629ms] [LOG] i18next::translator: missingKey en-US translation components.deckgl.layers.webcams components.deckgl.layers.webcams @ http://localhost:3000/node_modules/.vite/deps/i18next.js?v=d584b076:207
+[  303629ms] [LOG] i18next::translator: missingKey en-US translation components.deckgl.layers.miningSites components.deckgl.layers.miningSites @ http://localhost:3000/node_modules/.vite/deps/i18next.js?v=d584b076:207
+[  303629ms] [LOG] i18next::translator: missingKey en-US translation components.deckgl.layers.processingPlants components.deckgl.layers.processingPlants @ http://localhost:3000/node_modules/.vite/deps/i18next.js?v=d584b076:207
+[  303629ms] [LOG] i18next::translator: missingKey en-US translation components.deckgl.layers.resilienceScore components.deckgl.layers.resilienceScore @ http://localhost:3000/node_modules/.vite/deps/i18next.js?v=d584b076:207
+[  303629ms] [LOG] i18next::translator: missingKey en-US translation components.deckgl.layers.diseaseOutbreaks components.deckgl.layers.diseaseOutbreaks @ http://localhost:3000/node_modules/.vite/deps/i18next.js?v=d584b076:207
+[  303630ms] [LOG] i18next::translator: missingKey en-US translation components.deckgl.layers.sanctions components.deckgl.layers.sanctions @ http://localhost:3000/node_modules/.vite/deps/i18next.js?v=d584b076:207
+[  303632ms] [LOG] i18next::translator: missingKey en-US translation panels.cctvIpStream.infoTooltip panels.cctvIpStream.infoTooltip @ http://localhost:3000/node_modules/.vite/deps/i18next.js?v=d584b076:207
+[  303649ms] [LOG] i18next::translator: missingKey en-US translation panels.disasters panels.disasters @ http://localhost:3000/node_modules/.vite/deps/i18next.js?v=d584b076:207
+[  303649ms] [LOG] i18next::translator: missingKey en-US translation panels.positiveFeed panels.positiveFeed @ http://localhost:3000/node_modules/.vite/deps/i18next.js?v=d584b076:207
+[  303649ms] [LOG] i18next::translator: missingKey en-US translation panels.progress panels.progress @ http://localhost:3000/node_modules/.vite/deps/i18next.js?v=d584b076:207
+[  303649ms] [LOG] i18next::translator: missingKey en-US translation panels.counters panels.counters @ http://localhost:3000/node_modules/.vite/deps/i18next.js?v=d584b076:207
+[  303649ms] [LOG] i18next::translator: missingKey en-US translation panels.spotlight panels.spotlight @ http://localhost:3000/node_modules/.vite/deps/i18next.js?v=d584b076:207
+[  303649ms] [LOG] i18next::translator: missingKey en-US translation panels.breakthroughs panels.breakthroughs @ http://localhost:3000/node_modules/.vite/deps/i18next.js?v=d584b076:207
+[  303649ms] [LOG] i18next::translator: missingKey en-US translation panels.digest panels.digest @ http://localhost:3000/node_modules/.vite/deps/i18next.js?v=d584b076:207
+[  303649ms] [LOG] i18next::translator: missingKey en-US translation panels.species panels.species @ http://localhost:3000/node_modules/.vite/deps/i18next.js?v=d584b076:207
+[  303649ms] [LOG] i18next::translator: missingKey en-US translation panels.renewable panels.renewable @ http://localhost:3000/node_modules/.vite/deps/i18next.js?v=d584b076:207
+[  303649ms] [LOG] i18next::translator: missingKey en-US translation panels.commodityNews panels.commodityNews @ http://localhost:3000/node_modules/.vite/deps/i18next.js?v=d584b076:207
+[  303649ms] [LOG] i18next::translator: missingKey en-US translation panels.liquidityShifts panels.liquidityShifts @ http://localhost:3000/node_modules/.vite/deps/i18next.js?v=d584b076:207
+[  303649ms] [LOG] i18next::translator: missingKey en-US translation panels.positioning-247 panels.positioning-247 @ http://localhost:3000/node_modules/.vite/deps/i18next.js?v=d584b076:207
+[  303649ms] [LOG] i18next::translator: missingKey en-US translation panels.goldSilver panels.goldSilver @ http://localhost:3000/node_modules/.vite/deps/i18next.js?v=d584b076:207
+[  303649ms] [LOG] i18next::translator: missingKey en-US translation panels.miningNews panels.miningNews @ http://localhost:3000/node_modules/.vite/deps/i18next.js?v=d584b076:207
+[  303650ms] [LOG] i18next::translator: missingKey en-US translation panels.criticalMinerals panels.criticalMinerals @ http://localhost:3000/node_modules/.vite/deps/i18next.js?v=d584b076:207
+[  303650ms] [LOG] i18next::translator: missingKey en-US translation panels.baseMetals panels.baseMetals @ http://localhost:3000/node_modules/.vite/deps/i18next.js?v=d584b076:207
+[  303650ms] [LOG] i18next::translator: missingKey en-US translation panels.miningCompanies panels.miningCompanies @ http://localhost:3000/node_modules/.vite/deps/i18next.js?v=d584b076:207
+[  303650ms] [LOG] i18next::translator: missingKey en-US translation panels.commodityRegulation panels.commodityRegulation @ http://localhost:3000/node_modules/.vite/deps/i18next.js?v=d584b076:207
+[  303650ms] [LOG] i18next::translator: missingKey en-US translation panels.pipelineStatus panels.pipelineStatus @ http://localhost:3000/node_modules/.vite/deps/i18next.js?v=d584b076:207
+[  303650ms] [LOG] i18next::translator: missingKey en-US translation panels.sanctionsPressure panels.sanctionsPressure @ http://localhost:3000/node_modules/.vite/deps/i18next.js?v=d584b076:207
+[  303650ms] [LOG] i18next::translator: missingKey en-US translation panels.worldClock panels.worldClock @ http://localhost:3000/node_modules/.vite/deps/i18next.js?v=d584b076:207
+[  303650ms] [LOG] i18next::translator: missingKey en-US translation panels.latestBrief panels.latestBrief @ http://localhost:3000/node_modules/.vite/deps/i18next.js?v=d584b076:207
+[  303650ms] [LOG] i18next::translator: missingKey en-US translation panels.energyRiskOverview panels.energyRiskOverview @ http://localhost:3000/node_modules/.vite/deps/i18next.js?v=d584b076:207
+[  303650ms] [LOG] i18next::translator: missingKey en-US translation panels.chokepointStrip panels.chokepointStrip @ http://localhost:3000/node_modules/.vite/deps/i18next.js?v=d584b076:207
+[  303650ms] [LOG] i18next::translator: missingKey en-US translation panels.storageFacilityMap panels.storageFacilityMap @ http://localhost:3000/node_modules/.vite/deps/i18next.js?v=d584b076:207
+[  303650ms] [LOG] i18next::translator: missingKey en-US translation panels.fuelShortages panels.fuelShortages @ http://localhost:3000/node_modules/.vite/deps/i18next.js?v=d584b076:207
+[  303650ms] [LOG] i18next::translator: missingKey en-US translation panels.energyDisruptions panels.energyDisruptions @ http://localhost:3000/node_modules/.vite/deps/i18next.js?v=d584b076:207
+[  303650ms] [LOG] i18next::translator: missingKey en-US translation panels.hormuzTracker panels.hormuzTracker @ http://localhost:3000/node_modules/.vite/deps/i18next.js?v=d584b076:207
+[  303651ms] [LOG] i18next::translator: missingKey en-US translation panels.aiRegulation panels.aiRegulation @ http://localhost:3000/node_modules/.vite/deps/i18next.js?v=d584b076:207
+[  303651ms] [LOG] i18next::translator: missingKey en-US translation panels.stockAnalysis panels.stockAnalysis @ http://localhost:3000/node_modules/.vite/deps/i18next.js?v=d584b076:207
+[  303651ms] [LOG] i18next::translator: missingKey en-US translation panels.stockBacktest panels.stockBacktest @ http://localhost:3000/node_modules/.vite/deps/i18next.js?v=d584b076:207
+[  303651ms] [LOG] i18next::translator: missingKey en-US translation panels.dailyMarketBrief panels.dailyMarketBrief @ http://localhost:3000/node_modules/.vite/deps/i18next.js?v=d584b076:207
+[  303651ms] [LOG] i18next::translator: missingKey en-US translation panels.marketsNews panels.marketsNews @ http://localhost:3000/node_modules/.vite/deps/i18next.js?v=d584b076:207
+[  303651ms] [LOG] i18next::translator: missingKey en-US translation panels.forex panels.forex @ http://localhost:3000/node_modules/.vite/deps/i18next.js?v=d584b076:207
+[  303651ms] [LOG] i18next::translator: missingKey en-US translation panels.bonds panels.bonds @ http://localhost:3000/node_modules/.vite/deps/i18next.js?v=d584b076:207
+[  303651ms] [LOG] i18next::translator: missingKey en-US translation panels.commoditiesNews panels.commoditiesNews @ http://localhost:3000/node_modules/.vite/deps/i18next.js?v=d584b076:207
+[  303651ms] [LOG] i18next::translator: missingKey en-US translation panels.cryptoNews panels.cryptoNews @ http://localhost:3000/node_modules/.vite/deps/i18next.js?v=d584b076:207
+[  303651ms] [LOG] i18next::translator: missingKey en-US translation panels.cryptoHeatmap panels.cryptoHeatmap @ http://localhost:3000/node_modules/.vite/deps/i18next.js?v=d584b076:207
+[  303651ms] [LOG] i18next::translator: missingKey en-US translation panels.defiTokens panels.defiTokens @ http://localhost:3000/node_modules/.vite/deps/i18next.js?v=d584b076:207
+[  303651ms] [LOG] i18next::translator: missingKey en-US translation panels.aiTokens panels.aiTokens @ http://localhost:3000/node_modules/.vite/deps/i18next.js?v=d584b076:207
+[  303651ms] [LOG] i18next::translator: missingKey en-US translation panels.otherTokens panels.otherTokens @ http://localhost:3000/node_modules/.vite/deps/i18next.js?v=d584b076:207
+[  303651ms] [LOG] i18next::translator: missingKey en-US translation panels.centralbanks panels.centralbanks @ http://localhost:3000/node_modules/.vite/deps/i18next.js?v=d584b076:207
+[  303651ms] [LOG] i18next::translator: missingKey en-US translation panels.economicNews panels.economicNews @ http://localhost:3000/node_modules/.vite/deps/i18next.js?v=d584b076:207
+[  303651ms] [LOG] i18next::translator: missingKey en-US translation panels.macroTiles panels.macroTiles @ http://localhost:3000/node_modules/.vite/deps/i18next.js?v=d584b076:207
+[  303651ms] [LOG] i18next::translator: missingKey en-US translation panels.aaiiSentiment panels.aaiiSentiment @ http://localhost:3000/node_modules/.vite/deps/i18next.js?v=d584b076:207
+[  303651ms] [LOG] i18next::translator: missingKey en-US translation panels.fsi panels.fsi @ http://localhost:3000/node_modules/.vite/deps/i18next.js?v=d584b076:207
+[  303652ms] [LOG] i18next::translator: missingKey en-US translation panels.yieldCurve panels.yieldCurve @ http://localhost:3000/node_modules/.vite/deps/i18next.js?v=d584b076:207
+[  303652ms] [LOG] i18next::translator: missingKey en-US translation panels.earningsCalendar panels.earningsCalendar @ http://localhost:3000/node_modules/.vite/deps/i18next.js?v=d584b076:207
+[  303652ms] [LOG] i18next::translator: missingKey en-US translation panels.economicCalendar panels.economicCalendar @ http://localhost:3000/node_modules/.vite/deps/i18next.js?v=d584b076:207
+[  303652ms] [LOG] i18next::translator: missingKey en-US translation panels.cotPositioning panels.cotPositioning @ http://localhost:3000/node_modules/.vite/deps/i18next.js?v=d584b076:207
+[  303652ms] [LOG] i18next::translator: missingKey en-US translation panels.derivatives panels.derivatives @ http://localhost:3000/node_modules/.vite/deps/i18next.js?v=d584b076:207
+[  303652ms] [LOG] i18next::translator: missingKey en-US translation panels.fintech panels.fintech @ http://localhost:3000/node_modules/.vite/deps/i18next.js?v=d584b076:207
+[  303652ms] [LOG] i18next::translator: missingKey en-US translation panels.institutional panels.institutional @ http://localhost:3000/node_modules/.vite/deps/i18next.js?v=d584b076:207
+[  303652ms] [LOG] i18next::translator: missingKey en-US translation panels.analysis panels.analysis @ http://localhost:3000/node_modules/.vite/deps/i18next.js?v=d584b076:207
+[  303652ms] [LOG] i18next::translator: missingKey en-US translation panels.gccNews panels.gccNews @ http://localhost:3000/node_modules/.vite/deps/i18next.js?v=d584b076:207
+[  303652ms] [LOG] i18next::translator: missingKey en-US translation panels.forecast panels.forecast @ http://localhost:3000/node_modules/.vite/deps/i18next.js?v=d584b076:207
+[  303652ms] [LOG] i18next::translator: missingKey en-US translation panels.militaryCorrelation panels.militaryCorrelation @ http://localhost:3000/node_modules/.vite/deps/i18next.js?v=d584b076:207
+[  303652ms] [LOG] i18next::translator: missingKey en-US translation panels.escalationCorrelation panels.escalationCorrelation @ http://localhost:3000/node_modules/.vite/deps/i18next.js?v=d584b076:207
+[  303652ms] [LOG] i18next::translator: missingKey en-US translation panels.economicCorrelation panels.economicCorrelation @ http://localhost:3000/node_modules/.vite/deps/i18next.js?v=d584b076:207
+[  303652ms] [LOG] i18next::translator: missingKey en-US translation panels.disasterCorrelation panels.disasterCorrelation @ http://localhost:3000/node_modules/.vite/deps/i18next.js?v=d584b076:207
+[  303652ms] [LOG] i18next::translator: missingKey en-US translation panels.chatAnalyst panels.chatAnalyst @ http://localhost:3000/node_modules/.vite/deps/i18next.js?v=d584b076:207
+[  303652ms] [LOG] i18next::translator: missingKey en-US translation panels.diseaseOutbreaks panels.diseaseOutbreaks @ http://localhost:3000/node_modules/.vite/deps/i18next.js?v=d584b076:207
+[  303652ms] [LOG] i18next::translator: missingKey en-US translation panels.socialVelocity panels.socialVelocity @ http://localhost:3000/node_modules/.vite/deps/i18next.js?v=d584b076:207
+[  303653ms] [LOG] i18next::translator: missingKey en-US translation panels.defensePatents panels.defensePatents @ http://localhost:3000/node_modules/.vite/deps/i18next.js?v=d584b076:207
+[  303653ms] [LOG] i18next::translator: missingKey en-US translation panels.radiationWatch panels.radiationWatch @ http://localhost:3000/node_modules/.vite/deps/i18next.js?v=d584b076:207
+[  303653ms] [LOG] i18next::translator: missingKey en-US translation panels.thermalEscalation panels.thermalEscalation @ http://localhost:3000/node_modules/.vite/deps/i18next.js?v=d584b076:207
+[  303653ms] [LOG] i18next::translator: missingKey en-US translation panels.nationalDebt panels.nationalDebt @ http://localhost:3000/node_modules/.vite/deps/i18next.js?v=d584b076:207
+[  303653ms] [LOG] i18next::translator: missingKey en-US translation panels.crossSourceSignals panels.crossSourceSignals @ http://localhost:3000/node_modules/.vite/deps/i18next.js?v=d584b076:207
+[  303653ms] [LOG] i18next::translator: missingKey en-US translation panels.regionalIntelligence panels.regionalIntelligence @ http://localhost:3000/node_modules/.vite/deps/i18next.js?v=d584b076:207
+[  303733ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:3000/data/countries.geojson:0
+[  303733ms] [WARNING] [country-geometry] Failed to load countries.geojson: Error: HTTP 404
+    at http://localhost:3000/src/services/country-geometry.ts:200:15
+    at async ensureLoaded (http://localhost:3000/src/services/country-geometry.ts:224:3)
+    at async preloadCountryGeometry (http://localhost:3000/src/services/country-geometry.ts:227:3)
+    at async App.init (http://localhost:3000/src/App.ts:928:5) @ http://localhost:3000/src/services/country-geometry.ts:220
+[  303739ms] [WARNING] [clerk] getClerkToken: no session (clerkInstance=false, user=false) @ http://localhost:3000/src/services/clerk.ts:127
+[  303749ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:3000/favico/indonesia/favicon-32x32.png:0
+[  303796ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:3000/src/services/forecast.ts:0
+[  303797ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:3000/src/services/oref-locations.ts:0
+[  303797ms] [WARNING] [OREF] Failed to load location translations, will retry @ http://localhost:3000/src/services/oref-alerts.ts:19
+[  303846ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:3000/api/news/v1/list-feed-digest?variant=indonesia&lang=en:0
+[  303847ms] [WARNING] [News] Digest fetch failed, using fallback: Error: HTTP 404
+    at DataLoaderManager.tryFetchDigest (http://localhost:3000/src/app/data-loader.ts:296:27)
+    at async DataLoaderManager.loadNews (http://localhost:3000/src/app/data-loader.ts:916:20)
+    at async runGuarded (http://localhost:3000/src/app/data-loader.ts:357:9)
+    at async Promise.allSettled (index 0)
+    at async DataLoaderManager.loadAllData (http://localhost:3000/src/app/data-loader.ts:516:23)
+    at async Promise.all (index 0)
+    at async App.init (http://localhost:3000/src/App.ts:931:5) @ http://localhost:3000/src/app/data-loader.ts:304
+[  303847ms] [WARNING] [News] Digest missing for "politics", limited per-feed fallback disabled @ http://localhost:3000/src/app/data-loader.ts:848
+[  303848ms] [WARNING] [News] Digest missing for "gov", limited per-feed fallback disabled @ http://localhost:3000/src/app/data-loader.ts:848
+[  303848ms] [WARNING] [News] Digest missing for "markets", limited per-feed fallback disabled @ http://localhost:3000/src/app/data-loader.ts:848
+[  303848ms] [WARNING] [News] Digest missing for "tech", limited per-feed fallback disabled @ http://localhost:3000/src/app/data-loader.ts:848
+[  303848ms] [WARNING] [News] Digest missing for "disasters", limited per-feed fallback disabled @ http://localhost:3000/src/app/data-loader.ts:848
+[  303848ms] [WARNING] [News] Digest missing for "commodities", limited per-feed fallback disabled @ http://localhost:3000/src/app/data-loader.ts:848
+[  303851ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:3000/api/intelligence/v1/list-security-advisories:0
+[  303909ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:3000/api/bootstrap?keys=spending:0
+[  303935ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:3000/api/gpsjam:0
+[  303975ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:3000/api/telegram-feed?limit=50:0
+[  303975ms] [ERROR] [App] Telegram intel fetch failed: Error: Telegram feed 404
+    at fetchTelegramFeed (http://localhost:3000/src/services/telegram-intel.ts:22:22)
+    at async DataLoaderManager.loadTelegramIntel (http://localhost:3000/src/app/data-loader.ts:2937:22)
+    at async Promise.allSettled (index 10)
+    at async DataLoaderManager.loadIntelligenceSignals (http://localhost:3000/src/app/data-loader.ts:1932:5)
+    at async runGuarded (http://localhost:3000/src/app/data-loader.ts:357:9) @ http://localhost:3000/src/app/data-loader.ts:2939
+[  303979ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:3000/api/health/v1/list-disease-outbreaks:0
+[  303981ms] [WARNING] [SecurityAdvisories] RPC failed: ApiError: Request failed with status 404
+    at IntelligenceServiceClient.handleError (http://localhost:3000/src/generated/client/worldmonitor/intelligence/v1/service_client.ts:549:11)
+    at async loadAdvisoriesFromServer (http://localhost:3000/src/services/security-advisories.ts:37:18)
+    at async DataLoaderManager.loadSecurityAdvisories (http://localhost:3000/src/app/data-loader.ts:2867:22)
+    at async Promise.allSettled (index 9)
+    at async DataLoaderManager.loadIntelligenceSignals (http://localhost:3000/src/app/data-loader.ts:1932:5)
+    at async runGuarded (http://localhost:3000/src/app/data-loader.ts:357:9) @ http://localhost:3000/src/services/security-advisories.ts:45
+[  304019ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:3000/api/intelligence/v1/get-social-velocity:0
+[  304019ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:3000/api/market/v1/list-market-quotes?symbols=%5EGSPC&symbols=%5EDJI&symbols=%5EIXIC&symbols=AAPL&symbols=MSFT&symbols=NVDA&symbols=GOOGL&symbols=AMZN&symbols=META&symbols=BRK-B&symbols=TSM&symbols=LLY&symbols=TSLA&symbols=AVGO&symbols=WMT&symbols=JPM&symbols=V&symbols=UNH&symbols=NVO&symbols=XOM&symbols=MA&symbols=ORCL&symbols=PG&symbols=COST&symbols=JNJ&symbols=HD&symbols=NFLX&symbols=BAC&symbols=%5ENSEI&symbols=%5EBSESN&symbols=RELIANCE.NS&symbols=TCS.NS&symbols=HDFCBANK.NS&symbols=ICICIBANK.NS&symbols=BHARTIARTL.NS&symbols=INFY.NS&symbols=SBIN.NS&symbols=LICI.NS&symbols=ITC.NS&symbols=HINDUNILVR.NS&symbols=LT.NS&symbols=BAJFINANCE.NS&symbols=ADANIENT.NS&symbols=SUNPHARMA.NS&symbols=TITAN.NS&symbols=M%26M.NS&symbols=TATASTEEL.NS&symbols=KOTAKBANK.NS:0
+[  304055ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:3000/api/prediction/v1/list-prediction-markets?page_size=50&category=politics:0
+[  304058ms] Failed to execute 'importScripts' on 'WorkerGlobalScope': The script at 'http://localhost:3000/mapbox-gl-rtl-text.min.js' failed to load.
+[  304103ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:3000/api/infrastructure/v1/list-internet-outages:0
+[  304121ms] [ERROR] WebSocket connection to 'ws://localhost:3000/' failed: Connection closed before receiving a handshake response @ http://localhost:3000/@vite/client:1034
+[  304156ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:3000/api/conflict/v1/list-acled-events:0
+[  304169ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:3000/api/conflict/v1/get-humanitarian-summary-batch:0
+[  304186ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:3000/api/conflict/v1/list-ucdp-events:0
+[  304188ms] [ERROR] [Market Quotes] Failed: ApiError: Request failed with status 404 @ http://localhost:3000/src/utils/circuit-breaker.ts:298
+[  304190ms] [ERROR] [Polymarket] Failed: ApiError: Request failed with status 404 @ http://localhost:3000/src/utils/circuit-breaker.ts:298
+[  304245ms] [ERROR] [Internet Outages] Failed: ApiError: Request failed with status 404 @ http://localhost:3000/src/utils/circuit-breaker.ts:298
+[  304251ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:3000/api/military/v1/list-military-flights?ne_lat=46&ne_lon=143&sw_lat=10&sw_lon=107&operator=&aircraft_type=:0
+[  304254ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:3000/api/military/v1/list-military-flights?ne_lat=85&ne_lon=57&sw_lat=13&sw_lon=-10&operator=&aircraft_type=:0
+[  304271ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:3000/api/displacement/v1/get-displacement-summary?flow_limit=50:0
+[  304273ms] [ERROR] [ACLED Conflicts] Failed: ApiError: Request failed with status 404 @ http://localhost:3000/src/utils/circuit-breaker.ts:298
+[  304292ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:3000/api/climate/v1/list-climate-anomalies:0
+[  304306ms] [ERROR] [UCDP Events] Failed: ApiError: Request failed with status 404 @ http://localhost:3000/src/utils/circuit-breaker.ts:298
+[  304324ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:3000/api/seismology/v1/list-earthquakes:0
+[  304358ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:3000/api/natural/v1/list-natural-events?days=30:0
+[  304384ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:3000/api/radiation/v1/list-radiation-observations?max_items=18:0
+[  304386ms] [ERROR] [Military Flight Tracking] Failed: Error: No flights returned — upstream may be down @ http://localhost:3000/src/utils/circuit-breaker.ts:298
+[  304388ms] [ERROR] [UNHCR Displacement] Failed: ApiError: Request failed with status 404 @ http://localhost:3000/src/utils/circuit-breaker.ts:298
+[  304414ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:3000/api/thermal/v1/list-thermal-escalations?max_items=12:0
+[  304422ms] [ERROR] [Climate Anomalies] Failed: ApiError: Request failed with status 404 @ http://localhost:3000/src/utils/circuit-breaker.ts:298
+[  304433ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:3000/api/bootstrap?keys=weatherAlerts:0
+[  304433ms] [ERROR] [NWS Weather] Failed: Error: Bootstrap fetch failed: 404 @ http://localhost:3000/src/utils/circuit-breaker.ts:298
+[  304440ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:3000/api/intelligence/v1/list-cross-source-signals:0
+[  304444ms] [ERROR] [Seismology] Failed: ApiError: Request failed with status 404 @ http://localhost:3000/src/utils/circuit-breaker.ts:298
+[  304458ms] [ERROR] [NaturalEvents] Failed: ApiError: Request failed with status 404 @ http://localhost:3000/src/utils/circuit-breaker.ts:298
+[  304460ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:3000/api/economic/v1/get-fred-series-batch:0
+[  304462ms] [ERROR] [Radiation Watch] Failed: ApiError: Request failed with status 404 @ http://localhost:3000/src/utils/circuit-breaker.ts:298
+[  304486ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:3000/api/economic/v1/get-bis-policy-rates:0
+[  304495ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:3000/api/economic/v1/get-bis-exchange-rates:0
+[  304514ms] [ERROR] [Thermal Escalation] Failed: ApiError: Request failed with status 404 @ http://localhost:3000/src/utils/circuit-breaker.ts:298
+[  304516ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:3000/api/economic/v1/get-bis-credit:0
+[  304518ms] [ERROR] [Cross-Source Signals] Failed: ApiError: Request failed with status 404 @ http://localhost:3000/src/utils/circuit-breaker.ts:298
+[  304545ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:3000/api/economic/v1/get-bls-series?series_id=USPRIV&limit=60:0
+[  304553ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:3000/api/economic/v1/get-bls-series?series_id=ECIALLCIV&limit=60:0
+[  304576ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:3000/api/economic/v1/get-energy-prices:0
+[  304579ms] [ERROR] [BIS Policy] Failed: ApiError: Request failed with status 404 @ http://localhost:3000/src/utils/circuit-breaker.ts:298
+[  304597ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:3000/api/economic/v1/get-crude-inventories:0
+[  304597ms] [ERROR] [BIS EER] Failed: ApiError: Request failed with status 404 @ http://localhost:3000/src/utils/circuit-breaker.ts:298
+[  304602ms] [ERROR] [BIS Credit] Failed: ApiError: Request failed with status 404 @ http://localhost:3000/src/utils/circuit-breaker.ts:298
+[  304631ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:3000/api/economic/v1/get-nat-gas-storage:0
+[  304651ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:3000/api/economic/v1/get-eu-gas-storage:0
+[  304673ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:3000/api/economic/v1/get-oil-stocks-analysis:0
+[  304676ms] [ERROR] [EIA Energy] Failed: ApiError: Request failed with status 404 @ http://localhost:3000/src/utils/circuit-breaker.ts:298
+[  304697ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:3000/api/sanctions/v1/list-sanctions-pressure?max_items=30:0
+[  304697ms] [ERROR] [EIA Crude Inventories] Failed: ApiError: Request failed with status 404 @ http://localhost:3000/src/utils/circuit-breaker.ts:298
+[  304727ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:3000/api/oref-alerts:0
+[  304738ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:3000/node_modules/.vite/deps/webgl-device-T75T6R4X.js?v=d584b076:0
+[  304738ms] [WARNING] [DeckGLMap] Render error (non-fatal): Failed to fetch dynamically imported module: http://localhost:3000/node_modules/.vite/deps/webgl-device-T75T6R4X.js?v=d584b076 @ http://localhost:3000/src/components/DeckGLMap.ts:726
+[  304739ms] Failed to fetch dynamically imported module: http://localhost:3000/node_modules/.vite/deps/webgl-device-T75T6R4X.js?v=d584b076
+[  304741ms] [ERROR] [EIA Nat Gas Storage] Failed: ApiError: Request failed with status 404 @ http://localhost:3000/src/utils/circuit-breaker.ts:298
+[  304761ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:3000/favico/indonesia/favicon-16x16.png:0
+[  304761ms] [ERROR] [EU Gas Storage] Failed: ApiError: Request failed with status 404 @ http://localhost:3000/src/utils/circuit-breaker.ts:298
+[  304768ms] [ERROR] [IEA Oil Stocks Analysis] Failed: ApiError: Request failed with status 404 @ http://localhost:3000/src/utils/circuit-breaker.ts:298
+[  304811ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:3000/api/telegram-feed?limit=50:0
+[  304811ms] [ERROR] [App] Telegram intel fetch failed: Error: Telegram feed 404
+    at fetchTelegramFeed (http://localhost:3000/src/services/telegram-intel.ts:22:22)
+    at async DataLoaderManager.loadTelegramIntel (http://localhost:3000/src/app/data-loader.ts:2937:22)
+    at async http://localhost:3000/src/App.ts:189:11
+    at async Promise.allSettled (index 0)
+    at async App.primeVisiblePanelData (http://localhost:3000/src/App.ts:374:7)
+    at async Promise.all (index 1)
+    at async App.init (http://localhost:3000/src/App.ts:931:5) @ http://localhost:3000/src/app/data-loader.ts:2939
+[  304831ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:3000/api/conflict/v1/list-ucdp-events:0
+[  304831ms] [ERROR] [Sanctions Pressure] Failed: ApiError: Request failed with status 404 @ http://localhost:3000/src/utils/circuit-breaker.ts:298
+[  304847ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:3000/api/infrastructure/v1/list-internet-traffic-anomalies:0
+[  304872ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:3000/api/infrastructure/v1/list-internet-ddos-attacks:0
+[  304894ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:3000/api/conflict/v1/get-humanitarian-summary?country_code=US:0
+[  304926ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:3000/api/conflict/v1/get-humanitarian-summary?country_code=RU:0
+[  304927ms] [ERROR] [UCDP Events] Failed: ApiError: Request failed with status 404 @ http://localhost:3000/src/utils/circuit-breaker.ts:298
+[  304927ms] [WARNING] [UCDP Events] On cooldown for 300s after 2 failures @ http://localhost:3000/src/utils/circuit-breaker.ts:237
+[  304953ms] [ERROR] [Traffic Anomalies] Failed: ApiError: Request failed with status 404 @ http://localhost:3000/src/utils/circuit-breaker.ts:298
+[  304957ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:3000/api/conflict/v1/get-humanitarian-summary?country_code=CN:0
+[  305036ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:3000/api/conflict/v1/get-humanitarian-summary?country_code=UA:0
+[  305037ms] [ERROR] [DDoS Attacks] Failed: ApiError: Request failed with status 404 @ http://localhost:3000/src/utils/circuit-breaker.ts:298
+[  305045ms] [WARNING] [TemporalBaseline] Update failed: TypeError: Failed to fetch
+    at window.fetch (http://localhost:3000/src/services/runtime.ts:655:18)
+    at async InfrastructureServiceClient.recordBaselineSnapshot (http://localhost:3000/src/generated/client/worldmonitor/infrastructure/v1/service_client.ts:162:18)
+    at async reportMetrics (http://localhost:3000/src/services/temporal-baseline.ts:75:5) @ http://localhost:3000/src/services/temporal-baseline.ts:76
+[  305046ms] [WARNING] [TemporalBaseline] Check failed: TypeError: Failed to fetch
+    at window.fetch (http://localhost:3000/src/services/runtime.ts:655:18)
+    at async InfrastructureServiceClient.getTemporalBaseline (http://localhost:3000/src/generated/client/worldmonitor/infrastructure/v1/service_client.ts:84:18)
+    at async checkAnomaly (http://localhost:3000/src/services/temporal-baseline.ts:82:18)
+    at async Promise.allSettled (index 0)
+    at async updateAndCheck (http://localhost:3000/src/services/temporal-baseline.ts:103:19) @ http://localhost:3000/src/services/temporal-baseline.ts:93
+[  305046ms] [WARNING] [TemporalBaseline] Check failed: TypeError: Failed to fetch
+    at window.fetch (http://localhost:3000/src/services/runtime.ts:655:18)
+    at async InfrastructureServiceClient.getTemporalBaseline (http://localhost:3000/src/generated/client/worldmonitor/infrastructure/v1/service_client.ts:84:18)
+    at async checkAnomaly (http://localhost:3000/src/services/temporal-baseline.ts:82:18)
+    at async Promise.allSettled (index 1)
+    at async updateAndCheck (http://localhost:3000/src/services/temporal-baseline.ts:103:19) @ http://localhost:3000/src/services/temporal-baseline.ts:93
+[  305046ms] [ERROR] [HDX HAPI:IR] Failed: TypeError: Failed to fetch @ http://localhost:3000/src/utils/circuit-breaker.ts:298
+[  305046ms] [ERROR] [HDX HAPI:US] Failed: TypeError: Failed to fetch @ http://localhost:3000/src/utils/circuit-breaker.ts:298
+[  305046ms] [ERROR] [USNI Fleet Tracker] Failed: TypeError: Failed to fetch @ http://localhost:3000/src/utils/circuit-breaker.ts:298
+[  305046ms] [ERROR] [HDX HAPI:RU] Failed: TypeError: Failed to fetch @ http://localhost:3000/src/utils/circuit-breaker.ts:298
+[  305046ms] [ERROR] [HDX HAPI:UA] Failed: TypeError: Failed to fetch @ http://localhost:3000/src/utils/circuit-breaker.ts:298
+[  305046ms] [ERROR] [HDX HAPI:CN] Failed: TypeError: Failed to fetch @ http://localhost:3000/src/utils/circuit-breaker.ts:298
+[  305107ms] [VERBOSE] [DOM] Input elements should have autocomplete attributes (suggested: "current-password"): (More info: https://goo.gl/9p2vKq) %o @ http://localhost:3000/register/seller:0
+[  305161ms] [INFO] %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_f3530cac._.js:2297
+[  305213ms] [LOG] [HMR] connected @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_f3530cac._.js:2297
+[  342452ms] [ERROR] Executing inline script violates the following Content Security Policy directive 'script-src 'self' 'sha256-LnMFPWZxTgVOr2VYwIh9mhQ3l/l3+a3SfNOLERnuHfY=' 'sha256-4Z2xtr1B9QQugoojE/nbpOViG+8l2B7CZVlKgC78AeQ=' 'sha256-903UI9my1I7mqHoiVeZSc56yd50YoRJTB2269QqL76w=' 'sha256-EytE6o1N8rwzpVFMrF+WvBZr2y5UhFLw79o1/4VqS0s=' 'wasm-unsafe-eval' https://www.youtube.com https://static.cloudflareinsights.com https://vercel.live https://challenges.cloudflare.com https://abacus.worldmonitor.app https://*.clerk.accounts.dev https://*.dodopayments.com https://js.stripe.com'. Either the 'unsafe-inline' keyword, a hash ('sha256-LuDp9a6YTEBu5grwJa/9mHs7S0Q6G43hE6XZCsokUPQ='), or a nonce ('nonce-...') is required to enable inline execution. The action has been blocked. @ http://localhost:3000/register/seller:124
+[  345728ms] [LOG] [vite] server connection lost. Polling for restart... @ http://localhost:3000/@vite/client:963
+[  345732ms] [ERROR] WebSocket connection to 'ws://localhost:3000/' failed: Connection closed before receiving a handshake response @ http://localhost:3000/@vite/client:1034
+[  346735ms] [ERROR] WebSocket connection to 'ws://localhost:3000/' failed: Connection closed before receiving a handshake response @ http://localhost:3000/@vite/client:1034
+[  347742ms] [ERROR] WebSocket connection to 'ws://localhost:3000/' failed: Connection closed before receiving a handshake response @ http://localhost:3000/@vite/client:1034
+[  348746ms] [ERROR] WebSocket connection to 'ws://localhost:3000/' failed: Connection closed before receiving a handshake response @ http://localhost:3000/@vite/client:1034
+[  349752ms] [ERROR] WebSocket connection to 'ws://localhost:3000/' failed: Connection closed before receiving a handshake response @ http://localhost:3000/@vite/client:1034
+[  350756ms] [ERROR] WebSocket connection to 'ws://localhost:3000/' failed: Connection closed before receiving a handshake response @ http://localhost:3000/@vite/client:1034
+[  351758ms] [ERROR] WebSocket connection to 'ws://localhost:3000/' failed: Connection closed before receiving a handshake response @ http://localhost:3000/@vite/client:1034
+[  352422ms] [INFO] %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_f3530cac._.js:2297
+[  352428ms] [LOG] %c%s%c Query: select "vendors"."id", "vendors"."company_name", "users"."email", "users"."phone", "vendors"."location", "vendors"."status", "vendors"."active_projects", "vendors"."revenue", "vendors"."created_at", "vendors"."industry", "vendors"."tier" from "vendors" inner join "users" on "vendors"."user_id" = "users"."id" order by "vendors"."created_at" desc background: #e6e6e6;background: light-dark(rgba(0,0,0,0.1), rgba(255,255,255,0.25));color: #000000;color: light-dark(#000000, #ffffff);border-radius: 2px  Server   @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_f3530cac._.js:2297
+[  352430ms] [LOG] %c%s%c Query: select "id", "session_token", "user_id", "ip_address", "user_agent", "expires", "created_at", "updated_at" from "sessions" where "sessions"."session_token" = $1 -- params: ["l7iQZcks9Hs3xvaJ5xbx6jWGxnEAmd05"] background: #e6e6e6;background: light-dark(rgba(0,0,0,0.1), rgba(255,255,255,0.25));color: #000000;color: light-dark(#000000, #ffffff);border-radius: 2px  Server   @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_f3530cac._.js:2297
+[  352430ms] [LOG] %c%s%c Query: select "id", "email", "password", "name", "phone", "location", "role", "email_verified", "image", "preferences", "created_at", "updated_at" from "users" where "users"."id" = $1 -- params: ["fda03028-2ec9-4fe5-860e-b685d01bd5a3"] background: #e6e6e6;background: light-dark(rgba(0,0,0,0.1), rgba(255,255,255,0.25));color: #000000;color: light-dark(#000000, #ffffff);border-radius: 2px  Server   @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_f3530cac._.js:2297
+[  352430ms] [LOG] %c%s%c Query: select "users"."id", "users"."email", "users"."password", "users"."name", "users"."phone", "users"."location", "users"."role", "users"."email_verified", "users"."image", "users"."preferences", "users"."created_at", "users"."updated_at", "users_seller"."data" as "seller", "users_vendor"."data" as "vendor", "users_adminTeam"."data" as "adminTeam" from "users" "users" left join lateral (select json_build_array("users_seller"."id", "users_seller"."user_id", "users_seller"."company_name", "users_seller"."industry", "users_seller"."company_size", "users_seller"."website", "users_seller"."description", "users_seller"."location", "users_seller"."logo_url", "users_seller"."status", "users_seller"."tier", "users_seller"."deals_closed", "users_seller"."revenue", "users_seller"."created_at", "users_seller"."updated_at") as "data" from (select * from "sellers" "users_seller" where "users_seller"."user_id" = "users"."id" limit $1) "users_seller") "users_seller" on true left join lateral (select json_build_array("users_vendor"."id", "users_vendor"."user_id", "users_vendor"."company_name", "users_vendor"."industry", "users_vendor"."company_size", "users_vendor"."website", "users_vendor"."description", "users_vendor"."location", "users_vendor"."logo_url", "users_vendor"."status", "users_vendor"."tier", "users_vendor"."active_projects", "users_vendor"."revenue", "users_vendor"."created_at", "users_vendor"."updated_at") as "data" from (select * from "vendors" "users_vendor" where "users_vendor"."user_id" = "users"."id" limit $2) "users_vendor") "users_vendor" on true left join lateral (select json_build_array("users_adminTeam"."id", "users_adminTeam"."user_id", "users_adminTeam"."department", "users_adminTeam"."role", "users_adminTeam"."status", "users_adminTeam"."verified", "users_adminTeam"."is_active", "users_adminTeam"."created_at", "users_adminTeam"."updated_at") as "data" from (select * from "admin_team_members" "users_adminTeam" where "users_adminTeam"."user_id" = "users"."id" limit $3) "users_adminTeam") "users_adminTeam" on true where "users"."id" = $4 limit $5 -- params: [1, 1, 1, "fda03028-2ec9-4fe5-860e-b685d01bd5a3", 1] background: #e6e6e6;background: light-dark(rgba(0,0,0,0.1), rgba(255,255,255,0.25));color: #000000;color: light-dark(#000000, #ffffff);border-radius: 2px  Server   @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_f3530cac._.js:2297
+[  352431ms] [LOG] %c%s%c Query: select "id", "session_token", "user_id", "ip_address", "user_agent", "expires", "created_at", "updated_at" from "sessions" where "sessions"."session_token" = $1 -- params: ["l7iQZcks9Hs3xvaJ5xbx6jWGxnEAmd05"] background: #e6e6e6;background: light-dark(rgba(0,0,0,0.1), rgba(255,255,255,0.25));color: #000000;color: light-dark(#000000, #ffffff);border-radius: 2px  Server   @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_f3530cac._.js:2297
+[  352432ms] [LOG] %c%s%c Query: select "id", "email", "password", "name", "phone", "location", "role", "email_verified", "image", "preferences", "created_at", "updated_at" from "users" where "users"."id" = $1 -- params: ["fda03028-2ec9-4fe5-860e-b685d01bd5a3"] background: #e6e6e6;background: light-dark(rgba(0,0,0,0.1), rgba(255,255,255,0.25));color: #000000;color: light-dark(#000000, #ffffff);border-radius: 2px  Server   @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_f3530cac._.js:2297
+[  352432ms] [LOG] %c%s%c Query: select "users"."id", "users"."email", "users"."password", "users"."name", "users"."phone", "users"."location", "users"."role", "users"."email_verified", "users"."image", "users"."preferences", "users"."created_at", "users"."updated_at", "users_seller"."data" as "seller", "users_vendor"."data" as "vendor", "users_adminTeam"."data" as "adminTeam" from "users" "users" left join lateral (select json_build_array("users_seller"."id", "users_seller"."user_id", "users_seller"."company_name", "users_seller"."industry", "users_seller"."company_size", "users_seller"."website", "users_seller"."description", "users_seller"."location", "users_seller"."logo_url", "users_seller"."status", "users_seller"."tier", "users_seller"."deals_closed", "users_seller"."revenue", "users_seller"."created_at", "users_seller"."updated_at") as "data" from (select * from "sellers" "users_seller" where "users_seller"."user_id" = "users"."id" limit $1) "users_seller") "users_seller" on true left join lateral (select json_build_array("users_vendor"."id", "users_vendor"."user_id", "users_vendor"."company_name", "users_vendor"."industry", "users_vendor"."company_size", "users_vendor"."website", "users_vendor"."description", "users_vendor"."location", "users_vendor"."logo_url", "users_vendor"."status", "users_vendor"."tier", "users_vendor"."active_projects", "users_vendor"."revenue", "users_vendor"."created_at", "users_vendor"."updated_at") as "data" from (select * from "vendors" "users_vendor" where "users_vendor"."user_id" = "users"."id" limit $2) "users_vendor") "users_vendor" on true left join lateral (select json_build_array("users_adminTeam"."id", "users_adminTeam"."user_id", "users_adminTeam"."department", "users_adminTeam"."role", "users_adminTeam"."status", "users_adminTeam"."verified", "users_adminTeam"."is_active", "users_adminTeam"."created_at", "users_adminTeam"."updated_at") as "data" from (select * from "admin_team_members" "users_adminTeam" where "users_adminTeam"."user_id" = "users"."id" limit $3) "users_adminTeam") "users_adminTeam" on true where "users"."id" = $4 limit $5 -- params: [1, 1, 1, "fda03028-2ec9-4fe5-860e-b685d01bd5a3", 1] background: #e6e6e6;background: light-dark(rgba(0,0,0,0.1), rgba(255,255,255,0.25));color: #000000;color: light-dark(#000000, #ffffff);border-radius: 2px  Server   @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_f3530cac._.js:2297
+[  352432ms] [LOG] %c%s%c Query: select "id", "name", "project_id", "client_name" from "projects" order by "projects"."project_id" asc background: #e6e6e6;background: light-dark(rgba(0,0,0,0.1), rgba(255,255,255,0.25));color: #000000;color: light-dark(#000000, #ffffff);border-radius: 2px  Server   @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_f3530cac._.js:2297
+[  352439ms] [LOG] [HMR] connected @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_f3530cac._.js:2297
+[  362374ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_f3530cac._.js:2297
+[  362488ms] [LOG] [Fast Refresh] done in 216ms @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_f3530cac._.js:2297
+[  365457ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_f3530cac._.js:2297
+[  365473ms] [LOG] [Fast Refresh] done in 118ms @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_f3530cac._.js:2297
+[  369373ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_f3530cac._.js:2297
+[  369486ms] [LOG] [Fast Refresh] done in 214ms @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_f3530cac._.js:2297
+[  378767ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_f3530cac._.js:2297
+[  378880ms] [LOG] [Fast Refresh] done in 213ms @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_f3530cac._.js:2297
+[  385604ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_f3530cac._.js:2297
+[  385713ms] [LOG] [Fast Refresh] done in 210ms @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_f3530cac._.js:2297
+[  400107ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_f3530cac._.js:2297
+[  400238ms] [LOG] [Fast Refresh] done in 232ms @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_f3530cac._.js:2297
+[  416550ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_f3530cac._.js:2297
+[  416677ms] [LOG] [Fast Refresh] done in 228ms @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_f3530cac._.js:2297
+[  442449ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_f3530cac._.js:2297
+[  442562ms] [LOG] [Fast Refresh] done in 214ms @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_f3530cac._.js:2297
+[  472998ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_f3530cac._.js:2297
+[  473117ms] [LOG] [Fast Refresh] done in 220ms @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_f3530cac._.js:2297
+[  624029ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_f3530cac._.js:2297
+[  624152ms] [LOG] [Fast Refresh] done in 224ms @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_f3530cac._.js:2297
+[  647433ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_f3530cac._.js:2297
+[  647548ms] [LOG] [Fast Refresh] done in 216ms @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_f3530cac._.js:2297
+[  657178ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_f3530cac._.js:2297
+[  657294ms] [LOG] [Fast Refresh] done in 217ms @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_f3530cac._.js:2297

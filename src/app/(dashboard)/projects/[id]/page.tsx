@@ -40,6 +40,7 @@ const statusIcons: Record<MockProjectStatus, typeof CheckCircle> = {
   rejected: XCircle,
   in_progress: Clock,
   completed: CheckCircle,
+  paid: DollarSign,
   cancelled: XCircle,
 }
 

@@ -45,6 +45,7 @@ export const projectStatusEnum = pgEnum('project_status', [
   'NEED_CLARIFICATION',
   'IN_PROGRESS',
   'COMPLETED',
+  'PAID',
   'CANCELLED',
 ])
 
@@ -68,6 +69,9 @@ export const notificationTypeEnum = pgEnum('notification_type', [
   'PROJECT_ACCEPTED',
   'PROJECT_REJECTED',
   'PROJECT_CLARIFICATION',
+  'PROJECT_STARTED',
+  'PROJECT_COMPLETED',
+  'PROJECT_PAID',
   'MESSAGE_RECEIVED',
   'QUOTE_RECEIVED',
   'SELLER_REGISTRATION',
@@ -366,6 +370,27 @@ export const quotes = pgTable(
 )
 
 // ============================================================
+// PAYMENTS (Project payment tracking)
+// ============================================================
+
+export const payments = pgTable(
+  'payments',
+  {
+    id: uuid('id').defaultRandom().primaryKey(),
+    projectId: uuid('project_id')
+      .notNull()
+      .references(() => projects.id, { onDelete: 'cascade' }),
+    amount: decimal('amount', { precision: 12, scale: 2 }).notNull(),
+    currency: text('currency').default('IDR').notNull(),
+    paymentMethod: text('payment_method'),
+    notes: text('notes'),
+    paidAt: timestamp('paid_at', { withTimezone: true }).defaultNow().notNull(),
+    createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
+  },
+  (table) => [index('payments_project_id_idx').on(table.projectId)],
+)
+
+// ============================================================
 // PRODUCTS (Factory/Summon Products)
 // ============================================================
 
@@ -564,46 +589,6 @@ export const categories = pgTable(
 )
 
 // ============================================================
-// OFFER TEMPLATES (Per-category offer/quote defaults)
-// ============================================================
-
-export const offerTemplateTypeEnum = pgEnum('offer_template_type', ['FIXED', 'RANGE', 'CUSTOM'])
-
-export const offerTemplates = pgTable(
-  'offer_templates',
-  {
-    id: uuid('id').defaultRandom().primaryKey(),
-    categoryId: uuid('category_id').references(() => categories.id, { onDelete: 'set null' }),
-    name: text('name').notNull(),
-    description: text('description'),
-    defaultPricingType: offerTemplateTypeEnum('default_pricing_type').default('RANGE').notNull(),
-    defaultMinAmount: decimal('default_min_amount', { precision: 12, scale: 2 }),
-    defaultMaxAmount: decimal('default_max_amount', { precision: 12, scale: 2 }),
-    defaultCurrency: text('default_currency').default('IDR'),
-    defaultDuration: integer('default_duration').default(30),
-    defaultTerms: text('default_terms'),
-    customFields:
-      jsonb('custom_fields').$type<
-        Array<{ label: string; type: string; required: boolean; options?: string[] }>
-      >(),
-    isActive: boolean('is_active').default(true).notNull(),
-    createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
-    updatedAt: timestamp('updated_at', { withTimezone: true })
-      .defaultNow()
-      .notNull()
-      .$onUpdate(() => new Date()),
-  },
-  (table) => [index('offer_templates_category_idx').on(table.categoryId)],
-)
-
-export const offerTemplatesRelations = relations(offerTemplates, ({ one }) => ({
-  category: one(categories, {
-    fields: [offerTemplates.categoryId],
-    references: [categories.id],
-  }),
-}))
-
-// ============================================================
 // RELATIONS
 // ============================================================
 
@@ -647,6 +632,7 @@ export const projectsRelations = relations(projects, ({ one, many }) => ({
   notes: many(notes),
   comments: many(comments),
   quotes: many(quotes),
+  payments: many(payments),
 }))
 
 export const projectFilesRelations = relations(projectFiles, ({ one }) => ({
@@ -665,6 +651,10 @@ export const statusHistoryRelations = relations(statusHistory, ({ one }) => ({
 
 export const notesRelations = relations(notes, ({ one }) => ({
   project: one(projects, { fields: [notes.projectId], references: [projects.id] }),
+}))
+
+export const paymentsRelations = relations(payments, ({ one }) => ({
+  project: one(projects, { fields: [payments.projectId], references: [projects.id] }),
 }))
 
 export const quotesRelations = relations(quotes, ({ one }) => ({

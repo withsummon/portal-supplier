@@ -74,6 +74,12 @@ const STATUS_CONFIG: Record<
     background: 'var(--neutral-100)',
     icon: XCircle,
   },
+  paid: {
+    label: 'Paid',
+    color: 'var(--color-success)',
+    background: 'var(--color-success-bg)',
+    icon: CheckCircle,
+  },
 }
 
 export default function AdminProjectsPageClient({
@@ -251,7 +257,7 @@ export default function AdminProjectsPageClient({
                     <td>{priorityLabels[project.priority] ?? project.priority}</td>
                     <td>
                       <span
-                        className={`badge badge-${project.status === 'accepted' ? 'accepted' : project.status === 'rejected' ? 'rejected' : 'submitted'}`}
+                        className={`badge badge-${project.status === 'accepted' || project.status === 'paid' ? 'accepted' : project.status === 'rejected' ? 'rejected' : 'submitted'}`}
                       >
                         <Icon size={12} />
                         {status.label}
@@ -319,7 +325,17 @@ export default function AdminProjectsPageClient({
                 ? 'Accept Project'
                 : actionModal.action === 'reject'
                   ? 'Reject Project'
-                  : 'Request Clarification'}
+                  : actionModal.action === 'clarify'
+                    ? 'Request Clarification'
+                    : actionModal.action === 'start'
+                      ? 'Start Project'
+                      : actionModal.action === 'complete'
+                        ? 'Mark Complete'
+                        : actionModal.action === 'lunas'
+                          ? 'Mark Lunas (Paid)'
+                          : actionModal.action === 'acceptQuote'
+                            ? 'Accept Quote'
+                            : 'Reject Quote'}
             </h2>
             <p
               style={{
@@ -328,12 +344,22 @@ export default function AdminProjectsPageClient({
                 marginBottom: 'var(--sp-4)',
               }}
             >
-              This note will be stored in project history and sent to the seller.
+              {actionModal.action === 'acceptQuote'
+                ? 'Accepting this quote will notify the vendor to begin work.'
+                : actionModal.action === 'rejectQuote'
+                  ? 'Rejecting this quote will notify the vendor.'
+                  : actionModal.action === 'start'
+                    ? 'This will move the project to In Progress status and notify the vendor.'
+                    : actionModal.action === 'complete'
+                      ? 'Marking complete will notify the seller and vendor.'
+                      : actionModal.action === 'lunas'
+                        ? 'This will mark the project as fully paid (lunas) and notify all parties.'
+                        : 'This note will be stored in project history and sent to the seller.'}
             </p>
             <textarea
               className="input input-textarea"
               rows={6}
-              placeholder="Add a review note..."
+              placeholder="Add a note (optional for some actions)..."
               value={actionNote}
               onChange={(event) => setActionNote(event.target.value)}
             />

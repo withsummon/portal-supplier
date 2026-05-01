@@ -32,6 +32,7 @@ export type MockProjectStatus =
   | 'need_clarification'
   | 'in_progress'
   | 'completed'
+  | 'paid'
   | 'cancelled'
 
 export type MockQuoteStatus = 'pending' | 'accepted' | 'rejected' | 'withdrawn'
@@ -46,6 +47,7 @@ export const mockToDbStatus: Record<MockProjectStatus, string> = {
   need_clarification: 'NEED_CLARIFICATION',
   in_progress: 'IN_PROGRESS',
   completed: 'COMPLETED',
+  paid: 'PAID',
   cancelled: 'CANCELLED',
 }
 
@@ -57,6 +59,7 @@ export const dbToMockStatus: Record<string, MockProjectStatus> = {
   NEED_CLARIFICATION: 'need_clarification',
   IN_PROGRESS: 'in_progress',
   COMPLETED: 'completed',
+  PAID: 'paid',
   CANCELLED: 'cancelled',
 }
 
@@ -97,6 +100,7 @@ export const projectStatusLabels: Record<string, string> = {
   need_clarification: 'Need Clarification',
   in_progress: 'In Progress',
   completed: 'Completed',
+  paid: 'Paid',
   cancelled: 'Cancelled',
   SUBMITTED: 'Submitted',
   UNDER_REVIEW: 'Under Review',
@@ -105,6 +109,7 @@ export const projectStatusLabels: Record<string, string> = {
   NEED_CLARIFICATION: 'Need Clarification',
   IN_PROGRESS: 'In Progress',
   COMPLETED: 'Completed',
+  PAID: 'Paid',
   CANCELLED: 'Cancelled',
 }
 

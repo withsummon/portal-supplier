@@ -1,0 +1,83 @@
+{
+  "timestamp": 1777572950313,
+  "users": [
+    {
+      "email": "seller_e2e_1777572950313@test.com",
+      "password": "Seller123!@#",
+      "role": "SELLER",
+      "approved": true
+    },
+    {
+      "email": "seller_flow2_1777572950313@test.com",
+      "password": "Seller123!@#",
+      "role": "SELLER",
+      "approved": true
+    },
+    {
+      "email": "seller_flow3_1777572950313@test.com",
+      "password": "Seller123!@#",
+      "role": "SELLER",
+      "approved": true
+    },
+    {
+      "email": "seller_flow5_1777572950313@test.com",
+      "password": "Seller123!@#",
+      "role": "SELLER",
+      "approved": true
+    },
+    {
+      "email": "seller_wrongpwd_1777572950313@test.com",
+      "password": "Seller123!@#",
+      "role": "SELLER",
+      "approved": true
+    },
+    {
+      "email": "seller_wrongrole_1777572950313@test.com",
+      "password": "Seller123!@#",
+      "role": "SELLER",
+      "approved": true
+    },
+    {
+      "email": "vendor_e2e_1777572950313@test.com",
+      "password": "Vendor123!@#",
+      "role": "VENDOR",
+      "approved": true
+    },
+    {
+      "email": "vendor_flow2_1777572950313@test.com",
+      "password": "Vendor123!@#",
+      "role": "VENDOR",
+      "approved": true
+    },
+    {
+      "email": "vendor_flow3_1777572950313@test.com",
+      "password": "Vendor123!@#",
+      "role": "VENDOR",
+      "approved": true
+    },
+    {
+      "email": "vendor_flow5_1777572950313@test.com",
+      "password": "Vendor123!@#",
+      "role": "VENDOR",
+      "approved": true
+    },
+    {
+      "email": "seller_reject_1777572950313@test.com",
+      "password": "Seller123!@#",
+      "role": "SELLER",
+      "approved": false
+    },
+    {
+      "email": "vendor_reject_1777572950313@test.com",
+      "password": "Vendor123!@#",
+      "role": "VENDOR",
+      "approved": false
+    },
+    {
+      "email": "seller_dup_1777572950313@test.com",
+      "password": "Seller123!@#",
+      "role": "SELLER",
+      "approved": false
+    }
+  ]
+}
