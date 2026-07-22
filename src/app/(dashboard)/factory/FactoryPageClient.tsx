@@ -1,6 +1,8 @@
 'use client'
 
+import Image from 'next/image'
 import Link from 'next/link'
+import { createElement } from 'react'
 import { ArrowRight, Search } from 'lucide-react'
 import { getProductIcon } from '@/lib/product-icons'
 import { useFactoryProducts } from '@/hooks/use-factory-products'
@@ -133,7 +135,7 @@ export default function FactoryPageClient({ products }: { products: FactoryProdu
             style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 'var(--sp-5)' }}
           >
             {filteredProducts.map((product) => {
-              const Icon = getProductIcon(product.icon)
+              const bannerImage = product.images[0]
               return (
                 <Link
                   key={product.id}
@@ -141,7 +143,7 @@ export default function FactoryPageClient({ products }: { products: FactoryProdu
                   href={`/factory/${product.slug}`}
                   style={{
                     display: 'block',
-                    padding: 'var(--sp-6)',
+                    overflow: 'hidden',
                     textAlign: 'left',
                     cursor: 'pointer',
                     border: '1px solid var(--border-default)',
@@ -151,62 +153,96 @@ export default function FactoryPageClient({ products }: { products: FactoryProdu
                 >
                   <div
                     style={{
-                      width: '56px',
-                      height: '56px',
-                      borderRadius: 'var(--radius-lg)',
-                      background: product.iconBg,
-                      color: product.iconColor,
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      marginBottom: 'var(--sp-4)',
+                      background: 'var(--neutral-100)',
+                      height: 160,
+                      position: 'relative',
                     }}
                   >
-                    <Icon size={24} />
+                    {bannerImage ? (
+                      <Image
+                        src={bannerImage}
+                        alt={product.name}
+                        fill
+                        unoptimized
+                        style={{ objectFit: 'cover' }}
+                      />
+                    ) : (
+                      <div
+                        style={{
+                          alignItems: 'center',
+                          display: 'flex',
+                          height: '100%',
+                          justifyContent: 'center',
+                        }}
+                      >
+                        {createElement(getProductIcon(product.icon), {
+                          size: 32,
+                          style: { color: product.iconColor },
+                        })}
+                      </div>
+                    )}
                   </div>
-                  <div
-                    style={{
-                      display: 'flex',
-                      justifyContent: 'space-between',
-                      alignItems: 'center',
-                      marginBottom: 'var(--sp-2)',
-                    }}
-                  >
-                    <div style={{ fontSize: 'var(--fs-lg)', fontWeight: 'var(--fw-bold)' }}>
-                      {product.name}
-                    </div>
-                    <span className="badge badge-submitted">
-                      {product.kind === 'PORTFOLIO' ? 'Portofolio' : 'Produk'}
-                    </span>
-                  </div>
-                  <div
-                    style={{
-                      fontSize: 'var(--fs-sm)',
-                      color: 'var(--text-secondary)',
-                      marginBottom: 'var(--sp-4)',
-                    }}
-                  >
-                    {product.description}
-                  </div>
-                  <div
-                    style={{
-                      display: 'flex',
-                      justifyContent: 'flex-end',
-                      alignItems: 'center',
-                    }}
-                  >
-                    <span
+                  <div style={{ padding: 'var(--sp-5)' }}>
+                    <div
                       style={{
-                        display: 'inline-flex',
+                        width: '44px',
+                        height: '44px',
+                        borderRadius: 'var(--radius-lg)',
+                        background: product.iconBg,
+                        color: product.iconColor,
+                        display: 'flex',
                         alignItems: 'center',
-                        gap: '4px',
-                        color: 'var(--blue-600)',
-                        fontSize: 'var(--fs-xs)',
-                        fontWeight: 'var(--fw-semibold)',
+                        justifyContent: 'center',
+                        marginBottom: 'var(--sp-4)',
                       }}
                     >
-                      View Details <ArrowRight size={12} />
-                    </span>
+                      {createElement(getProductIcon(product.icon), { size: 20 })}
+                    </div>
+                    <div
+                      style={{
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
+                        gap: 'var(--sp-3)',
+                        marginBottom: 'var(--sp-2)',
+                      }}
+                    >
+                      <div style={{ fontSize: 'var(--fs-lg)', fontWeight: 'var(--fw-bold)' }}>
+                        {product.name}
+                      </div>
+                      <span className="badge badge-submitted">
+                        {product.kind === 'PORTFOLIO' ? 'Portofolio' : 'Produk'}
+                      </span>
+                    </div>
+                    <div
+                      style={{
+                        fontSize: 'var(--fs-sm)',
+                        color: 'var(--text-secondary)',
+                        marginBottom: 'var(--sp-4)',
+                      }}
+                    >
+                      {product.description}
+                    </div>
+                    <div
+                      style={{
+                        display: 'flex',
+                        justifyContent: 'flex-end',
+                        alignItems: 'center',
+                      }}
+                    >
+                      <span
+                        style={{
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          gap: '4px',
+                          color: 'var(--blue-600)',
+                          fontSize: 'var(--fs-xs)',
+                          fontWeight: 'var(--fw-semibold)',
+                        }}
+                      >
+                        View Details <ArrowRight size={12} />
+                      </span>
+                    </div>
                   </div>
                 </Link>
               )

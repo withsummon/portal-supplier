@@ -10,6 +10,7 @@ import { PRODUCT_ICON_OPTIONS } from '@/lib/product-icons'
 import type { ProductFormState } from '@/hooks/use-admin-products'
 import ProductFormField from './ProductFormField'
 import ProductMediaFields from './ProductMediaFields'
+import ProductFormSection from './ProductFormSection'
 import ProductTextListEditor from './ProductTextListEditor'
 import ProductVisualStylePicker from './ProductVisualStylePicker'
 
@@ -106,179 +107,161 @@ export default function ProductFormClient({
         </button>
       </div>
 
-      <div className="card" style={{ padding: 'var(--sp-6)' }}>
-        <h2
-          style={{
-            fontSize: 'var(--fs-lg)',
-            fontWeight: 'var(--fw-semibold)',
-            marginBottom: 'var(--sp-4)',
-          }}
-        >
-          Basic Information
-        </h2>
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--sp-4)' }}>
-          <ProductFormField label="Item Name">
-            <input
-              className="input"
-              placeholder="Summon Analytics Copilot"
-              value={formData.name}
-              onChange={(event) =>
-                setFormData((current) => ({ ...current, name: event.target.value }))
-              }
-            />
-          </ProductFormField>
-          <ProductFormField label="Type">
-            <select
-              className="select"
-              value={formData.kind}
-              onChange={(event) =>
-                setFormData((current) => ({ ...current, kind: event.target.value }))
-              }
-            >
-              {FACTORY_KINDS.filter((kind) => kind.id !== 'all').map((kind) => (
-                <option key={kind.id} value={kind.id}>
-                  {kind.label}
-                </option>
-              ))}
-            </select>
-          </ProductFormField>
-          <ProductFormField label="Category">
-            <select
-              className="select"
-              value={formData.category}
-              onChange={(event) =>
-                setFormData((current) => ({ ...current, category: event.target.value }))
-              }
-            >
-              {FACTORY_CATEGORIES.filter((category) => category.id !== 'all').map((category) => (
-                <option key={category.id} value={category.id}>
-                  {category.label}
-                </option>
-              ))}
-            </select>
-          </ProductFormField>
-          <ProductFormField label="Short Description">
-            <input
-              className="input"
-              placeholder="One-line summary for catalog cards"
-              value={formData.description}
-              onChange={(event) =>
-                setFormData((current) => ({ ...current, description: event.target.value }))
-              }
-            />
-          </ProductFormField>
-          <ProductFormField label="Badge">
-            <input
-              className="input"
-              placeholder="Popular, New, Enterprise"
-              value={formData.badge}
-              onChange={(event) =>
-                setFormData((current) => ({ ...current, badge: event.target.value }))
-              }
-            />
-          </ProductFormField>
-          <ProductFormField label="Icon">
-            <select
-              className="select"
-              value={formData.icon}
-              onChange={(event) =>
-                setFormData((current) => ({ ...current, icon: event.target.value }))
-              }
-            >
-              {PRODUCT_ICON_OPTIONS.map((option) => (
-                <option key={option.id} value={option.id}>
-                  {option.label}
-                </option>
-              ))}
-            </select>
-          </ProductFormField>
-          <ProductFormField label="Long Description" style={{ gridColumn: 'span 2' }}>
-            <textarea
-              className="input input-textarea"
-              rows={5}
-              placeholder="Describe the product or portfolio project in detail"
-              value={formData.longDescription}
-              onChange={(event) =>
-                setFormData((current) => ({ ...current, longDescription: event.target.value }))
-              }
-            />
-          </ProductFormField>
-        </div>
+      <div style={{ display: 'grid', gap: 'var(--sp-5)' }}>
+        <ProductFormSection title="Basic Information">
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--sp-4)' }}>
+            <ProductFormField label="Item Name">
+              <input
+                className="input"
+                placeholder="Summon Analytics Copilot"
+                value={formData.name}
+                onChange={(event) =>
+                  setFormData((current) => ({ ...current, name: event.target.value }))
+                }
+              />
+            </ProductFormField>
+            <ProductFormField label="Type">
+              <select
+                className="select"
+                value={formData.kind}
+                onChange={(event) =>
+                  setFormData((current) => ({ ...current, kind: event.target.value }))
+                }
+              >
+                {FACTORY_KINDS.filter((kind) => kind.id !== 'all').map((kind) => (
+                  <option key={kind.id} value={kind.id}>
+                    {kind.label}
+                  </option>
+                ))}
+              </select>
+            </ProductFormField>
+            <ProductFormField label="Category">
+              <select
+                className="select"
+                value={formData.category}
+                onChange={(event) =>
+                  setFormData((current) => ({ ...current, category: event.target.value }))
+                }
+              >
+                {FACTORY_CATEGORIES.filter((category) => category.id !== 'all').map((category) => (
+                  <option key={category.id} value={category.id}>
+                    {category.label}
+                  </option>
+                ))}
+              </select>
+            </ProductFormField>
+            <ProductFormField label="Short Description">
+              <input
+                className="input"
+                placeholder="One-line summary for catalog cards"
+                value={formData.description}
+                onChange={(event) =>
+                  setFormData((current) => ({ ...current, description: event.target.value }))
+                }
+              />
+            </ProductFormField>
+            <ProductFormField label="Long Description" style={{ gridColumn: 'span 2' }}>
+              <textarea
+                className="input input-textarea"
+                rows={5}
+                placeholder="Describe the product or portfolio project in detail"
+                value={formData.longDescription}
+                onChange={(event) =>
+                  setFormData((current) => ({ ...current, longDescription: event.target.value }))
+                }
+              />
+            </ProductFormField>
+          </div>
+        </ProductFormSection>
 
-        <h2
-          style={{
-            fontSize: 'var(--fs-lg)',
-            fontWeight: 'var(--fw-semibold)',
-            marginTop: 'var(--sp-7)',
-            marginBottom: 'var(--sp-4)',
-          }}
-        >
-          Selling Details
-        </h2>
-        <div
-          style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(3, 1fr)',
-            gap: 'var(--sp-4)',
-          }}
-        >
-          <ProductTextListEditor
-            label="Features"
-            items={formData.features}
-            onChange={(features) => setFormData((current) => ({ ...current, features }))}
-          />
-          <ProductTextListEditor
-            label="Use Cases"
-            items={formData.useCases}
-            onChange={(useCases) => setFormData((current) => ({ ...current, useCases }))}
-          />
-          <ProductTextListEditor
-            label="Clients"
-            items={formData.clients}
-            onChange={(clients) => setFormData((current) => ({ ...current, clients }))}
-          />
-        </div>
+        <ProductFormSection title="Catalog Presentation">
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--sp-4)' }}>
+            <ProductFormField label="Badge">
+              <input
+                className="input"
+                placeholder="Popular, New, Enterprise"
+                value={formData.badge}
+                onChange={(event) =>
+                  setFormData((current) => ({ ...current, badge: event.target.value }))
+                }
+              />
+            </ProductFormField>
+            <ProductFormField label="Icon">
+              <select
+                className="select"
+                value={formData.icon}
+                onChange={(event) =>
+                  setFormData((current) => ({ ...current, icon: event.target.value }))
+                }
+              >
+                {PRODUCT_ICON_OPTIONS.map((option) => (
+                  <option key={option.id} value={option.id}>
+                    {option.label}
+                  </option>
+                ))}
+              </select>
+            </ProductFormField>
+            <ProductVisualStylePicker
+              iconBg={formData.iconBg}
+              iconColor={formData.iconColor}
+              onChange={(style) => setFormData((current) => ({ ...current, ...style }))}
+            />
+            <label
+              style={{
+                alignItems: 'center',
+                display: 'flex',
+                gap: 'var(--sp-2)',
+                paddingTop: '24px',
+              }}
+            >
+              <input
+                type="checkbox"
+                checked={formData.visible}
+                onChange={(event) =>
+                  setFormData((current) => ({ ...current, visible: event.target.checked }))
+                }
+              />
+              Visible in factory
+            </label>
+          </div>
+        </ProductFormSection>
 
-        <div
-          style={{
-            marginTop: 'var(--sp-7)',
-            display: 'grid',
-            gridTemplateColumns: '1fr 1fr',
-            gap: 'var(--sp-4)',
-          }}
-        >
-          <ProductVisualStylePicker
-            iconBg={formData.iconBg}
-            iconColor={formData.iconColor}
-            onChange={(style) => setFormData((current) => ({ ...current, ...style }))}
-          />
-          <label
+        <ProductFormSection title="Selling Details">
+          <div
             style={{
-              alignItems: 'center',
-              display: 'flex',
-              gap: 'var(--sp-2)',
-              paddingTop: '24px',
+              display: 'grid',
+              gridTemplateColumns: 'repeat(3, 1fr)',
+              gap: 'var(--sp-4)',
             }}
           >
-            <input
-              type="checkbox"
-              checked={formData.visible}
-              onChange={(event) =>
-                setFormData((current) => ({ ...current, visible: event.target.checked }))
-              }
+            <ProductTextListEditor
+              label="Features"
+              items={formData.features}
+              onChange={(features) => setFormData((current) => ({ ...current, features }))}
             />
-            Visible in factory
-          </label>
-        </div>
+            <ProductTextListEditor
+              label="Use Cases"
+              items={formData.useCases}
+              onChange={(useCases) => setFormData((current) => ({ ...current, useCases }))}
+            />
+            <ProductTextListEditor
+              label="Clients"
+              items={formData.clients}
+              onChange={(clients) => setFormData((current) => ({ ...current, clients }))}
+            />
+          </div>
+        </ProductFormSection>
 
-        <ProductMediaFields
-          formData={formData}
-          replacePitchDeck={replacePitchDeck}
-          setFormData={setFormData}
-          setImageFiles={setImageFiles}
-          setPitchDeckFile={setPitchDeckFile}
-          setReplacePitchDeck={setReplacePitchDeck}
-        />
+        <ProductFormSection title="Media & Documents">
+          <ProductMediaFields
+            formData={formData}
+            replacePitchDeck={replacePitchDeck}
+            setFormData={setFormData}
+            setImageFiles={setImageFiles}
+            setPitchDeckFile={setPitchDeckFile}
+            setReplacePitchDeck={setReplacePitchDeck}
+          />
+        </ProductFormSection>
       </div>
     </div>
   )
