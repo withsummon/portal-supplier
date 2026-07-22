@@ -1,7 +1,7 @@
 import { createElement } from 'react'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
-import { ArrowLeft, Download } from 'lucide-react'
+import { ArrowLeft, Download, Pencil } from 'lucide-react'
 import { getCachedAdminProductBySlug } from '@/lib/data/products'
 import { getProductIcon } from '@/lib/product-icons'
 import FactoryProductBanner from '@/app/(dashboard)/factory/[slug]/FactoryProductBanner'
@@ -35,12 +35,18 @@ export default async function AdminProductDetailPage({
           <h1 className="page-title">{product.name}</h1>
           <p className="page-subtitle">{product.description}</p>
         </div>
-        {product.pitchDeckPdf && (
-          <Link href={product.pitchDeckPdf} target="_blank" className="btn btn-secondary">
-            <Download size={14} />
-            Pitch Deck
+        <div style={{ display: 'flex', gap: 'var(--sp-3)' }}>
+          <Link href={`/admin/products/${product.slug}/edit`} className="btn btn-primary">
+            <Pencil size={14} />
+            Edit Item
           </Link>
-        )}
+          {product.pitchDeckPdf && (
+            <Link href={product.pitchDeckPdf} target="_blank" className="btn btn-secondary">
+              <Download size={14} />
+              Pitch Deck
+            </Link>
+          )}
+        </div>
       </div>
 
       <div style={{ display: 'grid', gridTemplateColumns: '1.2fr 0.8fr', gap: 'var(--sp-6)' }}>

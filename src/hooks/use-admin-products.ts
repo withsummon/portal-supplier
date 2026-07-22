@@ -1,16 +1,11 @@
 'use client'
 
 import { useMemo, useState, useTransition } from 'react'
-import {
-  createProduct,
-  deleteProduct,
-  toggleProductVisibility,
-  updateProduct,
-} from '@/lib/actions/products'
+import { deleteProduct, toggleProductVisibility } from '@/lib/actions/products'
 
 export interface ProductFormState {
   id?: string
-  slug?: string
+  slug: string
   name: string
   kind: string
   category: string
@@ -34,34 +29,7 @@ export function useAdminProducts(initialProducts: ProductFormState[]) {
   const [products, setProducts] = useState(initialProducts)
   const [searchQuery, setSearchQuery] = useState('')
   const [categoryFilter, setCategoryFilter] = useState('all')
-  const [showModal, setShowModal] = useState(false)
-  const [editingProduct, setEditingProduct] = useState<ProductFormState | null>(null)
   const [isPending, startTransition] = useTransition()
-
-  const emptyForm = {
-    name: '',
-    kind: 'PRODUCT',
-    category: 'conversational-ai',
-    description: '',
-    longDescription: '',
-    basePrice: 0,
-    currency: 'IDR',
-    features: [''],
-    useCases: [''],
-    clients: [''],
-    icon: 'Cpu',
-    iconBg: 'var(--blue-50)',
-    iconColor: 'var(--blue-600)',
-    badge: '',
-    visible: true,
-    images: [],
-    pitchDeckPdf: null,
-  }
-
-  const [formData, setFormData] = useState<ProductFormState>(emptyForm)
-  const [newImageFiles, setNewImageFiles] = useState<File[]>([])
-  const [pitchDeckFile, setPitchDeckFile] = useState<File | null>(null)
-  const [replacePitchDeck, setReplacePitchDeck] = useState(false)
 
   const filteredProducts = useMemo(() => {
     return products.filter((product) => {
@@ -72,95 +40,6 @@ export function useAdminProducts(initialProducts: ProductFormState[]) {
       return matchesSearch && matchesCategory
     })
   }, [categoryFilter, products, searchQuery])
-
-  function openModal(product?: ProductFormState) {
-    if (product) {
-      setEditingProduct(product)
-      setFormData({
-        ...product,
-        kind: product.kind ?? 'PRODUCT',
-        currency: 'IDR',
-        features: product.features.length ? [...product.features] : [''],
-        useCases: product.useCases.length ? [...product.useCases] : [''],
-        clients: product.clients.length ? [...product.clients] : [''],
-      })
-    } else {
-      setEditingProduct(null)
-      setFormData(emptyForm)
-    }
-    setNewImageFiles([])
-    setPitchDeckFile(null)
-    setReplacePitchDeck(false)
-    setShowModal(true)
-  }
-
-  function saveProduct() {
-    const cleanData = {
-      ...formData,
-      kind: formData.kind === 'PORTFOLIO' ? 'PORTFOLIO' : 'PRODUCT',
-      currency: 'IDR',
-      features: formData.features.filter((item) => item.trim()),
-      useCases: formData.useCases.filter((item) => item.trim()),
-      clients: formData.clients.filter((item) => item.trim()),
-    }
-
-    const productToEdit = editingProduct?.id ? { ...editingProduct, id: editingProduct.id } : null
-    if (editingProduct && !productToEdit) {
-      return
-    }
-
-    startTransition(() => {
-      const action = productToEdit
-        ? updateProduct({
-            id: productToEdit.id,
-            ...cleanData,
-            existingImages: productToEdit.images.filter((image) =>
-              cleanData.images.includes(image),
-            ),
-            imageFiles: newImageFiles,
-            replacePitchDeck,
-            pitchDeckPdf: pitchDeckFile,
-          })
-        : createProduct({
-            ...cleanData,
-            imageFiles: newImageFiles,
-            pitchDeckPdf: pitchDeckFile,
-          })
-
-      void action.then((product) => {
-        if (!product) return
-
-        const normalizedProduct: ProductFormState = {
-          id: product.id,
-          slug: product.slug,
-          name: product.name,
-          kind: product.kind ?? 'PRODUCT',
-          category: product.category,
-          description: product.description ?? '',
-          longDescription: product.longDescription ?? '',
-          basePrice: Number(product.basePrice),
-          currency: product.currency,
-          features: product.features ?? [],
-          useCases: product.useCases ?? [],
-          clients: product.clients ?? [],
-          icon: product.icon ?? 'Cpu',
-          iconBg: product.iconBg ?? 'var(--blue-50)',
-          iconColor: product.iconColor ?? 'var(--blue-600)',
-          badge: product.badge ?? '',
-          visible: product.isActive,
-          images: product.images ?? [],
-          pitchDeckPdf: product.pitchDeckPdf,
-        }
-
-        setProducts((current) =>
-          productToEdit
-            ? current.map((item) => (item.id === productToEdit.id ? normalizedProduct : item))
-            : [normalizedProduct, ...current],
-        )
-        setShowModal(false)
-      })
-    })
-  }
 
   function removeProduct(id: string) {
     setProducts((current) => current.filter((product) => product.id !== id))
@@ -180,26 +59,13 @@ export function useAdminProducts(initialProducts: ProductFormState[]) {
 
   return {
     categoryFilter,
-    editingProduct,
     filteredProducts,
-    formData,
     isPending,
-    newImageFiles,
-    openModal,
-    pitchDeckFile,
     products,
     removeProduct,
-    replacePitchDeck,
-    saveProduct,
     searchQuery,
     setCategoryFilter,
-    setFormData,
-    setNewImageFiles,
-    setPitchDeckFile,
-    setReplacePitchDeck,
     setSearchQuery,
-    setShowModal,
     setVisibility,
-    showModal,
   }
 }

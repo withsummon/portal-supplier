@@ -87,6 +87,7 @@ export async function createProduct(input: {
     .returning()
 
   revalidatePath('/admin/products')
+  revalidatePath(`/admin/products/${product?.slug ?? ''}`)
   revalidatePath('/factory')
   return product
 }
@@ -155,6 +156,7 @@ export async function updateProduct(input: {
     .returning()
 
   revalidatePath('/admin/products')
+  revalidatePath(`/admin/products/${product?.slug ?? ''}`)
   revalidatePath('/factory')
   revalidatePath(`/factory/${product?.slug ?? ''}`)
   return product
