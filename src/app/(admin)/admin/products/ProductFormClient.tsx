@@ -9,6 +9,7 @@ import { FACTORY_CATEGORIES, FACTORY_KINDS } from '@/lib/factory-catalog-options
 import { PRODUCT_ICON_OPTIONS } from '@/lib/product-icons'
 import type { ProductFormState } from '@/hooks/use-admin-products'
 import ProductFormField from './ProductFormField'
+import ProductFactoryPreview from './ProductFactoryPreview'
 import ProductMediaFields from './ProductMediaFields'
 import ProductFormSection from './ProductFormSection'
 import ProductTextListEditor from './ProductTextListEditor'
@@ -45,9 +46,25 @@ export default function ProductFormClient({
   const [imageFiles, setImageFiles] = useState<File[]>([])
   const [pitchDeckFile, setPitchDeckFile] = useState<File | null>(null)
   const [replacePitchDeck, setReplacePitchDeck] = useState(false)
+  const [errors, setErrors] = useState<Record<string, string>>({})
+  const [formError, setFormError] = useState('')
   const [isPending, startTransition] = useTransition()
 
+  function updateField<K extends keyof ProductFormState>(key: K, value: ProductFormState[K]) {
+    setErrors((current) => ({ ...current, [key]: '' }))
+    setFormData((current) => ({ ...current, [key]: value }))
+  }
+
   function saveProduct() {
+    const nextErrors = {
+      name: formData.name.trim() ? '' : 'Item name is required.',
+      description: formData.description.trim() ? '' : 'Short description is required.',
+      longDescription: formData.longDescription.trim() ? '' : 'Long description is required.',
+    }
+    setErrors(nextErrors)
+    if (Object.values(nextErrors).some(Boolean)) return
+
+    setFormError('')
     const cleanData = {
       ...formData,
       kind: formData.kind === 'PORTFOLIO' ? 'PORTFOLIO' : 'PRODUCT',
@@ -73,11 +90,15 @@ export default function ProductFormClient({
             pitchDeckPdf: pitchDeckFile,
           })
 
-      void action.then((product) => {
-        if (product?.slug) {
-          router.push(`/admin/products/${product.slug}`)
-        }
-      })
+      void action
+        .then((product) => {
+          if (product?.slug) {
+            router.push(`/admin/products/${product.slug}`)
+          }
+        })
+        .catch((error: unknown) =>
+          setFormError(error instanceof Error ? error.message : 'Failed to save item.'),
+        )
     })
   }
 
@@ -107,26 +128,36 @@ export default function ProductFormClient({
         </button>
       </div>
 
+      {formError && (
+        <div
+          className="card"
+          style={{
+            borderColor: 'var(--color-danger)',
+            color: 'var(--color-danger)',
+            marginBottom: 'var(--sp-5)',
+            padding: 'var(--sp-4)',
+          }}
+        >
+          {formError}
+        </div>
+      )}
+
       <div style={{ display: 'grid', gap: 'var(--sp-5)' }}>
         <ProductFormSection title="Basic Information">
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--sp-4)' }}>
-            <ProductFormField label="Item Name">
+            <ProductFormField label="Item Name" required error={errors.name}>
               <input
                 className="input"
                 placeholder="Summon Analytics Copilot"
                 value={formData.name}
-                onChange={(event) =>
-                  setFormData((current) => ({ ...current, name: event.target.value }))
-                }
+                onChange={(event) => updateField('name', event.target.value)}
               />
             </ProductFormField>
-            <ProductFormField label="Type">
+            <ProductFormField label="Type" required>
               <select
                 className="select"
                 value={formData.kind}
-                onChange={(event) =>
-                  setFormData((current) => ({ ...current, kind: event.target.value }))
-                }
+                onChange={(event) => updateField('kind', event.target.value)}
               >
                 {FACTORY_KINDS.filter((kind) => kind.id !== 'all').map((kind) => (
                   <option key={kind.id} value={kind.id}>
@@ -135,13 +166,11 @@ export default function ProductFormClient({
                 ))}
               </select>
             </ProductFormField>
-            <ProductFormField label="Category">
+            <ProductFormField label="Category" required>
               <select
                 className="select"
                 value={formData.category}
-                onChange={(event) =>
-                  setFormData((current) => ({ ...current, category: event.target.value }))
-                }
+                onChange={(event) => updateField('category', event.target.value)}
               >
                 {FACTORY_CATEGORIES.filter((category) => category.id !== 'all').map((category) => (
                   <option key={category.id} value={category.id}>
@@ -150,25 +179,26 @@ export default function ProductFormClient({
                 ))}
               </select>
             </ProductFormField>
-            <ProductFormField label="Short Description">
+            <ProductFormField label="Short Description" required error={errors.description}>
               <input
                 className="input"
                 placeholder="One-line summary for catalog cards"
                 value={formData.description}
-                onChange={(event) =>
-                  setFormData((current) => ({ ...current, description: event.target.value }))
-                }
+                onChange={(event) => updateField('description', event.target.value)}
               />
             </ProductFormField>
-            <ProductFormField label="Long Description" style={{ gridColumn: 'span 2' }}>
+            <ProductFormField
+              label="Long Description"
+              required
+              error={errors.longDescription}
+              style={{ gridColumn: 'span 2' }}
+            >
               <textarea
                 className="input input-textarea"
                 rows={5}
                 placeholder="Describe the product or portfolio project in detail"
                 value={formData.longDescription}
-                onChange={(event) =>
-                  setFormData((current) => ({ ...current, longDescription: event.target.value }))
-                }
+                onChange={(event) => updateField('longDescription', event.target.value)}
               />
             </ProductFormField>
           </div>
@@ -181,18 +211,14 @@ export default function ProductFormClient({
                 className="input"
                 placeholder="Popular, New, Enterprise"
                 value={formData.badge}
-                onChange={(event) =>
-                  setFormData((current) => ({ ...current, badge: event.target.value }))
-                }
+                onChange={(event) => updateField('badge', event.target.value)}
               />
             </ProductFormField>
             <ProductFormField label="Icon">
               <select
                 className="select"
                 value={formData.icon}
-                onChange={(event) =>
-                  setFormData((current) => ({ ...current, icon: event.target.value }))
-                }
+                onChange={(event) => updateField('icon', event.target.value)}
               >
                 {PRODUCT_ICON_OPTIONS.map((option) => (
                   <option key={option.id} value={option.id}>
@@ -217,9 +243,7 @@ export default function ProductFormClient({
               <input
                 type="checkbox"
                 checked={formData.visible}
-                onChange={(event) =>
-                  setFormData((current) => ({ ...current, visible: event.target.checked }))
-                }
+                onChange={(event) => updateField('visible', event.target.checked)}
               />
               Visible in factory
             </label>
@@ -261,6 +285,10 @@ export default function ProductFormClient({
             setPitchDeckFile={setPitchDeckFile}
             setReplacePitchDeck={setReplacePitchDeck}
           />
+          <div style={{ marginTop: 'var(--sp-5)' }}>
+            <div className="form-label">Seller Grid Preview</div>
+            <ProductFactoryPreview imageFiles={imageFiles} product={formData} />
+          </div>
         </ProductFormSection>
       </div>
     </div>

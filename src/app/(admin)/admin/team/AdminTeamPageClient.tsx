@@ -1,17 +1,7 @@
 'use client'
 
 import type { LucideIcon } from 'lucide-react'
-import {
-  CheckCircle,
-  Mail,
-  MoreVertical,
-  Search,
-  Shield,
-  Star,
-  Trash2,
-  UserPlus,
-  Users,
-} from 'lucide-react'
+import { CheckCircle, Mail, Search, Shield, Star, Trash2, UserPlus, Users, X } from 'lucide-react'
 import { useAdminTeam } from '@/hooks/use-admin-team'
 import type { AdminTeamMemberDto } from '@/lib/data/teams'
 
@@ -62,6 +52,7 @@ export default function AdminTeamPageClient({
 }) {
   const {
     draft,
+    error,
     filteredMembers,
     members,
     searchQuery,
@@ -316,53 +307,74 @@ export default function AdminTeamPageClient({
                 }}
                 aria-label="Close"
               >
-                <MoreVertical size={18} />
+                <X size={18} />
               </button>
             </div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--sp-4)' }}>
-              <input
-                className="input"
-                placeholder="Full name"
-                value={draft.name}
-                onChange={(event) =>
-                  setDraft((current) => ({ ...current, name: event.target.value }))
-                }
-              />
-              <input
-                className="input"
-                type="email"
-                placeholder="Email address"
-                value={draft.email}
-                onChange={(event) =>
-                  setDraft((current) => ({ ...current, email: event.target.value }))
-                }
-              />
-              <select
-                className="select"
-                value={draft.department}
-                onChange={(event) =>
-                  setDraft((current) => ({ ...current, department: event.target.value }))
-                }
-              >
-                {DEPARTMENTS.map((department) => (
-                  <option key={department} value={department}>
-                    {department}
-                  </option>
-                ))}
-              </select>
-              <select
-                className="select"
-                value={draft.role}
-                onChange={(event) =>
-                  setDraft((current) => ({ ...current, role: event.target.value }))
-                }
-              >
-                {ROLES.map((role) => (
-                  <option key={role} value={role}>
-                    {role}
-                  </option>
-                ))}
-              </select>
+              {error && (
+                <div style={{ color: 'var(--color-danger)', fontSize: 'var(--fs-sm)' }}>
+                  {error}
+                </div>
+              )}
+              <label>
+                <span className="form-label">
+                  Full name <span className="form-required">*</span>
+                </span>
+                <input
+                  className="input"
+                  placeholder="Alicia Admin"
+                  value={draft.name}
+                  onChange={(event) =>
+                    setDraft((current) => ({ ...current, name: event.target.value }))
+                  }
+                />
+              </label>
+              <label>
+                <span className="form-label">
+                  Email <span className="form-required">*</span>
+                </span>
+                <input
+                  className="input"
+                  type="email"
+                  placeholder="alicia@summon.co"
+                  value={draft.email}
+                  onChange={(event) =>
+                    setDraft((current) => ({ ...current, email: event.target.value }))
+                  }
+                />
+              </label>
+              <label>
+                <span className="form-label">Department</span>
+                <select
+                  className="select"
+                  value={draft.department}
+                  onChange={(event) =>
+                    setDraft((current) => ({ ...current, department: event.target.value }))
+                  }
+                >
+                  {DEPARTMENTS.map((department) => (
+                    <option key={department} value={department}>
+                      {department}
+                    </option>
+                  ))}
+                </select>
+              </label>
+              <label>
+                <span className="form-label">Role</span>
+                <select
+                  className="select"
+                  value={draft.role}
+                  onChange={(event) =>
+                    setDraft((current) => ({ ...current, role: event.target.value }))
+                  }
+                >
+                  {ROLES.map((role) => (
+                    <option key={role} value={role}>
+                      {role}
+                    </option>
+                  ))}
+                </select>
+              </label>
             </div>
             <div
               style={{

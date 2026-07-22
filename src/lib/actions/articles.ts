@@ -36,6 +36,8 @@ export async function createArticle(input: {
   coverImage?: File | null
 }) {
   await requireRole('ADMIN')
+  if (!input.title.trim()) throw new Error('Title is required.')
+  if (!input.content.trim()) throw new Error('Article content is required.')
 
   const coverImage = await saveCoverImage(input.coverImage)
   const status = input.published ? 'PUBLISHED' : 'DRAFT'
@@ -67,6 +69,8 @@ export async function updateArticle(input: {
   coverImage?: File | null
 }) {
   await requireRole('ADMIN')
+  if (!input.title.trim()) throw new Error('Title is required.')
+  if (!input.content.trim()) throw new Error('Article content is required.')
 
   const uploadedCoverImage = await saveCoverImage(input.coverImage)
   const status = input.published ? 'PUBLISHED' : 'DRAFT'

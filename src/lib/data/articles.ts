@@ -56,3 +56,11 @@ export const getCachedPublishedArticleBySlug = React.cache(async (slug: string) 
 
   return row ? serializeArticle(row) : null
 })
+
+export const getCachedAdminArticleBySlug = React.cache(async (slug: string) => {
+  const row = await db.query.articles.findFirst({
+    where: eq(articles.slug, slug),
+  })
+
+  return row ? serializeArticle(row) : null
+})

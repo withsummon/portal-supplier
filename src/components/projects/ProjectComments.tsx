@@ -1,6 +1,6 @@
 'use client'
 
-import { Clock, Paperclip, Send } from 'lucide-react'
+import { Clock, Send } from 'lucide-react'
 import { useProjectComments } from '@/hooks/use-project-comments'
 import type { ProjectCommentDto } from '@/lib/data/project-workflows'
 import { formatDateTime } from '@/lib/utils/data'
@@ -145,12 +145,10 @@ export default function ProjectComments({
             </div>
           )}
           <div style={{ display: 'flex', gap: 'var(--sp-2)' }}>
-            <button className="btn btn-ghost btn-sm" title="Attach file" style={{ flexShrink: 0 }}>
-              <Paperclip size={15} />
-            </button>
-            <input
+            <textarea
               className="input"
               placeholder="Type your reply to the Summon team..."
+              rows={2}
               value={message}
               onChange={(event) => setMessage(event.target.value)}
               onKeyDown={(event) => {
@@ -159,7 +157,7 @@ export default function ProjectComments({
                   sendComment()
                 }
               }}
-              style={{ flex: 1, fontSize: 'var(--fs-sm)' }}
+              style={{ flex: 1, fontSize: 'var(--fs-sm)', resize: 'vertical' }}
             />
             <button
               className="btn btn-primary btn-sm"

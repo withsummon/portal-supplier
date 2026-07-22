@@ -329,21 +329,7 @@ export default function RegisterSellerPage() {
                     lineHeight: 'var(--lh-relaxed)',
                   }}
                 >
-                  I agree to Summon&apos;s{' '}
-                  <a
-                    href="#"
-                    style={{ color: 'var(--text-accent)', fontWeight: 'var(--fw-medium)' }}
-                  >
-                    Terms of Service
-                  </a>{' '}
-                  and{' '}
-                  <a
-                    href="#"
-                    style={{ color: 'var(--text-accent)', fontWeight: 'var(--fw-medium)' }}
-                  >
-                    Privacy Policy
-                  </a>
-                  .
+                  I agree to Summon&apos;s Terms of Service and Privacy Policy.
                 </span>
               </label>
 
@@ -400,14 +386,14 @@ export default function RegisterSellerPage() {
           </div>
           <h2 className="auth-hero-title">Your projects deserve the best execution.</h2>
           <p className="auth-hero-desc">
-            Register in minutes and gain access to Summon&apos;s network of vetted execution
-            partners. Structured, transparent, and enterprise-ready.
+            Register in minutes and manage project submissions with Summon&apos;s review team.
+            Structured, transparent, and enterprise-ready.
           </p>
 
           <div className="auth-feature-list">
             {[
               { icon: CheckCircle, text: 'No complicated onboarding — get started fast' },
-              { icon: Shield, text: 'Execution partners are reviewed by the Summon team' },
+              { icon: Shield, text: 'Seller accounts are reviewed by the Summon team' },
               { icon: TrendingUp, text: 'End-to-end project visibility from day one' },
             ].map(({ icon: Icon, text }) => (
               <div className="auth-feature-item" key={text}>

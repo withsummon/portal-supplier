@@ -1,7 +1,18 @@
 'use client'
 
 import type { LucideIcon } from 'lucide-react'
-import { Mail, Phone, Plus, Search, Shield, Trash2, UserCheck, UserPlus, Users } from 'lucide-react'
+import {
+  Mail,
+  Phone,
+  Plus,
+  Search,
+  Shield,
+  Trash2,
+  UserCheck,
+  UserPlus,
+  Users,
+  X,
+} from 'lucide-react'
 import { useSellerTeam } from '@/hooks/use-seller-team'
 import type { SellerTeamMemberDto } from '@/lib/data/teams'
 
@@ -52,6 +63,7 @@ export default function TeamPageClient({
 }) {
   const {
     draft,
+    error,
     filteredMembers,
     members,
     searchQuery,
@@ -280,45 +292,75 @@ export default function TeamPageClient({
             >
               Add Team Member
             </h2>
+            <button
+              className="btn btn-ghost btn-sm"
+              type="button"
+              onClick={() => setShowAddModal(false)}
+              aria-label="Close"
+              style={{ position: 'absolute', right: 'var(--sp-5)', top: 'var(--sp-5)' }}
+            >
+              <X size={18} />
+            </button>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--sp-4)' }}>
-              <input
-                className="input"
-                placeholder="Full name"
-                value={draft.name}
-                onChange={(event) =>
-                  setDraft((current) => ({ ...current, name: event.target.value }))
-                }
-              />
-              <input
-                className="input"
-                type="email"
-                placeholder="Email address"
-                value={draft.email}
-                onChange={(event) =>
-                  setDraft((current) => ({ ...current, email: event.target.value }))
-                }
-              />
-              <input
-                className="input"
-                placeholder="Phone number"
-                value={draft.phone}
-                onChange={(event) =>
-                  setDraft((current) => ({ ...current, phone: event.target.value }))
-                }
-              />
-              <select
-                className="select"
-                value={draft.role}
-                onChange={(event) =>
-                  setDraft((current) => ({ ...current, role: event.target.value }))
-                }
-              >
-                {ROLES.map((role) => (
-                  <option key={role} value={role}>
-                    {role}
-                  </option>
-                ))}
-              </select>
+              {error && (
+                <div style={{ color: 'var(--color-danger)', fontSize: 'var(--fs-sm)' }}>
+                  {error}
+                </div>
+              )}
+              <label>
+                <span className="form-label">
+                  Full name <span className="form-required">*</span>
+                </span>
+                <input
+                  className="input"
+                  placeholder="Budi Santoso"
+                  value={draft.name}
+                  onChange={(event) =>
+                    setDraft((current) => ({ ...current, name: event.target.value }))
+                  }
+                />
+              </label>
+              <label>
+                <span className="form-label">
+                  Email <span className="form-required">*</span>
+                </span>
+                <input
+                  className="input"
+                  type="email"
+                  placeholder="budi@company.com"
+                  value={draft.email}
+                  onChange={(event) =>
+                    setDraft((current) => ({ ...current, email: event.target.value }))
+                  }
+                />
+              </label>
+              <label>
+                <span className="form-label">Phone</span>
+                <input
+                  className="input"
+                  placeholder="+62 812 0000 0000"
+                  value={draft.phone}
+                  onChange={(event) =>
+                    setDraft((current) => ({ ...current, phone: event.target.value }))
+                  }
+                />
+              </label>
+              <label>
+                <span className="form-label">Role</span>
+                <select
+                  className="select"
+                  value={draft.role}
+                  onChange={(event) =>
+                    setDraft((current) => ({ ...current, role: event.target.value }))
+                  }
+                >
+                  {ROLES.map((role) => (
+                    <option key={role} value={role}>
+                      {role}
+                    </option>
+                  ))}
+                </select>
+              </label>
             </div>
             <div
               style={{

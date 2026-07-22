@@ -20,6 +20,8 @@ export interface SubmitProjectFormState {
   currency: string
 }
 
+export type SubmitProjectFieldErrors = Partial<Record<keyof SubmitProjectFormState, string>>
+
 const INITIAL_STATE: SubmitProjectFormState = {
   projectName: '',
   clientName: '',
@@ -41,6 +43,7 @@ export function useSubmitProject() {
   const [step, setStep] = useState(0)
   const [formData, setFormData] = useState<SubmitProjectFormState>(INITIAL_STATE)
   const [error, setError] = useState<string | null>(null)
+  const [fieldErrors, setFieldErrors] = useState<SubmitProjectFieldErrors>({})
   const [isPending, startTransition] = useTransition()
 
   function updateField<K extends keyof SubmitProjectFormState>(
@@ -48,42 +51,51 @@ export function useSubmitProject() {
     value: SubmitProjectFormState[K],
   ) {
     setError(null)
+    setFieldErrors((current) => ({ ...current, [key]: '' }))
     setFormData((current) => ({ ...current, [key]: value }))
   }
 
   function validateStep(currentStep: number) {
+    const errors: SubmitProjectFieldErrors = {}
     if (currentStep === 0) {
-      if (!formData.projectName.trim()) return 'Project name is required.'
-      if (!formData.clientName.trim()) return 'Client name is required.'
-      if (!formData.category) return 'Project category is required.'
-      if (!formData.description.trim()) return 'Brief description is required.'
+      if (!formData.projectName.trim()) errors.projectName = 'Project name is required.'
+      if (!formData.clientName.trim()) errors.clientName = 'Client name is required.'
+      if (!formData.category) errors.category = 'Project category is required.'
+      if (!formData.description.trim()) errors.description = 'Brief description is required.'
     }
 
     if (currentStep === 1 && !formData.requirements.trim()) {
-      return 'Detailed requirements are required.'
+      errors.requirements = 'Detailed requirements are required.'
     }
 
     if (currentStep === 2) {
-      if (!formData.startDate) return 'Expected start date is required.'
-      if (!formData.endDate) return 'Expected end date is required.'
-      if (formData.endDate < formData.startDate) {
-        return 'Expected end date must be after the start date.'
+      if (!formData.startDate) errors.startDate = 'Expected start date is required.'
+      if (!formData.endDate) errors.endDate = 'Expected end date is required.'
+      if (formData.startDate && formData.endDate && formData.endDate < formData.startDate) {
+        errors.endDate = 'Expected end date must be after the start date.'
       }
-      if (!formData.budgetRange) return 'Budget range is required.'
-      if (!formData.priority) return 'Priority level is required.'
+      if (!formData.budgetRange) errors.budgetRange = 'Budget range is required.'
+      if (!formData.priority) errors.priority = 'Priority level is required.'
     }
 
-    return null
+    return errors
+  }
+
+  function firstError(errors: SubmitProjectFieldErrors) {
+    return Object.values(errors).find(Boolean) ?? null
   }
 
   function nextStep() {
-    const validationError = validateStep(step)
+    const errors = validateStep(step)
+    const validationError = firstError(errors)
     if (validationError) {
       setError(validationError)
+      setFieldErrors(errors)
       return
     }
 
     setError(null)
+    setFieldErrors({})
     setStep((current) => Math.min(current + 1, 4))
   }
 
@@ -92,13 +104,19 @@ export function useSubmitProject() {
   }
 
   function submit() {
-    const validationError = validateStep(0) ?? validateStep(1) ?? validateStep(2)
-    if (validationError) {
-      setError(validationError)
-      return
+    for (const targetStep of [0, 1, 2]) {
+      const errors = validateStep(targetStep)
+      const validationError = firstError(errors)
+      if (validationError) {
+        setStep(targetStep)
+        setError(validationError)
+        setFieldErrors(errors)
+        return
+      }
     }
 
     setError(null)
+    setFieldErrors({})
     startTransition(() => {
       void submitProjectWithFiles({
         name: formData.projectName,
@@ -126,6 +144,7 @@ export function useSubmitProject() {
 
   return {
     error,
+    fieldErrors,
     formData,
     isPending,
     nextStep,

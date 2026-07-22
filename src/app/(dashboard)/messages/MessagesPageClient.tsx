@@ -331,9 +331,10 @@ export default function MessagesPageClient({
 
             <div style={{ padding: 'var(--sp-4)', borderTop: '1px solid var(--border-default)' }}>
               <div style={{ display: 'flex', gap: 'var(--sp-3)' }}>
-                <input
+                <textarea
                   className="input"
                   placeholder="Write a message..."
+                  rows={2}
                   value={messageDraft}
                   onChange={(event) => setMessageDraft(event.target.value)}
                   onKeyDown={(event) => {
@@ -342,6 +343,7 @@ export default function MessagesPageClient({
                       handleSendMessage()
                     }
                   }}
+                  style={{ resize: 'vertical' }}
                 />
                 <button
                   className="btn btn-primary"

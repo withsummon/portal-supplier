@@ -18,6 +18,7 @@ export function useSellerTeam(initialMembers: SellerTeamMemberDto[]) {
     phone: '',
     role: 'Developer',
   })
+  const [error, setError] = useState('')
   const [isPending, startTransition] = useTransition()
 
   const filteredMembers = useMemo(() => {
@@ -33,27 +34,36 @@ export function useSellerTeam(initialMembers: SellerTeamMemberDto[]) {
   }, [members, searchQuery])
 
   function submitNewMember() {
-    startTransition(() => {
-      void createSellerTeamMember(draft).then((member) => {
-        if (!member) {
-          return
-        }
+    if (!draft.name.trim()) return setError('Full name is required.')
+    if (!draft.email.trim() || !draft.email.includes('@'))
+      return setError('Valid email is required.')
 
-        setMembers((current) => [
-          {
-            id: member.id,
-            name: member.name,
-            email: member.email,
-            phone: member.phone ?? '',
-            role: member.role,
-            status: member.status,
-            joinedAt: member.createdAt.toISOString(),
-          },
-          ...current,
-        ])
-        setDraft({ name: '', email: '', phone: '', role: 'Developer' })
-        setShowAddModal(false)
-      })
+    setError('')
+    startTransition(() => {
+      void createSellerTeamMember(draft)
+        .then((member) => {
+          if (!member) {
+            return
+          }
+
+          setMembers((current) => [
+            {
+              id: member.id,
+              name: member.name,
+              email: member.email,
+              phone: member.phone ?? '',
+              role: member.role,
+              status: member.status,
+              joinedAt: member.createdAt.toISOString(),
+            },
+            ...current,
+          ])
+          setDraft({ name: '', email: '', phone: '', role: 'Developer' })
+          setShowAddModal(false)
+        })
+        .catch((submitError: unknown) =>
+          setError(submitError instanceof Error ? submitError.message : 'Failed to add member.'),
+        )
     })
   }
 
@@ -75,6 +85,7 @@ export function useSellerTeam(initialMembers: SellerTeamMemberDto[]) {
 
   return {
     draft,
+    error,
     filteredMembers,
     isPending,
     members,

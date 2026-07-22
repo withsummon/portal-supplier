@@ -14,7 +14,11 @@ import {
   Upload,
   X,
 } from 'lucide-react'
-import { useSubmitProject, type SubmitProjectFormState } from '@/hooks/use-submit-project'
+import {
+  useSubmitProject,
+  type SubmitProjectFieldErrors,
+  type SubmitProjectFormState,
+} from '@/hooks/use-submit-project'
 
 const DEFAULT_CATEGORIES = [
   'Web Development',
@@ -75,12 +79,24 @@ const STEPS = [
   { label: 'Review', desc: 'Confirm and submit' },
 ]
 
+function FieldError({ message }: { message?: string | undefined }) {
+  return message ? (
+    <div
+      style={{ color: 'var(--color-danger)', fontSize: 'var(--fs-xs)', marginTop: 'var(--sp-1)' }}
+    >
+      {message}
+    </div>
+  ) : null
+}
+
 function Step1({
   data,
+  errors,
   categories,
   onChange,
 }: {
   data: SubmitProjectFormState
+  errors: SubmitProjectFieldErrors
   categories: string[]
   onChange: <K extends keyof SubmitProjectFormState>(
     key: K,
@@ -99,6 +115,7 @@ function Step1({
           value={data.projectName}
           onChange={(event) => onChange('projectName', event.target.value)}
         />
+        <FieldError message={errors.projectName} />
       </div>
       <div className="form-group">
         <label className="form-label">
@@ -110,6 +127,7 @@ function Step1({
           value={data.clientName}
           onChange={(event) => onChange('clientName', event.target.value)}
         />
+        <FieldError message={errors.clientName} />
       </div>
       <div className="form-group">
         <label className="form-label">
@@ -127,6 +145,7 @@ function Step1({
             </option>
           ))}
         </select>
+        <FieldError message={errors.category} />
       </div>
       <div className="form-group">
         <label className="form-label">
@@ -139,6 +158,7 @@ function Step1({
           value={data.description}
           onChange={(event) => onChange('description', event.target.value)}
         />
+        <FieldError message={errors.description} />
       </div>
     </div>
   )
@@ -146,9 +166,11 @@ function Step1({
 
 function Step2({
   data,
+  errors,
   onChange,
 }: {
   data: SubmitProjectFormState
+  errors: SubmitProjectFieldErrors
   onChange: <K extends keyof SubmitProjectFormState>(
     key: K,
     value: SubmitProjectFormState[K],
@@ -186,6 +208,7 @@ function Step2({
           value={data.requirements}
           onChange={(event) => onChange('requirements', event.target.value)}
         />
+        <FieldError message={errors.requirements} />
       </div>
 
       <div className="form-group">
@@ -296,9 +319,11 @@ function Step2({
 
 function Step3({
   data,
+  errors,
   onChange,
 }: {
   data: SubmitProjectFormState
+  errors: SubmitProjectFieldErrors
   onChange: <K extends keyof SubmitProjectFormState>(
     key: K,
     value: SubmitProjectFormState[K],
@@ -317,6 +342,7 @@ function Step3({
             value={data.startDate}
             onChange={(event) => onChange('startDate', event.target.value)}
           />
+          <FieldError message={errors.startDate} />
         </div>
         <div className="form-group">
           <label className="form-label">
@@ -328,6 +354,7 @@ function Step3({
             value={data.endDate}
             onChange={(event) => onChange('endDate', event.target.value)}
           />
+          <FieldError message={errors.endDate} />
         </div>
       </div>
 
@@ -347,6 +374,7 @@ function Step3({
             </option>
           ))}
         </select>
+        <FieldError message={errors.budgetRange} />
       </div>
 
       <div className="form-group">
@@ -402,6 +430,7 @@ function Step3({
             </label>
           ))}
         </div>
+        <FieldError message={errors.priority} />
       </div>
     </div>
   )
@@ -419,13 +448,16 @@ function Step4({
 }) {
   const inputRef = useRef<HTMLInputElement>(null)
   const [dragging, setDragging] = useState(false)
+  const [rejectedFiles, setRejectedFiles] = useState<string[]>([])
 
   function addFiles(fileList: FileList | null) {
     if (!fileList) {
       return
     }
 
-    const nextFiles = Array.from(fileList).filter((file) => file.size <= 20 * 1024 * 1024)
+    const files = Array.from(fileList)
+    const nextFiles = files.filter((file) => file.size <= 20 * 1024 * 1024)
+    setRejectedFiles(files.filter((file) => file.size > 20 * 1024 * 1024).map((file) => file.name))
     onChange('files', [...data.files, ...nextFiles])
   }
 
@@ -473,6 +505,12 @@ function Step4({
           onChange={(event) => addFiles(event.target.files)}
         />
       </div>
+
+      {rejectedFiles.length > 0 && (
+        <div style={{ color: 'var(--color-danger)', fontSize: 'var(--fs-sm)' }}>
+          File exceeds 20MB: {rejectedFiles.join(', ')}
+        </div>
+      )}
 
       {data.files.length > 0 && (
         <div>
@@ -609,8 +647,17 @@ function Step5({ data }: { data: SubmitProjectFormState }) {
 }
 
 export default function SubmitProjectPageClient({ categories }: { categories: string[] }) {
-  const { error, formData, isPending, nextStep, previousStep, step, submit, updateField } =
-    useSubmitProject()
+  const {
+    error,
+    fieldErrors,
+    formData,
+    isPending,
+    nextStep,
+    previousStep,
+    step,
+    submit,
+    updateField,
+  } = useSubmitProject()
   const currentStep = STEPS[step] ?? STEPS[0] ?? { label: 'Project Basics', desc: '' }
   const projectCategories = categories.length > 0 ? categories : DEFAULT_CATEGORIES
 
@@ -681,13 +728,18 @@ export default function SubmitProjectPageClient({ categories }: { categories: st
           </div>
           <div className="card-body">
             {step === 0 && (
-              <Step1 data={formData} categories={projectCategories} onChange={updateField} />
+              <Step1
+                data={formData}
+                errors={fieldErrors}
+                categories={projectCategories}
+                onChange={updateField}
+              />
             )}
-            {step === 1 && <Step2 data={formData} onChange={updateField} />}
-            {step === 2 && <Step3 data={formData} onChange={updateField} />}
+            {step === 1 && <Step2 data={formData} errors={fieldErrors} onChange={updateField} />}
+            {step === 2 && <Step3 data={formData} errors={fieldErrors} onChange={updateField} />}
             {step === 3 && <Step4 data={formData} onChange={updateField} />}
             {step === 4 && <Step5 data={formData} />}
-            {error && (
+            {error && Object.values(fieldErrors).every((message) => !message) && (
               <div
                 style={{
                   marginTop: 'var(--sp-4)',

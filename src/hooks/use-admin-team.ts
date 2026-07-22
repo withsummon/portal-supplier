@@ -18,6 +18,7 @@ export function useAdminTeam(initialMembers: AdminTeamMemberDto[]) {
     department: 'Operations',
     role: 'Support Staff',
   })
+  const [error, setError] = useState('')
   const [isPending, startTransition] = useTransition()
 
   const filteredMembers = useMemo(() => {
@@ -33,34 +34,43 @@ export function useAdminTeam(initialMembers: AdminTeamMemberDto[]) {
   }, [members, searchQuery])
 
   function submitNewMember() {
-    startTransition(() => {
-      void createAdminTeamMember(draft).then(({ createdUser, member }) => {
-        if (!createdUser || !member) {
-          return
-        }
+    if (!draft.name.trim()) return setError('Full name is required.')
+    if (!draft.email.trim() || !draft.email.includes('@'))
+      return setError('Valid email is required.')
 
-        setMembers((current) => [
-          {
-            id: member.id,
-            userId: createdUser.id,
-            name: createdUser.name ?? '',
-            email: createdUser.email,
-            role: member.role,
-            department: member.department,
-            status: member.status,
-            verified: member.verified,
-            joinedAt: member.createdAt.toISOString(),
-          },
-          ...current,
-        ])
-        setDraft({
-          name: '',
-          email: '',
-          department: 'Operations',
-          role: 'Support Staff',
+    setError('')
+    startTransition(() => {
+      void createAdminTeamMember(draft)
+        .then(({ createdUser, member }) => {
+          if (!createdUser || !member) {
+            return
+          }
+
+          setMembers((current) => [
+            {
+              id: member.id,
+              userId: createdUser.id,
+              name: createdUser.name ?? '',
+              email: createdUser.email,
+              role: member.role,
+              department: member.department,
+              status: member.status,
+              verified: member.verified,
+              joinedAt: member.createdAt.toISOString(),
+            },
+            ...current,
+          ])
+          setDraft({
+            name: '',
+            email: '',
+            department: 'Operations',
+            role: 'Support Staff',
+          })
+          setShowAddModal(false)
         })
-        setShowAddModal(false)
-      })
+        .catch((submitError: unknown) =>
+          setError(submitError instanceof Error ? submitError.message : 'Failed to add member.'),
+        )
     })
   }
 
@@ -89,6 +99,7 @@ export function useAdminTeam(initialMembers: AdminTeamMemberDto[]) {
 
   return {
     draft,
+    error,
     filteredMembers,
     isPending,
     members,
