@@ -66,6 +66,9 @@ export function useSubmitProject() {
     if (currentStep === 2) {
       if (!formData.startDate) return 'Expected start date is required.'
       if (!formData.endDate) return 'Expected end date is required.'
+      if (formData.endDate < formData.startDate) {
+        return 'Expected end date must be after the start date.'
+      }
       if (!formData.budgetRange) return 'Budget range is required.'
       if (!formData.priority) return 'Priority level is required.'
     }
