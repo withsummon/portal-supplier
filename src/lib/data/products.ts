@@ -32,3 +32,11 @@ export const getCachedFactoryProductBySlug = React.cache(async (slug: string) =>
 
   return serializeProduct(row)
 })
+
+export const getCachedAdminProductBySlug = React.cache(async (slug: string) => {
+  const row = await db.query.products.findFirst({
+    where: eq(products.slug, slug),
+  })
+
+  return row ? serializeProduct(row) : null
+})

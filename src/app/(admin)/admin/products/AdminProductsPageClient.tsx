@@ -1,6 +1,7 @@
 'use client'
 
-import { Eye, EyeOff, Plus, Search, Trash2 } from 'lucide-react'
+import Link from 'next/link'
+import { Eye, EyeOff, Pencil, Plus, Search, Trash2 } from 'lucide-react'
 import { PRODUCT_ICON_OPTIONS, getProductIcon } from '@/lib/product-icons'
 import { useAdminProducts, type ProductFormState } from '@/hooks/use-admin-products'
 import Modal from '@/components/ui/Modal'
@@ -134,15 +135,8 @@ export default function AdminProductsPageClient({
                 return (
                   <tr key={productId}>
                     <td>
-                      <button
-                        type="button"
-                        onClick={() => openModal(product)}
-                        onKeyDown={(e) => {
-                          if (e.key === 'Enter' || e.key === ' ') {
-                            e.preventDefault()
-                            openModal(product)
-                          }
-                        }}
+                      <Link
+                        href={`/admin/products/${product.slug}`}
                         style={{
                           display: 'flex',
                           alignItems: 'center',
@@ -152,6 +146,8 @@ export default function AdminProductsPageClient({
                           cursor: 'pointer',
                           padding: 0,
                           textAlign: 'left',
+                          textDecoration: 'none',
+                          color: 'inherit',
                         }}
                       >
                         <div
@@ -174,7 +170,7 @@ export default function AdminProductsPageClient({
                             {product.description}
                           </div>
                         </div>
-                      </button>
+                      </Link>
                     </td>
                     <td>{product.kind === 'PORTFOLIO' ? 'Portofolio' : 'Produk'}</td>
                     <td>{product.category}</td>
@@ -198,6 +194,14 @@ export default function AdminProductsPageClient({
                     </td>
                     <td>
                       <div style={{ display: 'flex', gap: 'var(--sp-2)' }}>
+                        <button
+                          className="btn btn-ghost btn-sm"
+                          type="button"
+                          onClick={() => openModal(product)}
+                          aria-label={`Edit ${product.name}`}
+                        >
+                          <Pencil size={14} />
+                        </button>
                         <button
                           className="btn btn-ghost btn-sm"
                           type="button"

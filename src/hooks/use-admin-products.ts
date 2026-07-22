@@ -10,6 +10,7 @@ import {
 
 export interface ProductFormState {
   id?: string
+  slug?: string
   name: string
   kind: string
   category: string
@@ -131,6 +132,7 @@ export function useAdminProducts(initialProducts: ProductFormState[]) {
 
         const normalizedProduct: ProductFormState = {
           id: product.id,
+          slug: product.slug,
           name: product.name,
           kind: product.kind ?? 'PRODUCT',
           category: product.category,
