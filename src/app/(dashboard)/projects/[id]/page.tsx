@@ -20,9 +20,9 @@ import { requireRole } from '@/lib/auth/session'
 import {
   formatDate,
   formatDateTime,
-  dbToMockStatus,
+  dbToUiStatus,
   priorityLabels,
-  type MockProjectStatus,
+  type ProjectStatusKey,
 } from '@/lib/utils/data'
 
 const priorityColors: Record<string, string> = {
@@ -32,7 +32,7 @@ const priorityColors: Record<string, string> = {
   critical: 'var(--color-danger)',
 }
 
-const statusIcons: Record<MockProjectStatus, typeof CheckCircle> = {
+const statusIcons: Record<ProjectStatusKey, typeof CheckCircle> = {
   submitted: FileText,
   under_review: Clock,
   need_clarification: AlertCircle,
@@ -57,7 +57,7 @@ export default async function ProjectDetailPage({ params }: Props) {
     notFound()
   }
 
-  const mockStatus = dbToMockStatus[project.status] ?? project.status
+  const uiStatus = dbToUiStatus[project.status] ?? project.status
   const latestClarificationNote = project.statusHistory.find(
     (h) => h.note && project.status === 'NEED_CLARIFICATION',
   )?.note
@@ -88,7 +88,7 @@ export default async function ProjectDetailPage({ params }: Props) {
               <h1 className="page-title" style={{ fontSize: 'var(--fs-3xl)' }}>
                 {project.name}
               </h1>
-              <StatusBadge status={mockStatus as MockProjectStatus} />
+              <StatusBadge status={uiStatus as ProjectStatusKey} />
             </div>
             <p className="page-subtitle">
               {project.projectId} · Client: {project.clientName ?? '—'} · Submitted{' '}
@@ -99,7 +99,7 @@ export default async function ProjectDetailPage({ params }: Props) {
       </div>
 
       {/* Need Clarification Banner */}
-      {mockStatus === 'need_clarification' && latestClarificationNote && (
+      {uiStatus === 'need_clarification' && latestClarificationNote && (
         <div
           style={{
             background: 'var(--color-purple-bg)',
@@ -315,7 +315,7 @@ export default async function ProjectDetailPage({ params }: Props) {
           {/* Messages & Clarifications */}
           <ProjectComments
             projectId={project.id}
-            projectStatus={mockStatus}
+            projectStatus={uiStatus}
             initialComments={project.comments.map((comment) => ({
               id: comment.id,
               authorId: comment.authorId,
@@ -393,8 +393,8 @@ export default async function ProjectDetailPage({ params }: Props) {
             <div className="card-body">
               <div className="timeline">
                 {project.statusHistory.map((entry, i) => {
-                  const dbStatus = dbToMockStatus[entry.status] ?? entry.status
-                  const Icon = statusIcons[dbStatus as MockProjectStatus] ?? FileText
+                  const dbStatus = dbToUiStatus[entry.status] ?? entry.status
+                  const Icon = statusIcons[dbStatus as ProjectStatusKey] ?? FileText
                   const isLatest = i === 0
                   return (
                     <div key={entry.id} className="timeline-item">
@@ -404,7 +404,7 @@ export default async function ProjectDetailPage({ params }: Props) {
                       <div className="timeline-content">
                         <div className="timeline-date">{formatDateTime(entry.createdAt)}</div>
                         <div className="timeline-title">
-                          <StatusBadge status={dbStatus as MockProjectStatus} showDot={false} />
+                          <StatusBadge status={dbStatus as ProjectStatusKey} showDot={false} />
                         </div>
                         {entry.note && <div className="timeline-desc">{entry.note}</div>}
                         <div
@@ -423,54 +423,6 @@ export default async function ProjectDetailPage({ params }: Props) {
               </div>
             </div>
           </div>
-
-          {/* Vendor Quotes */}
-          {project.quotes.length > 0 && (
-            <div className="card">
-              <div className="card-header">
-                <div className="card-title">Vendor Quotes</div>
-                <span style={{ fontSize: 'var(--fs-xs)', color: 'var(--text-muted)' }}>
-                  {project.quotes.length}
-                </span>
-              </div>
-              <div className="card-body">
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--sp-3)' }}>
-                  {project.quotes.map((quote) => (
-                    <div
-                      key={quote.id}
-                      style={{
-                        padding: 'var(--sp-3)',
-                        background: 'var(--neutral-50)',
-                        borderRadius: 'var(--radius-md)',
-                        border: '1px solid var(--border-default)',
-                      }}
-                    >
-                      <div
-                        style={{
-                          display: 'flex',
-                          justifyContent: 'space-between',
-                          alignItems: 'center',
-                          marginBottom: 'var(--sp-1)',
-                        }}
-                      >
-                        <span
-                          style={{ fontWeight: 'var(--fw-semibold)', fontSize: 'var(--fs-sm)' }}
-                        >
-                          {quote.vendor.companyName}
-                        </span>
-                        <span style={{ fontWeight: 'var(--fw-bold)', color: 'var(--blue-600)' }}>
-                          ${Number(quote.amount).toLocaleString()}
-                        </span>
-                      </div>
-                      <div style={{ fontSize: 'var(--fs-xs)', color: 'var(--text-muted)' }}>
-                        {quote.duration ? `${quote.duration} days` : 'Duration TBD'}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-          )}
         </div>
       </div>
     </div>

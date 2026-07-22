@@ -13,7 +13,7 @@ import {
 } from 'lucide-react'
 import StatusBadge from '@/components/projects/StatusBadge'
 import InsightsCharts from '@/components/dashboard/InsightsCharts'
-import { formatDate, dbToMockStatus } from '@/lib/utils/data'
+import { formatDate, dbToUiStatus } from '@/lib/utils/data'
 import {
   getCachedAllProjects,
   getCachedSeller,
@@ -203,7 +203,7 @@ export default async function DashboardPage() {
                     <td>
                       <StatusBadge
                         status={
-                          (dbToMockStatus[project.status] ?? project.status) as
+                          (dbToUiStatus[project.status] ?? project.status) as
                             | 'submitted'
                             | 'under_review'
                             | 'accepted'

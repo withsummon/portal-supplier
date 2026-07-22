@@ -9,9 +9,7 @@ import {
   Clock,
   FolderOpen,
   Info,
-  Mail,
   MessageSquare,
-  TrendingUp,
   XCircle,
   CheckCircle,
   Shield,
@@ -21,7 +19,7 @@ import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import type { LucideIcon } from 'lucide-react'
 import type { NotificationDto } from '@/lib/data/communications'
-import { approveSeller, rejectSeller, approveVendor, rejectVendor } from '@/lib/actions/members'
+import { approveSeller, rejectSeller } from '@/lib/actions/members'
 import { markNotificationRead } from '@/lib/actions/communications'
 
 type NotificationIconConfig = {
@@ -32,13 +30,27 @@ type NotificationIconConfig = {
 
 const notificationIconMap: Record<string, NotificationIconConfig> = {
   PROJECT_SUBMITTED: { icon: FolderOpen, iconColor: 'var(--blue-600)', bgColor: 'var(--blue-50)' },
-  PROJECT_ACCEPTED: { icon: Check, iconColor: 'var(--color-success)', bgColor: 'var(--color-success-bg)' },
-  PROJECT_REJECTED: { icon: XCircle, iconColor: 'var(--color-danger)', bgColor: 'var(--color-danger-bg)' },
-  PROJECT_CLARIFICATION: { icon: AlertTriangle, iconColor: 'var(--color-warning)', bgColor: 'var(--color-warning-bg)' },
-  MESSAGE_RECEIVED: { icon: MessageSquare, iconColor: 'var(--color-purple)', bgColor: 'var(--color-purple-bg)' },
-  QUOTE_RECEIVED: { icon: TrendingUp, iconColor: 'var(--color-success)', bgColor: 'var(--color-success-bg)' },
+  PROJECT_ACCEPTED: {
+    icon: Check,
+    iconColor: 'var(--color-success)',
+    bgColor: 'var(--color-success-bg)',
+  },
+  PROJECT_REJECTED: {
+    icon: XCircle,
+    iconColor: 'var(--color-danger)',
+    bgColor: 'var(--color-danger-bg)',
+  },
+  PROJECT_CLARIFICATION: {
+    icon: AlertTriangle,
+    iconColor: 'var(--color-warning)',
+    bgColor: 'var(--color-warning-bg)',
+  },
+  MESSAGE_RECEIVED: {
+    icon: MessageSquare,
+    iconColor: 'var(--color-purple)',
+    bgColor: 'var(--color-purple-bg)',
+  },
   SELLER_REGISTRATION: { icon: Shield, iconColor: 'var(--color-info)', bgColor: 'var(--blue-50)' },
-  VENDOR_REGISTRATION: { icon: Shield, iconColor: 'var(--color-info)', bgColor: 'var(--blue-50)' },
   SYSTEM: { icon: Info, iconColor: 'var(--text-muted)', bgColor: 'var(--neutral-50)' },
 }
 
@@ -90,14 +102,10 @@ export default function AdminNotificationsPageClient({
   }
 
   async function handleApprove(notificationId: string, meta: Record<string, unknown> | null) {
-    if (!meta?.profileId || !meta?.role) return
+    if (!meta?.profileId || meta.role !== 'SELLER') return
     setPendingAction(notificationId)
     try {
-      if (meta.role === 'SELLER') {
-        await approveSeller(meta.profileId as string)
-      } else {
-        await approveVendor(meta.profileId as string)
-      }
+      await approveSeller(meta.profileId as string)
       setNotificationList((current) => current.filter((n) => n.id !== notificationId))
       router.refresh()
     } finally {
@@ -106,14 +114,10 @@ export default function AdminNotificationsPageClient({
   }
 
   async function handleReject(notificationId: string, meta: Record<string, unknown> | null) {
-    if (!meta?.profileId || !meta?.role) return
+    if (!meta?.profileId || meta.role !== 'SELLER') return
     setPendingAction(notificationId)
     try {
-      if (meta.role === 'SELLER') {
-        await rejectSeller(meta.profileId as string)
-      } else {
-        await rejectVendor(meta.profileId as string)
-      }
+      await rejectSeller(meta.profileId as string)
       setNotificationList((current) => current.filter((n) => n.id !== notificationId))
       router.refresh()
     } finally {
@@ -121,7 +125,7 @@ export default function AdminNotificationsPageClient({
     }
   }
 
-  const registrationTypes = new Set(['SELLER_REGISTRATION', 'VENDOR_REGISTRATION'])
+  const registrationTypes = new Set(['SELLER_REGISTRATION'])
 
   return (
     <div className="animate-in">
@@ -273,7 +277,9 @@ export default function AdminNotificationsPageClient({
                       <button
                         className="btn btn-primary btn-sm"
                         type="button"
-                        onClick={() => handleApprove(notification.id, notification.meta)}
+                        onClick={() => {
+                          void handleApprove(notification.id, notification.meta)
+                        }}
                         style={{ gap: '6px' }}
                       >
                         <CheckCircle size={14} />
@@ -282,7 +288,9 @@ export default function AdminNotificationsPageClient({
                       <button
                         className="btn btn-secondary btn-sm"
                         type="button"
-                        onClick={() => handleReject(notification.id, notification.meta)}
+                        onClick={() => {
+                          void handleReject(notification.id, notification.meta)
+                        }}
                         style={{ gap: '6px' }}
                       >
                         <XCircle size={14} />
@@ -301,7 +309,16 @@ export default function AdminNotificationsPageClient({
                   )}
 
                   {isRegistration && isLoading && (
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: 'var(--sp-4)', color: 'var(--text-muted)', fontSize: '13px' }}>
+                    <div
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '8px',
+                        marginTop: 'var(--sp-4)',
+                        color: 'var(--text-muted)',
+                        fontSize: '13px',
+                      }}
+                    >
                       <Loader2 size={14} className="animate-spin" />
                       Processing...
                     </div>

@@ -16,21 +16,14 @@ import type { AdminProjectDto } from '@/lib/data/project-workflows'
 import { formatDate, formatDateTime } from '@/lib/utils/data'
 import Modal from '@/components/ui/Modal'
 
-type ActionType = 'accept' | 'reject' | 'clarify' | 'start' | 'complete' | 'lunas' | 'acceptQuote' | 'rejectQuote'
+type ActionType = 'accept' | 'reject' | 'clarify' | 'start' | 'complete' | 'lunas'
 
 interface ProjectDetailModalProps {
   project: AdminProjectDto | null
   isOpen: boolean
   onClose: () => void
-  onAction: (projectId: string, action: ActionType, quoteId?: string) => void
+  onAction: (projectId: string, action: ActionType) => void
   isPending?: boolean
-}
-
-const QUOTE_STATUS_LABELS: Record<string, string> = {
-  pending: 'Pending',
-  accepted: 'Accepted',
-  rejected: 'Rejected',
-  withdrawn: 'Withdrawn',
 }
 
 export default function ProjectDetailModal({
@@ -160,149 +153,6 @@ export default function ProjectDetailModal({
                   </div>
                 </div>
               </div>
-
-              {project.quotes.length > 0 && (
-                <div className="card" style={{ margin: 0 }}>
-                  <div className="card-header">
-                    <div className="card-title">
-                      Vendor Quotes ({project.quotes.length})
-                    </div>
-                  </div>
-                  <div className="card-body">
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--sp-4)' }}>
-                      {project.quotes.map((quote) => (
-                        <div
-                          key={quote.id}
-                          style={{
-                            padding: 'var(--sp-3)',
-                            border: '1px solid var(--border-default)',
-                            borderRadius: 'var(--radius-lg)',
-                            display: 'flex',
-                            flexDirection: 'column',
-                            gap: 'var(--sp-2)',
-                          }}
-                        >
-                          <div
-                            style={{
-                              display: 'flex',
-                              justifyContent: 'space-between',
-                              alignItems: 'flex-start',
-                            }}
-                          >
-                            <div>
-                              <div
-                                style={{
-                                  fontWeight: 'var(--fw-semibold)',
-                                  fontSize: 'var(--fs-sm)',
-                                }}
-                              >
-                                {quote.vendorName}
-                              </div>
-                              <div
-                                style={{
-                                  fontSize: 'var(--fs-xs)',
-                                  color: 'var(--text-muted)',
-                                }}
-                              >
-                                {formatDateTime(quote.submittedAt)} · {quote.duration} days
-                              </div>
-                            </div>
-                            <div style={{ textAlign: 'right' }}>
-                              <div
-                                style={{
-                                  fontWeight: 'var(--fw-bold)',
-                                  color: 'var(--blue-600)',
-                                  fontSize: 'var(--fs-sm)',
-                                }}
-                              >
-                                Rp {Number(quote.amount).toLocaleString('id-ID')}
-                              </div>
-                              <span
-                                style={{
-                                  fontSize: 'var(--fs-xs)',
-                                  padding: '2px 8px',
-                                  borderRadius: 'var(--radius-full)',
-                                  background:
-                                    quote.status === 'accepted'
-                                      ? 'var(--color-success-bg)'
-                                      : quote.status === 'rejected'
-                                        ? 'var(--color-danger-bg)'
-                                        : 'var(--neutral-100)',
-                                  color:
-                                    quote.status === 'accepted'
-                                      ? 'var(--color-success)'
-                                      : quote.status === 'rejected'
-                                        ? 'var(--color-danger)'
-                                        : 'var(--text-muted)',
-                                }}
-                              >
-                                {QUOTE_STATUS_LABELS[quote.status] ?? quote.status}
-                              </span>
-                            </div>
-                          </div>
-                          {quote.proposal && (
-                            <p
-                              style={{
-                                fontSize: 'var(--fs-xs)',
-                                color: 'var(--text-secondary)',
-                                lineHeight: 'var(--lh-relaxed)',
-                              }}
-                            >
-                              {quote.proposal.length > 150
-                                ? quote.proposal.slice(0, 150) + '...'
-                                : quote.proposal}
-                            </p>
-                          )}
-                          {quote.status === 'pending' && (
-                            <div
-                              style={{
-                                display: 'flex',
-                                gap: 'var(--sp-2)',
-                                marginTop: 'var(--sp-1)',
-                              }}
-                            >
-                              <button
-                                className="btn btn-primary btn-sm"
-                                type="button"
-                                disabled={isPending}
-                                onClick={() =>
-                                  onAction(project.id, 'acceptQuote', quote.id)
-                                }
-                                onKeyDown={(e) => {
-                                  if (e.key === 'Enter' || e.key === ' ') {
-                                    e.preventDefault()
-                                    onAction(project.id, 'acceptQuote', quote.id)
-                                  }
-                                }}
-                              >
-                                <CheckCircle size={12} />
-                                Accept
-                              </button>
-                              <button
-                                className="btn btn-secondary btn-sm"
-                                type="button"
-                                disabled={isPending}
-                                onClick={() =>
-                                  onAction(project.id, 'rejectQuote', quote.id)
-                                }
-                                onKeyDown={(e) => {
-                                  if (e.key === 'Enter' || e.key === ' ') {
-                                    e.preventDefault()
-                                    onAction(project.id, 'rejectQuote', quote.id)
-                                  }
-                                }}
-                              >
-                                <XCircle size={12} />
-                                Reject
-                              </button>
-                            </div>
-                          )}
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              )}
             </div>
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--sp-5)' }}>
@@ -480,7 +330,11 @@ export default function ProjectDetailModal({
                       onAction(project.id, 'lunas')
                     }
                   }}
-                  style={{ width: '100%', background: 'var(--color-success)', borderColor: 'var(--color-success)' }}
+                  style={{
+                    width: '100%',
+                    background: 'var(--color-success)',
+                    borderColor: 'var(--color-success)',
+                  }}
                 >
                   <Clock size={14} />
                   Mark Lunas (Paid)

@@ -1,7 +1,7 @@
 'use client'
 
 import { useMemo, useState, useTransition } from 'react'
-import { updateSellerProfile, updateVendorProfile } from '@/lib/actions/profiles'
+import { updateSellerProfile } from '@/lib/actions/profiles'
 import type { CompanyProfileDto } from '@/lib/data/profiles'
 
 export function useCompanyProfileForm(profile: CompanyProfileDto) {
@@ -56,10 +56,7 @@ export function useCompanyProfileForm(profile: CompanyProfileDto) {
     }
 
     startTransition(() => {
-      const action =
-        profile.role === 'SELLER' ? updateSellerProfile(formData) : updateVendorProfile(formData)
-
-      void action.then(() => {
+      void updateSellerProfile(formData).then(() => {
         setMessage('Profile saved.')
       })
     })

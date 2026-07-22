@@ -1,11 +1,11 @@
 import React from 'react'
 import { eq } from 'drizzle-orm'
 import { db } from '@/db'
-import { adminTeamMembers, sellers, users, vendors } from '@/db/schema'
+import { adminTeamMembers, sellers, users } from '@/db/schema'
 
 export interface CompanyProfileDto {
   userId: string
-  role: 'SELLER' | 'VENDOR'
+  role: 'SELLER'
   name: string
   email: string
   phone: string
@@ -73,56 +73,6 @@ export const getCachedSellerProfile = React.cache(async (userId: string) => {
     email: row.email,
     phone: row.phone ?? '',
     location: row.location ?? row.location ?? '',
-    image: row.image,
-    companyId: row.companyId,
-    companyName: row.companyName,
-    industry: row.industry ?? '',
-    companySize: row.companySize ?? '',
-    website: row.website ?? '',
-    description: row.description ?? '',
-    logoUrl: row.logoUrl,
-    tier: row.tier,
-    status: row.status,
-  } satisfies CompanyProfileDto
-})
-
-export const getCachedVendorEditableProfile = React.cache(async (userId: string) => {
-  const rows = await db
-    .select({
-      userId: users.id,
-      name: users.name,
-      email: users.email,
-      phone: users.phone,
-      location: users.location,
-      image: users.image,
-      companyId: vendors.id,
-      companyName: vendors.companyName,
-      industry: vendors.industry,
-      companySize: vendors.companySize,
-      website: vendors.website,
-      description: vendors.description,
-      logoUrl: vendors.logoUrl,
-      tier: vendors.tier,
-      status: vendors.status,
-    })
-    .from(users)
-    .innerJoin(vendors, eq(vendors.userId, users.id))
-    .where(eq(users.id, userId))
-    .limit(1)
-
-  const row = rows[0]
-
-  if (!row) {
-    return null
-  }
-
-  return {
-    userId: row.userId,
-    role: 'VENDOR' as const,
-    name: row.name ?? '',
-    email: row.email,
-    phone: row.phone ?? '',
-    location: row.location ?? '',
     image: row.image,
     companyId: row.companyId,
     companyName: row.companyName,

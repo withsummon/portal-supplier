@@ -2,7 +2,7 @@
 
 import { auth } from '@/lib/auth'
 import { db } from '@/db'
-import { users, sellers, vendors, notifications } from '@/db/schema'
+import { users, sellers, notifications } from '@/db/schema'
 import { eq } from 'drizzle-orm'
 import { redirect } from 'next/navigation'
 import { headers } from 'next/headers'
@@ -16,7 +16,7 @@ export async function registerUser(data: {
   email: string
   password: string
   name: string
-  role: 'SELLER' | 'VENDOR' | 'ADMIN'
+  role: 'SELLER' | 'ADMIN'
   companyName: string
   industry?: string | undefined
   companySize?: string | undefined
@@ -59,35 +59,24 @@ export async function registerUser(data: {
 
     let newProfileId: string | null = null
 
-    if (data.role === 'SELLER') {
-      const [seller] = await db.insert(sellers).values(profileValues).returning({ id: sellers.id })
-      newProfileId = seller?.id ?? null
-    } else if (data.role === 'VENDOR') {
-      const [vendor] = await db.insert(vendors).values(profileValues).returning({ id: vendors.id })
-      newProfileId = vendor?.id ?? null
-    }
+    const [seller] = await db.insert(sellers).values(profileValues).returning({ id: sellers.id })
+    newProfileId = seller?.id ?? null
 
     // Notify all admins of the new registration
     const adminUsers = await db.select({ id: users.id }).from(users).where(eq(users.role, 'ADMIN'))
     if (newProfileId) {
-      const notificationType: 'SELLER_REGISTRATION' | 'VENDOR_REGISTRATION' =
-        data.role === 'SELLER' ? 'SELLER_REGISTRATION' : 'VENDOR_REGISTRATION'
-      const title =
-        data.role === 'SELLER'
-          ? `New seller registration: ${data.companyName}`
-          : `New vendor registration: ${data.companyName}`
-      const adminLink = data.role === 'SELLER' ? '/admin/sellers' : '/admin/vendors'
-
-      await db.insert(notifications).values(
-        adminUsers.map((admin) => ({
+      const notificationRows: Array<typeof notifications.$inferInsert> = adminUsers.map(
+        (admin) => ({
           userId: admin.id,
-          type: notificationType,
-          title,
-          content: `A new ${data.role.toLowerCase()} registration requires your review.`,
-          link: adminLink,
+          type: 'SELLER_REGISTRATION',
+          title: `New makelar registration: ${data.companyName}`,
+          content: 'A new makelar registration requires your review.',
+          link: '/admin/sellers',
           meta: JSON.stringify({ profileId: newProfileId, role: data.role }),
-        })),
+        }),
       )
+
+      await db.insert(notifications).values(notificationRows)
     }
 
     return { success: true, userId: user.id }
@@ -100,7 +89,7 @@ export async function registerUser(data: {
 export async function signIn(data: {
   email: string
   password: string
-  expectedRole?: 'SELLER' | 'VENDOR' | 'ADMIN'
+  expectedRole?: 'SELLER' | 'ADMIN'
 }) {
   try {
     const result = await auth.api.signInEmail({
@@ -113,7 +102,7 @@ export async function signIn(data: {
 
     const userRecord = await db.query.users.findFirst({
       where: eq(users.id, result.user.id),
-      with: { seller: true, vendor: true },
+      with: { seller: true },
     })
 
     if (data.expectedRole && userRecord?.role !== data.expectedRole) {
@@ -124,11 +113,8 @@ export async function signIn(data: {
       return { error: 'This account does not match the selected workspace' }
     }
 
-    // Check if seller/vendor is pending approval
+    // Check if seller is pending approval
     if (userRecord?.role === 'SELLER' && userRecord.seller?.status === 'PENDING') {
-      return { pending: true, error: 'Your account is pending approval.' }
-    }
-    if (userRecord?.role === 'VENDOR' && userRecord.vendor?.status === 'PENDING') {
       return { pending: true, error: 'Your account is pending approval.' }
     }
 
@@ -164,7 +150,6 @@ export async function getCurrentUser() {
     where: eq(users.id, session.user.id),
     with: {
       seller: true,
-      vendor: true,
       adminTeam: true,
     },
   })

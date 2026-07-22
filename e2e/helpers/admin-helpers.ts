@@ -1,17 +1,10 @@
 import { type Page } from '@playwright/test'
-import { loginUser } from './auth'
-import { TEST_USERS } from './test-users'
 
 /**
  * Admin approves a user by navigating to the management page
  */
-export async function approveUser(
-  page: Page,
-  userEmail: string,
-  role: 'seller' | 'vendor',
-): Promise<void> {
-  const path = role === 'seller' ? '/admin/sellers' : '/admin/vendors'
-  await page.goto(path)
+export async function approveUser(page: Page, userEmail: string, role: 'seller'): Promise<void> {
+  await page.goto('/admin/sellers')
   await page.waitForLoadState('networkidle')
 
   // Find the user row by email text
@@ -28,7 +21,10 @@ export async function approveUser(
   }
 
   // In modal, click Approve
-  const approveBtn = page.locator('button').filter({ hasText: /approve/i }).first()
+  const approveBtn = page
+    .locator('button')
+    .filter({ hasText: /approve/i })
+    .first()
   if (await approveBtn.isVisible({ timeout: 2000 }).catch(() => false)) {
     await approveBtn.click()
     await page.waitForTimeout(1000)
@@ -38,13 +34,8 @@ export async function approveUser(
 /**
  * Admin rejects a user
  */
-export async function rejectUser(
-  page: Page,
-  userEmail: string,
-  role: 'seller' | 'vendor',
-): Promise<void> {
-  const path = role === 'seller' ? '/admin/sellers' : '/admin/vendors'
-  await page.goto(path)
+export async function rejectUser(page: Page, userEmail: string, role: 'seller'): Promise<void> {
+  await page.goto('/admin/sellers')
   await page.waitForLoadState('networkidle')
 
   const row = page.locator('tr').filter({ hasText: userEmail })
@@ -60,7 +51,10 @@ export async function rejectUser(
   }
 
   // In modal, click Reject
-  const rejectBtn = page.locator('button').filter({ hasText: /reject/i }).first()
+  const rejectBtn = page
+    .locator('button')
+    .filter({ hasText: /reject/i })
+    .first()
   if (await rejectBtn.isVisible({ timeout: 2000 }).catch(() => false)) {
     await rejectBtn.click()
     await page.waitForTimeout(1000)
@@ -79,7 +73,9 @@ export async function reviewProject(
   await page.waitForLoadState('networkidle')
 
   // Find the project
-  const projectRow = page.locator('tr, [class*="row"], [class*="card"]').filter({ hasText: projectName })
+  const projectRow = page
+    .locator('tr, [class*="row"], [class*="card"]')
+    .filter({ hasText: projectName })
   if (await projectRow.isVisible({ timeout: 5000 }).catch(() => false)) {
     await projectRow.click()
     await page.waitForLoadState('networkidle')
@@ -94,45 +90,23 @@ export async function reviewProject(
 }
 
 /**
- * Admin accepts a vendor's quote on a project
- */
-export async function acceptQuote(
-  page: Page,
-  projectName: string,
-  vendorCompanyName?: string,
-): Promise<void> {
-  await page.goto('/admin/projects')
-  await page.waitForLoadState('networkidle')
-
-  // Find project row and click into it
-  const projectRow = page.locator('tr, [class*="row"], [class*="card"]').filter({ hasText: projectName })
-  if (await projectRow.isVisible({ timeout: 5000 }).catch(() => false)) {
-    await projectRow.click()
-    await page.waitForLoadState('networkidle')
-  }
-
-  // Find and click accept quote button
-  const acceptBtn = page.locator('button:has-text("Accept Quote"), button:has-text("Accept Proposal")').first()
-  if (await acceptBtn.isVisible({ timeout: 3000 }).catch(() => false)) {
-    await acceptBtn.click()
-    await page.waitForTimeout(1000)
-  }
-}
-
-/**
  * Admin starts a project (ACCEPTED -> IN_PROGRESS)
  */
 export async function startProject(page: Page, projectName: string): Promise<void> {
   await page.goto('/admin/projects')
   await page.waitForLoadState('networkidle')
 
-  const projectRow = page.locator('tr, [class*="row"], [class*="card"]').filter({ hasText: projectName })
+  const projectRow = page
+    .locator('tr, [class*="row"], [class*="card"]')
+    .filter({ hasText: projectName })
   if (await projectRow.isVisible({ timeout: 5000 }).catch(() => false)) {
     await projectRow.click()
     await page.waitForLoadState('networkidle')
   }
 
-  const startBtn = page.locator('button:has-text("Start Project"), button:has-text("start")').first()
+  const startBtn = page
+    .locator('button:has-text("Start Project"), button:has-text("start")')
+    .first()
   if (await startBtn.isVisible({ timeout: 3000 }).catch(() => false)) {
     await startBtn.click()
     await page.waitForTimeout(1000)
@@ -146,13 +120,17 @@ export async function markProjectComplete(page: Page, projectName: string): Prom
   await page.goto('/admin/projects')
   await page.waitForLoadState('networkidle')
 
-  const projectRow = page.locator('tr, [class*="row"], [class*="card"]').filter({ hasText: projectName })
+  const projectRow = page
+    .locator('tr, [class*="row"], [class*="card"]')
+    .filter({ hasText: projectName })
   if (await projectRow.isVisible({ timeout: 5000 }).catch(() => false)) {
     await projectRow.click()
     await page.waitForLoadState('networkidle')
   }
 
-  const completeBtn = page.locator('button:has-text("Mark Complete"), button:has-text("complete")').first()
+  const completeBtn = page
+    .locator('button:has-text("Mark Complete"), button:has-text("complete")')
+    .first()
   if (await completeBtn.isVisible({ timeout: 3000 }).catch(() => false)) {
     await completeBtn.click()
     await page.waitForTimeout(1000)
@@ -166,13 +144,19 @@ export async function markProjectLunas(page: Page, projectName: string): Promise
   await page.goto('/admin/projects')
   await page.waitForLoadState('networkidle')
 
-  const projectRow = page.locator('tr, [class*="row"], [class*="card"]').filter({ hasText: projectName })
+  const projectRow = page
+    .locator('tr, [class*="row"], [class*="card"]')
+    .filter({ hasText: projectName })
   if (await projectRow.isVisible({ timeout: 5000 }).catch(() => false)) {
     await projectRow.click()
     await page.waitForLoadState('networkidle')
   }
 
-  const lunasBtn = page.locator('button:has-text("Mark Lunas"), button:has-text("Mark Paid"), button:has-text("Lunas")').first()
+  const lunasBtn = page
+    .locator(
+      'button:has-text("Mark Lunas"), button:has-text("Mark Paid"), button:has-text("Lunas")',
+    )
+    .first()
   if (await lunasBtn.isVisible({ timeout: 3000 }).catch(() => false)) {
     await lunasBtn.click()
     await page.waitForTimeout(1000)

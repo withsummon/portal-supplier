@@ -1,6 +1,6 @@
 import DashboardLayout from '@/components/layout/DashboardLayout'
 import type { ReactNode } from 'react'
-import { getCurrentUserRecord, requireRole } from '@/lib/auth/session'
+import { requireRole } from '@/lib/auth/session'
 import { redirect } from 'next/navigation'
 
 export const dynamic = 'force-dynamic'

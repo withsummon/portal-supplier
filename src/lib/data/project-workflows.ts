@@ -1,8 +1,8 @@
 import React from 'react'
-import { desc, eq } from 'drizzle-orm'
+import { desc } from 'drizzle-orm'
 import { db } from '@/db'
-import { comments, notes, projects, quotes, vendors } from '@/db/schema'
-import { dbToMockPriority, dbToMockQuoteStatus, dbToMockStatus } from '@/lib/utils/data'
+import { comments, notes, projects } from '@/db/schema'
+import { dbToUiPriority, dbToUiStatus } from '@/lib/utils/data'
 
 export interface ProjectCommentDto {
   id: string
@@ -19,18 +19,6 @@ export interface ProjectReviewNoteDto {
   by: string
   at: string
   type: 'clarification' | 'status_change' | 'general'
-}
-
-export interface ProjectQuoteDto {
-  id: string
-  vendorId: string
-  vendorName: string
-  amount: number
-  currency: string
-  duration: number
-  proposal: string
-  status: string
-  submittedAt: string
 }
 
 export interface ProjectFileDto {
@@ -72,44 +60,6 @@ export interface AdminProjectDto {
   files: ProjectFileDto[]
   notes: ProjectReviewNoteDto[]
   comments: ProjectCommentDto[]
-  quotes: ProjectQuoteDto[]
-}
-
-export interface VendorProjectDetailDto {
-  id: string
-  projectId: string
-  name: string
-  description: string
-  requirements: string | null
-  category: string
-  budgetRange: string | null
-  startDate: string
-  endDate: string
-  priority: 'low' | 'medium' | 'high' | 'critical'
-  status:
-    | 'submitted'
-    | 'under_review'
-    | 'accepted'
-    | 'rejected'
-    | 'need_clarification'
-    | 'in_progress'
-    | 'completed'
-    | 'paid'
-    | 'cancelled'
-  createdAt: string
-  updatedAt: string
-  deliverables: string[]
-  techStack: string[]
-  files: ProjectFileDto[]
-  seller: {
-    companyName: string
-    user: {
-      name: string | null
-      email: string
-    }
-  }
-  comments: ProjectCommentDto[]
-  existingQuote: ProjectQuoteDto | null
 }
 
 interface AdminProjectNoteRecord {
@@ -160,20 +110,6 @@ interface AdminProjectRecord {
     createdAt: Date
     author?: { name: string | null; email: string; role: string } | null
   }>
-  quotes: Array<{
-    id: string
-    vendorId: string
-    amount: string | number
-    currency: string
-    duration: number | null
-    proposal: string | null
-    status: string
-    createdAt: Date
-    vendor?: {
-      companyName: string
-      user?: { name: string | null; email: string } | null
-    } | null
-  }>
 }
 
 function serializeComment(comment: {
@@ -211,34 +147,6 @@ function serializeFile(file: {
   }
 }
 
-function serializeQuote(quote: {
-  id: string
-  vendorId: string
-  amount: string | number
-  currency: string
-  duration: number | null
-  proposal: string | null
-  status: string
-  createdAt: Date
-  vendor?: { companyName: string; user?: { name: string | null; email: string } | null } | null
-}): ProjectQuoteDto {
-  return {
-    id: quote.id,
-    vendorId: quote.vendorId,
-    vendorName:
-      quote.vendor?.user?.name ??
-      quote.vendor?.companyName ??
-      quote.vendor?.user?.email ??
-      'Vendor',
-    amount: Number(quote.amount),
-    currency: quote.currency,
-    duration: quote.duration ?? 0,
-    proposal: quote.proposal ?? '',
-    status: dbToMockQuoteStatus[quote.status] ?? quote.status.toLowerCase(),
-    submittedAt: quote.createdAt.toISOString(),
-  }
-}
-
 function serializeAdminProject(project: AdminProjectRecord): AdminProjectDto {
   const seller = project.seller
   return {
@@ -256,9 +164,9 @@ function serializeAdminProject(project: AdminProjectRecord): AdminProjectDto {
     endDate: project.endDate?.toISOString() ?? '',
     budget: project.budgetRange ?? '',
     budgetCurrency: project.budgetCurrency,
-    priority: (dbToMockPriority[project.priority] ??
+    priority: (dbToUiPriority[project.priority] ??
       project.priority.toLowerCase()) as AdminProjectDto['priority'],
-    status: (dbToMockStatus[project.status] ??
+    status: (dbToUiStatus[project.status] ??
       project.status.toLowerCase()) as AdminProjectDto['status'],
     submittedAt: project.createdAt.toISOString(),
     files: project.files.map(serializeFile),
@@ -278,7 +186,6 @@ function serializeAdminProject(project: AdminProjectRecord): AdminProjectDto {
             : 'general',
     })),
     comments: project.comments.map(serializeComment),
-    quotes: project.quotes.map(serializeQuote),
   }
 }
 
@@ -300,16 +207,6 @@ export const getCachedAdminProjects = React.cache(async () => {
         },
         orderBy: [desc(comments.createdAt)],
       },
-      quotes: {
-        with: {
-          vendor: {
-            with: {
-              user: true,
-            },
-          },
-        },
-        orderBy: [desc(quotes.createdAt)],
-      },
     },
     orderBy: [desc(projects.createdAt)],
   })
@@ -318,81 +215,6 @@ export const getCachedAdminProjects = React.cache(async () => {
     serializeAdminProject(project as Parameters<typeof serializeAdminProject>[0]),
   )
 })
-
-export const getCachedVendorProjectDetailForUser = React.cache(
-  async (projectId: string, vendorUserId: string) => {
-    const vendor = await db.query.vendors.findFirst({
-      where: eq(vendors.userId, vendorUserId),
-    })
-
-    if (!vendor) {
-      return null
-    }
-
-    const project = await db.query.projects.findFirst({
-      where: eq(projects.id, projectId),
-      with: {
-        files: true,
-        seller: {
-          with: {
-            user: true,
-          },
-        },
-        comments: {
-          with: {
-            author: true,
-          },
-          orderBy: [desc(comments.createdAt)],
-        },
-        quotes: {
-          where: eq(quotes.vendorId, vendor.id),
-          with: {
-            vendor: {
-              with: {
-                user: true,
-              },
-            },
-          },
-          orderBy: [desc(quotes.createdAt)],
-        },
-      },
-    })
-
-    if (!project?.seller?.user) {
-      return null
-    }
-
-    return {
-      id: project.id,
-      projectId: project.projectId,
-      name: project.name,
-      description: project.description,
-      requirements: project.requirements,
-      category: project.category,
-      budgetRange: project.budgetRange,
-      startDate: project.startDate?.toISOString() ?? '',
-      endDate: project.endDate?.toISOString() ?? '',
-      priority: (dbToMockPriority[project.priority] ??
-        project.priority.toLowerCase()) as VendorProjectDetailDto['priority'],
-      status: (dbToMockStatus[project.status] ??
-        project.status.toLowerCase()) as VendorProjectDetailDto['status'],
-      createdAt: project.createdAt.toISOString(),
-      updatedAt: project.updatedAt.toISOString(),
-      deliverables: project.deliverables ?? [],
-      techStack: project.techStack ?? [],
-      files: project.files.map(serializeFile),
-      seller: {
-        companyName: project.seller.companyName,
-        user: {
-          name: project.seller.user.name,
-          email: project.seller.user.email,
-        },
-      },
-      comments: project.comments.map(serializeComment),
-      existingQuote: project.quotes[0] ? serializeQuote(project.quotes[0]) : null,
-    } satisfies VendorProjectDetailDto
-  },
-)
 
 export const getCachedProjectCategories = React.cache(async () => {
   const rows = await db

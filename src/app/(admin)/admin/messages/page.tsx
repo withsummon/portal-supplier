@@ -11,7 +11,7 @@ export default async function AdminMessagesPage() {
       currentUserId={user.id}
       initialConversations={conversations}
       pageTitle="Messages"
-      pageSubtitle="Review and respond to seller and vendor conversations in one queue."
+      pageSubtitle="Review and respond to makelar conversations in one queue."
     />
   )
 }

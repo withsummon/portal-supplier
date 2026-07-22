@@ -2,18 +2,15 @@
 
 import {
   Bell,
-  BookOpen,
   ChevronLeft,
   ChevronRight,
   Factory,
-  FileText,
   FolderOpen,
   LayoutDashboard,
   LogOut,
   MessageSquare,
   PlusCircle,
   Shield,
-  Store,
   User,
   Users,
 } from 'lucide-react'
@@ -28,7 +25,6 @@ interface SidebarUser {
   email: string
   name: string | null
   seller?: { companyName: string } | null
-  vendor?: { companyName: string } | null
   adminTeam?: { department: string } | null
 }
 
@@ -51,29 +47,13 @@ const sellerNavItems: NavSection[] = [
     section: 'Main',
     items: [
       { label: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
-      { label: 'My Projects', href: '/projects', icon: FolderOpen, badge: '5' },
+      { label: 'My Projects', href: '/projects', icon: FolderOpen },
       { label: 'Submit Project', href: '/projects/submit', icon: PlusCircle },
     ],
   },
   {
     section: 'Explore',
-    items: [
-      { label: 'Summon Factory', href: '/factory', icon: Factory },
-      { label: 'Research Blog', href: '/research', icon: BookOpen },
-    ],
-  },
-]
-
-// Vendor navigation
-const vendorNavItems: NavSection[] = [
-  {
-    section: 'Main',
-    items: [
-      { label: 'Dashboard', href: '/vendor', icon: LayoutDashboard },
-      { label: 'Find Projects', href: '/vendor/projects', icon: FolderOpen },
-      { label: 'My Quotes', href: '/vendor/quotes', icon: FileText },
-      { label: 'Messages', href: '/vendor/messages', icon: MessageSquare },
-    ],
+    items: [{ label: 'Summon Factory', href: '/factory', icon: Factory }],
   },
 ]
 
@@ -83,10 +63,8 @@ const adminNavItems: NavSection[] = [
     section: 'Main',
     items: [
       { label: 'Dashboard', href: '/admin', icon: LayoutDashboard },
-      { label: 'Sellers', href: '/admin/sellers', icon: Users },
-      { label: 'Vendors', href: '/admin/vendors', icon: Store },
+      { label: 'Makelar', href: '/admin/sellers', icon: Users },
       { label: 'Projects', href: '/admin/projects', icon: FolderOpen },
-      { label: 'New Project', href: '/admin/projects/new', icon: PlusCircle },
     ],
   },
   {
@@ -121,15 +99,11 @@ export default function Sidebar({
 
   // Determine which navigation to show based on route
   const isAdmin = pathname.startsWith('/admin')
-  const isVendor = pathname.startsWith('/vendor')
-  const currentNavItems = isAdmin ? adminNavItems : isVendor ? vendorNavItems : sellerNavItems
+  const currentNavItems = isAdmin ? adminNavItems : sellerNavItems
 
   const isActive = (href: string) => {
     if (isAdmin) {
       return href === '/admin' ? pathname === href : pathname.startsWith(href)
-    }
-    if (isVendor) {
-      return href === '/vendor' ? pathname === href : pathname.startsWith(href)
     }
     return href === '/dashboard' ? pathname === href : pathname.startsWith(href)
   }
@@ -147,8 +121,6 @@ export default function Sidebar({
     let company = ''
     if (user.seller) {
       company = user.seller.companyName
-    } else if (user.vendor) {
-      company = user.vendor.companyName
     } else if (user.adminTeam) {
       company = user.adminTeam.department
     }
@@ -166,11 +138,7 @@ export default function Sidebar({
         {!collapsed && (
           <div className="sidebar-brand-text">
             <span className="sidebar-brand-name">Summon</span>
-            {isAdmin ? null : (
-              <span className="sidebar-brand-sub">
-                {isVendor ? 'Vendor Portal' : 'Supplier Portal'}
-              </span>
-            )}
+            {isAdmin ? null : <span className="sidebar-brand-sub">Makelar Portal</span>}
           </div>
         )}
       </div>
@@ -216,16 +184,15 @@ export default function Sidebar({
             <div className="sidebar-divider" />
 
             <Link
-              href={`${isAdmin ? '/admin' : isVendor ? '/vendor' : ''}/notifications`}
+              href={`${isAdmin ? '/admin' : ''}/notifications`}
               className={`sidebar-item${isActive('/notifications') ? ' active' : ''}`}
               title={collapsed ? 'Notifications' : undefined}
             >
               <Bell size={17} className="sidebar-item-icon" />
               {!collapsed && <span>Notifications</span>}
-              {!collapsed && <span className="sidebar-badge">3</span>}
             </Link>
             <Link
-              href={`${isAdmin ? '/admin' : isVendor ? '/vendor' : ''}/team`}
+              href={`${isAdmin ? '/admin' : ''}/team`}
               className={`sidebar-item${isActive('/team') ? ' active' : ''}`}
               title={collapsed ? 'Team' : undefined}
             >
@@ -255,11 +222,11 @@ export default function Sidebar({
       <div className="sidebar-footer">
         <div
           className={`sidebar-user${isActive('/profile') ? ' active-profile' : ''}`}
-          onClick={() => router.push(`${isAdmin ? '/admin' : isVendor ? '/vendor' : ''}/profile`)}
+          onClick={() => router.push(`${isAdmin ? '/admin' : ''}/profile`)}
           onKeyDown={(e) => {
             if (e.key === 'Enter' || e.key === ' ') {
               e.preventDefault()
-              router.push(`${isAdmin ? '/admin' : isVendor ? '/vendor' : ''}/profile`)
+              router.push(`${isAdmin ? '/admin' : ''}/profile`)
             }
           }}
           style={{ cursor: 'pointer' }}

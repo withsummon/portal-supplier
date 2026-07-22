@@ -11,7 +11,6 @@ import {
   Info,
   Mail,
   MessageSquare,
-  TrendingUp,
   XCircle,
 } from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
@@ -49,11 +48,6 @@ const notificationIconMap: Record<string, NotificationIconConfig> = {
     icon: MessageSquare,
     iconColor: 'var(--color-purple)',
     bgColor: 'var(--color-purple-bg)',
-  },
-  QUOTE_RECEIVED: {
-    icon: TrendingUp,
-    iconColor: 'var(--color-success)',
-    bgColor: 'var(--color-success-bg)',
   },
   SYSTEM: {
     icon: Info,

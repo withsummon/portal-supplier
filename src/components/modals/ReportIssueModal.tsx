@@ -123,7 +123,7 @@ export default function ReportIssueModal({ isOpen, onClose }: ReportIssueModalPr
             <select className="select" required>
               <option value="">Select your involvement</option>
               <option value="seller">Seller / Project Submitter</option>
-              <option value="vendor">Vendor / Partner</option>
+              <option value="partner">Execution Partner</option>
               <option value="admin">System Admin</option>
               <option value="other">Other</option>
             </select>

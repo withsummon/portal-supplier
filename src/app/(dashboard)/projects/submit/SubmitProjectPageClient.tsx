@@ -768,7 +768,7 @@ export default function SubmitProjectPageClient({ categories }: { categories: st
               Be specific on scope, constraints, and delivery timeline.
             </div>
             <div style={{ fontSize: 'var(--fs-sm)', color: 'var(--text-secondary)' }}>
-              Add supporting documents so admin and vendors can review faster.
+              Add supporting documents so admin can review faster.
             </div>
             <div style={{ fontSize: 'var(--fs-sm)', color: 'var(--text-secondary)' }}>
               Clarify budget and priority early to reduce back-and-forth.

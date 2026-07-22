@@ -3,7 +3,7 @@
 import { revalidatePath } from 'next/cache'
 import { eq } from 'drizzle-orm'
 import { db } from '@/db'
-import { adminTeamMembers, sellers, users, vendors } from '@/db/schema'
+import { adminTeamMembers, sellers, users } from '@/db/schema'
 import { requireRole } from '@/lib/auth/session'
 import { saveLocalUpload } from '@/lib/uploads'
 
@@ -63,53 +63,6 @@ export async function updateSellerProfile(formData: FormData) {
   return { success: true }
 }
 
-export async function updateVendorProfile(formData: FormData) {
-  const user = await requireRole('VENDOR')
-  const logoFile = readOptionalFile(formData, 'logo')
-  const nextLogoUrl = logoFile
-    ? await saveLocalUpload({
-        file: logoFile,
-        folder: 'profiles',
-        allowedMimePrefix: 'image/',
-      })
-    : null
-
-  await db.transaction(async (tx) => {
-    await tx
-      .update(users)
-      .set({
-        name: readString(formData, 'name'),
-        email: readString(formData, 'email'),
-        phone: readString(formData, 'phone'),
-        location: readString(formData, 'location'),
-        ...(nextLogoUrl ? { image: nextLogoUrl } : {}),
-      })
-      .where(eq(users.id, user.id))
-
-    const vendor = user.vendor
-    if (!vendor) {
-      throw new Error('Vendor profile not found.')
-    }
-
-    await tx
-      .update(vendors)
-      .set({
-        companyName: readString(formData, 'companyName'),
-        industry: readString(formData, 'industry'),
-        companySize: readString(formData, 'companySize'),
-        website: readString(formData, 'website'),
-        description: readString(formData, 'description'),
-        location: readString(formData, 'location'),
-        ...(nextLogoUrl ? { logoUrl: nextLogoUrl } : {}),
-      })
-      .where(eq(vendors.id, vendor.id))
-  })
-
-  revalidatePath('/vendor/profile')
-
-  return { success: true }
-}
-
 export async function updateAdminProfile(formData: FormData) {
   const user = await requireRole('ADMIN')
   const imageFile = readOptionalFile(formData, 'image')
@@ -132,7 +85,6 @@ export async function updateAdminProfile(formData: FormData) {
         preferences: {
           emailNotifications: formData.get('emailNotifications') === 'true',
           projectUpdates: formData.get('projectUpdates') === 'true',
-          vendorApplications: formData.get('vendorApplications') === 'true',
           weeklyReports: formData.get('weeklyReports') === 'true',
         },
         ...(nextImageUrl ? { image: nextImageUrl } : {}),

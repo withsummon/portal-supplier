@@ -2,9 +2,10 @@
 
 import { useState, useRef, useEffect } from 'react'
 import { usePathname, useRouter } from 'next/navigation'
-import { Search, Bell, HelpCircle, BookOpen, AlertCircle, ExternalLink, X } from 'lucide-react'
+import { Search, Bell, HelpCircle, AlertCircle, X } from 'lucide-react'
 import Link from 'next/link'
 import ReportIssueModal from '../modals/ReportIssueModal'
+import type { NotificationDto } from '@/lib/data/communications'
 
 const breadcrumbMap: Record<string, { parent?: string; label: string }> = {
   '/dashboard': { label: 'Dashboard' },
@@ -12,41 +13,35 @@ const breadcrumbMap: Record<string, { parent?: string; label: string }> = {
   '/projects/submit': { parent: 'My Projects', label: 'Submit Project' },
   '/notifications': { parent: 'Dashboard', label: 'Notifications' },
   '/factory': { label: 'Summon Factory' },
-  '/research': { label: 'Research Blog' },
+  '/research': { label: 'Research' },
   '/profile': { label: 'My Profile' },
   '/wiki': { parent: 'Help', label: 'Summon Wiki' },
 }
 
-const mockNotifications = [
-  {
-    id: '1',
-    title: 'Project Status Updated',
-    desc: 'Your project "E-Commerce Platform Revamp" has been moved to Under Review.',
-    time: '2 mins ago',
-    link: '/projects/PRJ-001',
-  },
-  {
-    id: '2',
-    title: 'New Clarification Request',
-    desc: 'Admin has requested additional documents for "Data Analytics Dashboard".',
-    time: '1 hour ago',
-    link: '/projects/PRJ-003',
-  },
-  {
-    id: '3',
-    title: 'Welcome to Summon',
-    desc: 'Thank you for joining the Summon Supplier Portal. Start by submitting your first project.',
-    time: '2 days ago',
-    link: '/projects/submit',
-  },
-]
+function formatNotificationTime(value: string) {
+  return new Intl.DateTimeFormat('en-US', {
+    month: 'short',
+    day: 'numeric',
+    hour: 'numeric',
+    minute: '2-digit',
+  }).format(new Date(value))
+}
 
-export default function Header({ sidebarCollapsed }: { sidebarCollapsed?: boolean }) {
+export default function Header({
+  notifications,
+  sidebarCollapsed,
+  userRole,
+}: {
+  notifications: NotificationDto[]
+  sidebarCollapsed?: boolean
+  userRole?: 'ADMIN' | 'SELLER' | undefined
+}) {
   const pathname = usePathname()
   const router = useRouter()
   const [showNotifications, setShowNotifications] = useState(false)
   const [showHelp, setShowHelp] = useState(false)
   const [showReportModal, setShowReportModal] = useState(false)
+  const notificationBasePath = userRole === 'ADMIN' ? '/admin/notifications' : '/notifications'
 
   // Refs for outside click handling
   const notifRef = useRef<HTMLDivElement>(null)
@@ -105,7 +100,9 @@ export default function Header({ sidebarCollapsed }: { sidebarCollapsed?: boolea
             onClick={() => setShowNotifications(!showNotifications)}
           >
             <Bell size={18} />
-            <span className="header-notif-dot" />
+            {notifications.some((notification) => notification.unread) && (
+              <span className="header-notif-dot" />
+            )}
           </button>
 
           {showNotifications && (
@@ -117,17 +114,18 @@ export default function Header({ sidebarCollapsed }: { sidebarCollapsed?: boolea
                 </button>
               </div>
               <div style={{ maxHeight: '400px', overflowY: 'auto' }}>
-                {mockNotifications.map((notif) => (
-                  <div
-                    key={notif.id}
+                {notifications.slice(0, 5).map((notification) => (
+                  <button
+                    key={notification.id}
                     className="dropdown-item"
+                    type="button"
                     onClick={() => {
-                      router.push(notif.link)
+                      router.push(notification.link ?? notificationBasePath)
                       setShowNotifications(false)
                     }}
                   >
-                    <span className="dropdown-item-title">{notif.title}</span>
-                    <span className="dropdown-item-desc">{notif.desc}</span>
+                    <span className="dropdown-item-title">{notification.title}</span>
+                    <span className="dropdown-item-desc">{notification.description}</span>
                     <div
                       style={{
                         display: 'flex',
@@ -136,11 +134,19 @@ export default function Header({ sidebarCollapsed }: { sidebarCollapsed?: boolea
                         marginTop: '4px',
                       }}
                     >
-                      <span className="dropdown-item-time">{notif.time}</span>
+                      <span className="dropdown-item-time">
+                        {formatNotificationTime(notification.createdAt)}
+                      </span>
                       <span className="dropdown-item-link">Click here for details →</span>
                     </div>
-                  </div>
+                  </button>
                 ))}
+                {notifications.length === 0 && (
+                  <div className="dropdown-item">
+                    <span className="dropdown-item-title">No notifications</span>
+                    <span className="dropdown-item-desc">You are all caught up.</span>
+                  </div>
+                )}
               </div>
               <div
                 style={{
@@ -150,7 +156,7 @@ export default function Header({ sidebarCollapsed }: { sidebarCollapsed?: boolea
                 }}
               >
                 <Link
-                  href="/notifications"
+                  href={notificationBasePath}
                   style={{
                     fontSize: 'var(--fs-xs)',
                     color: 'var(--blue-600)',
@@ -193,41 +199,6 @@ export default function Header({ sidebarCollapsed }: { sidebarCollapsed?: boolea
                   <div className="dropdown-item-desc">Found a bug or need help?</div>
                 </div>
               </button>
-              <button
-                className="dropdown-item"
-                style={{ flexDirection: 'row', alignItems: 'center', gap: 'var(--sp-3)' }}
-                onClick={() => {
-                  router.push('/wiki')
-                  setShowHelp(false)
-                }}
-              >
-                <BookOpen size={16} color="var(--color-purple)" />
-                <div style={{ textAlign: 'left' }}>
-                  <div className="dropdown-item-title">Summon Wiki</div>
-                  <div className="dropdown-item-desc">Guides and documentation</div>
-                </div>
-              </button>
-              <div
-                style={{
-                  padding: 'var(--sp-2)',
-                  borderTop: '1px solid var(--border-default)',
-                  textAlign: 'center',
-                }}
-              >
-                <a
-                  href="#"
-                  style={{
-                    fontSize: 'var(--fs-xs)',
-                    color: 'var(--text-muted)',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    gap: '4px',
-                  }}
-                >
-                  Version 1.0.4 <ExternalLink size={10} />
-                </a>
-              </div>
             </div>
           )}
         </div>

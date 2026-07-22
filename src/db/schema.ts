@@ -17,7 +17,7 @@ import { relations } from 'drizzle-orm'
 // ENUMS
 // ============================================================
 
-export const userRoleEnum = pgEnum('user_role', ['ADMIN', 'SELLER', 'VENDOR'])
+export const userRoleEnum = pgEnum('user_role', ['ADMIN', 'SELLER'])
 
 export const sellerStatusEnum = pgEnum('seller_status', [
   'PENDING',
@@ -27,15 +27,6 @@ export const sellerStatusEnum = pgEnum('seller_status', [
 ])
 
 export const sellerTierEnum = pgEnum('seller_tier', ['PLATINUM', 'GOLD', 'SILVER', 'BRONZE'])
-
-export const vendorStatusEnum = pgEnum('vendor_status', [
-  'PENDING',
-  'ACTIVE',
-  'SUSPENDED',
-  'REJECTED',
-])
-
-export const vendorTierEnum = pgEnum('vendor_tier', ['PLATINUM', 'GOLD', 'SILVER', 'BRONZE'])
 
 export const projectStatusEnum = pgEnum('project_status', [
   'SUBMITTED',
@@ -53,13 +44,6 @@ export const projectPriorityEnum = pgEnum('project_priority', ['LOW', 'MEDIUM', 
 
 export const noteTypeEnum = pgEnum('note_type', ['CLARIFICATION', 'STATUS_CHANGE', 'GENERAL'])
 
-export const quoteStatusEnum = pgEnum('quote_status', [
-  'PENDING',
-  'ACCEPTED',
-  'REJECTED',
-  'WITHDRAWN',
-])
-
 export const conversationTypeEnum = pgEnum('conversation_type', ['INDIVIDUAL', 'GROUP', 'PROJECT'])
 
 export const messageTypeEnum = pgEnum('message_type', ['TEXT', 'FILE', 'SYSTEM'])
@@ -73,9 +57,7 @@ export const notificationTypeEnum = pgEnum('notification_type', [
   'PROJECT_COMPLETED',
   'PROJECT_PAID',
   'MESSAGE_RECEIVED',
-  'QUOTE_RECEIVED',
   'SELLER_REGISTRATION',
-  'VENDOR_REGISTRATION',
   'SYSTEM',
 ])
 
@@ -212,38 +194,6 @@ export const sellers = pgTable(
 )
 
 // ============================================================
-// VENDOR Management
-// ============================================================
-
-export const vendors = pgTable(
-  'vendors',
-  {
-    id: uuid('id').defaultRandom().primaryKey(),
-    userId: uuid('user_id')
-      .notNull()
-      .unique()
-      .references(() => users.id, { onDelete: 'cascade' }),
-    companyName: text('company_name').notNull(),
-    industry: text('industry'),
-    companySize: text('company_size'),
-    website: text('website'),
-    description: text('description'),
-    location: text('location'),
-    logoUrl: text('logo_url'),
-    status: vendorStatusEnum('status').default('PENDING').notNull(),
-    tier: vendorTierEnum('tier').default('BRONZE').notNull(),
-    activeProjects: integer('active_projects').default(0).notNull(),
-    revenue: decimal('revenue', { precision: 12, scale: 2 }).default('0').notNull(),
-    createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
-    updatedAt: timestamp('updated_at', { withTimezone: true })
-      .defaultNow()
-      .notNull()
-      .$onUpdate(() => new Date()),
-  },
-  (table) => [index('vendors_user_id_idx').on(table.userId)],
-)
-
-// ============================================================
 // PROJECT Management
 // ============================================================
 
@@ -336,37 +286,6 @@ export const notes = pgTable(
     createdBy: text('created_by').notNull(),
   },
   (table) => [index('notes_project_id_idx').on(table.projectId)],
-)
-
-// ============================================================
-// QUOTES (Vendor responses to projects)
-// ============================================================
-
-export const quotes = pgTable(
-  'quotes',
-  {
-    id: uuid('id').defaultRandom().primaryKey(),
-    projectId: uuid('project_id')
-      .notNull()
-      .references(() => projects.id, { onDelete: 'cascade' }),
-    vendorId: uuid('vendor_id')
-      .notNull()
-      .references(() => vendors.id, { onDelete: 'cascade' }),
-    amount: decimal('amount', { precision: 12, scale: 2 }).notNull(),
-    currency: text('currency').default('IDR').notNull(),
-    duration: integer('duration'), // in days
-    proposal: text('proposal'),
-    status: quoteStatusEnum('status').default('PENDING').notNull(),
-    createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
-    updatedAt: timestamp('updated_at', { withTimezone: true })
-      .defaultNow()
-      .notNull()
-      .$onUpdate(() => new Date()),
-  },
-  (table) => [
-    index('quotes_project_id_idx').on(table.projectId),
-    index('quotes_vendor_id_idx').on(table.vendorId),
-  ],
 )
 
 // ============================================================
@@ -594,7 +513,6 @@ export const categories = pgTable(
 
 export const usersRelations = relations(users, ({ one, many }) => ({
   seller: one(sellers, { fields: [users.id], references: [sellers.userId] }),
-  vendor: one(vendors, { fields: [users.id], references: [vendors.userId] }),
   adminTeam: one(adminTeamMembers, {
     fields: [users.id],
     references: [adminTeamMembers.userId],
@@ -620,18 +538,12 @@ export const sellersRelations = relations(sellers, ({ one, many }) => ({
   teamMembers: many(teamMembers),
 }))
 
-export const vendorsRelations = relations(vendors, ({ one, many }) => ({
-  user: one(users, { fields: [vendors.userId], references: [users.id] }),
-  quotes: many(quotes),
-}))
-
 export const projectsRelations = relations(projects, ({ one, many }) => ({
   seller: one(sellers, { fields: [projects.sellerId], references: [sellers.id] }),
   files: many(projectFiles),
   statusHistory: many(statusHistory),
   notes: many(notes),
   comments: many(comments),
-  quotes: many(quotes),
   payments: many(payments),
 }))
 
@@ -655,11 +567,6 @@ export const notesRelations = relations(notes, ({ one }) => ({
 
 export const paymentsRelations = relations(payments, ({ one }) => ({
   project: one(projects, { fields: [payments.projectId], references: [projects.id] }),
-}))
-
-export const quotesRelations = relations(quotes, ({ one }) => ({
-  project: one(projects, { fields: [quotes.projectId], references: [projects.id] }),
-  vendor: one(vendors, { fields: [quotes.vendorId], references: [vendors.id] }),
 }))
 
 export const conversationsRelations = relations(conversations, ({ many }) => ({

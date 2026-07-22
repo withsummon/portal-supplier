@@ -9,16 +9,14 @@ import {
   payments,
   projectFiles,
   projects,
-  quotes,
   statusHistory,
   users,
-  vendors,
 } from '@/db/schema'
-import { eq, desc, and, like, or, count, sql, inArray } from 'drizzle-orm'
+import { eq, desc, and, like, or, count, sql } from 'drizzle-orm'
 import { revalidatePath } from 'next/cache'
 import { getCurrentUserRecord, requireRole } from '@/lib/auth/session'
 import { saveLocalUpload } from '@/lib/uploads'
-import { dbToMockQuoteStatus, dbToMockStatus, mockToDbPriority } from '@/lib/utils/data'
+import { dbToUiStatus, uiToDbPriority } from '@/lib/utils/data'
 
 // ============================================================
 // PROJECT ACTIONS
@@ -77,9 +75,6 @@ export async function getProjectById(id: string) {
       notes: {
         orderBy: [desc(notes.createdAt)],
       },
-      quotes: {
-        with: { vendor: { with: { user: true } } },
-      },
       comments: {
         with: { author: true },
         orderBy: [desc(comments.createdAt)],
@@ -100,9 +95,6 @@ export async function getProjectByProjectId(projectId: string) {
       files: true,
       statusHistory: {
         orderBy: [desc(statusHistory.createdAt)],
-      },
-      quotes: {
-        with: { vendor: { with: { user: true } } },
       },
     },
   })
@@ -186,7 +178,6 @@ export async function updateProjectStatus(
     where: eq(projects.id, projectId),
     with: {
       seller: { with: { user: true } },
-      quotes: { with: { vendor: { with: { user: true } } } },
     },
   })
 
@@ -223,9 +214,6 @@ export async function updateProjectStatus(
 
     const notifyUserIds: string[] = []
     if (project.seller?.user) notifyUserIds.push(project.seller.user.id)
-    for (const quote of project.quotes) {
-      if (quote.vendor?.user) notifyUserIds.push(quote.vendor.user.id)
-    }
 
     const notificationType =
       newStatus === 'IN_PROGRESS'
@@ -259,12 +247,11 @@ export async function updateProjectStatus(
   revalidatePath('/projects')
   revalidatePath(`/projects/${projectId}`)
   revalidatePath('/admin/projects')
-  revalidatePath('/vendor/projects')
   revalidatePath('/dashboard')
 
   return {
     id: projectId,
-    status: dbToMockStatus[newStatus] ?? newStatus.toLowerCase(),
+    status: dbToUiStatus[newStatus] ?? newStatus.toLowerCase(),
     note: defaultNote,
   }
 }
@@ -288,69 +275,6 @@ export async function getProjectStats(sellerId?: string) {
   }
 
   return stats
-}
-
-// ============================================================
-// QUOTE ACTIONS
-// ============================================================
-
-export async function getQuotes(vendorId?: string, projectId?: string) {
-  const conditions = []
-
-  if (vendorId) {
-    conditions.push(eq(quotes.vendorId, vendorId))
-  }
-
-  if (projectId) {
-    conditions.push(eq(quotes.projectId, projectId))
-  }
-
-  return db.query.quotes.findMany({
-    where: conditions.length > 0 ? and(...conditions) : undefined,
-    with: {
-      project: {
-        with: { seller: { with: { user: true } } },
-      },
-      vendor: { with: { user: true } },
-    },
-    orderBy: [desc(quotes.createdAt)],
-  })
-}
-
-export async function submitQuote(data: {
-  projectId: string
-  vendorId: string
-  amount: number
-  currency?: string
-  duration?: number
-  proposal?: string
-}) {
-  const [quote] = await db
-    .insert(quotes)
-    .values({
-      ...data,
-      amount: data.amount.toString(),
-    })
-    .returning()
-  return quote
-}
-
-export async function updateQuoteStatus(
-  quoteId: string,
-  status: typeof quotes.$inferSelect.status,
-) {
-  const [updated] = await db
-    .update(quotes)
-    .set({ status })
-    .where(eq(quotes.id, quoteId))
-    .returning()
-
-  revalidatePath('/admin/projects')
-  revalidatePath('/projects')
-  revalidatePath('/vendor/projects')
-  revalidatePath('/vendor/quotes')
-
-  return updated
 }
 
 // ============================================================
@@ -603,7 +527,7 @@ export async function submitProjectWithFiles(input: {
     category,
     description,
     requirements: input.requirements.trim(),
-    priority: (mockToDbPriority[input.priority] ?? 'MEDIUM') as
+    priority: (uiToDbPriority[input.priority] ?? 'MEDIUM') as
       | 'LOW'
       | 'MEDIUM'
       | 'HIGH'
@@ -651,98 +575,11 @@ export async function submitProjectWithFiles(input: {
   revalidatePath('/projects/submit')
   revalidatePath('/dashboard')
   revalidatePath('/admin/projects')
-  revalidatePath('/vendor/projects')
 
   return {
     id: project.id,
     projectId: project.projectId,
   }
-}
-
-export async function createProjectAsAdmin(input: {
-  name: string
-  clientName?: string
-  category: string
-  description?: string
-  requirements?: string
-  deliverables?: string[]
-  vendorId?: string
-  priority?: 'low' | 'medium' | 'high' | 'critical'
-  budgetRange?: string
-  budgetCurrency?: string
-  startDate?: string
-  endDate?: string
-}) {
-  const user = await requireRole('ADMIN')
-
-  if (input.vendorId) {
-    const vendor = await db.query.vendors.findFirst({
-      where: eq(vendors.id, input.vendorId),
-    })
-
-    if (!vendor) {
-      return { error: 'Vendor not found.' } as const
-    }
-  }
-
-  const name = input.name.trim()
-  if (!name) {
-    return { error: 'Project name is required.' } as const
-  }
-
-  const countResult = await db.select({ count: count() }).from(projects)
-  const nextNumber = (countResult[0]?.count ?? 0) + 1
-  const projectId = `PRJ-${String(nextNumber).padStart(3, '0')}`
-
-  const { min, max } = parseBudgetRange(input.budgetRange ?? '')
-
-  const status = input.vendorId ? 'ACCEPTED' : 'SUBMITTED'
-
-  const [project] = await db
-    .insert(projects)
-    .values({
-      name,
-      clientName: input.clientName?.trim() || null,
-      category: input.category.trim(),
-      description: input.description?.trim() || '',
-      requirements: input.requirements?.trim() || null,
-      deliverables: (input.deliverables ?? []).filter((d) => d.trim()),
-      budgetRange: input.budgetRange?.trim() || null,
-      budgetCurrency: input.budgetCurrency ?? 'IDR',
-      budgetMin: min?.toString() ?? null,
-      budgetMax: max?.toString() ?? null,
-      priority: (mockToDbPriority[input.priority ?? 'medium'] ?? 'MEDIUM') as
-        | 'LOW'
-        | 'MEDIUM'
-        | 'HIGH'
-        | 'CRITICAL',
-      status,
-      source: 'ADMIN',
-      startDate: input.startDate ? new Date(input.startDate) : null,
-      endDate: input.endDate ? new Date(input.endDate) : null,
-      projectId,
-    })
-    .returning()
-
-  if (!project) {
-    return { error: 'Failed to create project.' } as const
-  }
-
-  await db.insert(statusHistory).values({
-    projectId: project.id,
-    status,
-    note: input.vendorId
-      ? 'Project created by admin and assigned to vendor.'
-      : 'Project created by admin and opened for bidding.',
-    changedBy: user.id,
-  })
-
-  revalidatePath('/projects')
-  revalidatePath('/admin/projects')
-  revalidatePath('/vendor/projects')
-  revalidatePath('/dashboard')
-
-  return { success: true, id: project.id, projectId: project.projectId } as const
 }
 
 export async function reviewProjectSubmission(input: {
@@ -824,7 +661,7 @@ export async function reviewProjectSubmission(input: {
 
   return {
     id: project.id,
-    status: dbToMockStatus[status] ?? status.toLowerCase(),
+    status: dbToUiStatus[status] ?? status.toLowerCase(),
     note: {
       id: `${project.id}:${Date.now()}`,
       text: note,
@@ -855,7 +692,6 @@ export async function addProjectComment(input: { projectId: string; message: str
           user: true,
         },
       },
-      quotes: true,
     },
   })
 
@@ -878,21 +714,6 @@ export async function addProjectComment(input: { projectId: string; message: str
 
   if (user.role === 'ADMIN') {
     const recipientSet = new Set<string>([project.seller.user.id])
-    if (project.quotes.length > 0) {
-      const vendorRows = await db
-        .select({ userId: vendors.userId })
-        .from(vendors)
-        .where(
-          inArray(
-            vendors.id,
-            project.quotes.map((quote) => quote.vendorId),
-          ),
-        )
-
-      for (const row of vendorRows) {
-        recipientSet.add(row.userId)
-      }
-    }
 
     if (recipientSet.size > 0) {
       const sellerUserId = project.seller?.user?.id
@@ -903,10 +724,7 @@ export async function addProjectComment(input: { projectId: string; message: str
         type: 'MESSAGE_RECEIVED',
         title: 'New project message',
         content: `${project.name}: ${message}`,
-        link:
-          recipientId === sellerUserId
-            ? `/projects/${project.id}`
-            : `/vendor/projects/${project.id}`,
+        link: recipientId === sellerUserId ? `/projects/${project.id}` : '/admin/projects',
       }))
 
       await db.insert(notifications).values(notificationRows)
@@ -921,7 +739,6 @@ export async function addProjectComment(input: { projectId: string; message: str
   }
 
   revalidatePath(`/projects/${project.id}`)
-  revalidatePath(`/vendor/projects/${project.id}`)
   revalidatePath('/admin/projects')
 
   return {
@@ -934,103 +751,6 @@ export async function addProjectComment(input: { projectId: string; message: str
   }
 }
 
-export async function submitVendorProjectQuote(input: {
-  projectId: string
-  amount: number
-  currency: string
-  duration: number
-  proposal: string
-}) {
-  const user = await requireRole('VENDOR')
-
-  if (!user.vendor) {
-    throw new Error('Vendor profile not found.')
-  }
-
-  const project = await db.query.projects.findFirst({
-    where: eq(projects.id, input.projectId),
-    with: {
-      seller: {
-        with: {
-          user: true,
-        },
-      },
-    },
-  })
-
-  if (!project?.seller?.user) {
-    throw new Error('Project not found.')
-  }
-
-  const existingQuote = await db.query.quotes.findFirst({
-    where: and(eq(quotes.projectId, input.projectId), eq(quotes.vendorId, user.vendor.id)),
-    orderBy: [desc(quotes.createdAt)],
-  })
-
-  const quote = existingQuote
-    ? (
-        await db
-          .update(quotes)
-          .set({
-            amount: input.amount.toString(),
-            currency: input.currency.trim() || 'USD',
-            duration: input.duration,
-            proposal: input.proposal.trim(),
-            status: 'PENDING',
-          })
-          .where(eq(quotes.id, existingQuote.id))
-          .returning()
-      )[0]
-    : await submitQuote({
-        projectId: input.projectId,
-        vendorId: user.vendor.id,
-        amount: input.amount,
-        currency: input.currency.trim() || 'USD',
-        duration: input.duration,
-        proposal: input.proposal.trim(),
-      })
-
-  if (!quote) {
-    throw new Error('Failed to submit quote.')
-  }
-
-  await db.insert(notifications).values([
-    {
-      userId: project.seller.user.id,
-      type: 'QUOTE_RECEIVED',
-      title: 'New vendor proposal received',
-      content: `${project.name}: ${user.vendor.companyName} submitted a proposal.`,
-      link: `/projects/${project.id}`,
-    },
-  ])
-
-  await createNotificationsForAdmins({
-    type: 'QUOTE_RECEIVED',
-    title: 'New vendor proposal received',
-    content: `${project.name}: ${user.vendor.companyName} submitted a proposal.`,
-    link: `/admin/projects`,
-  })
-
-  revalidatePath(`/vendor/projects/${project.id}`)
-  revalidatePath('/vendor/quotes')
-  revalidatePath(`/projects/${project.id}`)
-  revalidatePath('/admin/projects')
-
-  return {
-    id: quote.id,
-    vendorId: user.vendor.id,
-    vendorName: user.vendor.companyName,
-    amount: Number(quote.amount),
-    currency: quote.currency,
-    duration: quote.duration ?? 0,
-    proposal: quote.proposal ?? '',
-    status: dbToMockQuoteStatus[quote.status] ?? quote.status.toLowerCase(),
-    submittedAt: quote.createdAt.toISOString(),
-  }
-}
-
-// ============================================================
-
 export async function markProjectPaid(
   projectId: string,
   paymentData?: { amount?: number; paymentMethod?: string; notes?: string },
@@ -1041,7 +761,6 @@ export async function markProjectPaid(
     where: eq(projects.id, projectId),
     with: {
       seller: { with: { user: true } },
-      quotes: { with: { vendor: { with: { user: true } } } },
     },
   })
 
@@ -1078,9 +797,6 @@ export async function markProjectPaid(
 
     const notifyUserIds: string[] = []
     if (project.seller?.user) notifyUserIds.push(project.seller.user.id)
-    for (const quote of project.quotes) {
-      if (quote.vendor?.user) notifyUserIds.push(quote.vendor.user.id)
-    }
 
     for (const userId of [...new Set(notifyUserIds)]) {
       await tx.insert(notifications).values({
@@ -1096,7 +812,6 @@ export async function markProjectPaid(
   revalidatePath('/projects')
   revalidatePath(`/projects/${projectId}`)
   revalidatePath('/admin/projects')
-  revalidatePath('/vendor/projects')
   revalidatePath('/dashboard')
 
   return { id: projectId, status: 'paid' }

@@ -9,8 +9,6 @@ import { getCurrentUserRecord, requireSession } from '@/lib/auth/session'
 function revalidateCommunicationPaths() {
   revalidatePath('/messages')
   revalidatePath('/notifications')
-  revalidatePath('/vendor/messages')
-  revalidatePath('/vendor/notifications')
   revalidatePath('/admin/messages')
   revalidatePath('/admin/notifications')
 }

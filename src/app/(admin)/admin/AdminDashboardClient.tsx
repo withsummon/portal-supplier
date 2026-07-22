@@ -31,18 +31,11 @@ const DASHBOARD_STAT_CARDS: Array<{
   getValue: (stats: AdminStatDto) => string
 }> = [
   {
-    title: 'Total Sellers',
+    title: 'Total Makelar',
     icon: Users,
     background: 'var(--blue-50)',
     color: 'var(--blue-600)',
     getValue: (stats) => String(stats.totalSellers),
-  },
-  {
-    title: 'Total Vendors',
-    icon: Users,
-    background: 'var(--color-success-bg)',
-    color: 'var(--color-success)',
-    getValue: (stats) => String(stats.totalVendors),
   },
   {
     title: 'Active Projects',
@@ -69,9 +62,8 @@ const DASHBOARD_STAT_CARDS: Array<{
 
 const PENDING_ACTION_ROUTES: Record<string, string> = {
   'pending-sellers': '/admin/sellers?status=pending',
-  'pending-vendors': '/admin/vendors?status=pending',
   'pending-projects': '/admin/projects?status=submitted',
-  'clarifications': '/admin/projects?status=need_clarification',
+  clarifications: '/admin/projects?status=need_clarification',
 }
 
 export default function AdminDashboardClient({
@@ -198,9 +190,7 @@ export default function AdminDashboardClient({
                       height: '40px',
                       borderRadius: '50%',
                       background:
-                        activity.type === 'project'
-                          ? 'var(--color-success-bg)'
-                          : 'var(--blue-50)',
+                        activity.type === 'project' ? 'var(--color-success-bg)' : 'var(--blue-50)',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',

@@ -1,21 +1,35 @@
 import React from 'react'
-import { asc } from 'drizzle-orm'
+import { asc, eq } from 'drizzle-orm'
 import { db } from '@/db'
-import { projects } from '@/db/schema'
+import { products, projects } from '@/db/schema'
 
 export const getCachedCommandBarProjects = React.cache(async (filters?: { sellerId?: string }) => {
-  let query = db
-    .select({
-      id: projects.id,
-      name: projects.name,
-      projectId: projects.projectId,
-      clientName: projects.clientName,
-    })
-    .from(projects)
-
-  if (filters?.sellerId) {
-    query = query.where(require('drizzle-orm').eq(projects.sellerId, filters.sellerId)) as any
+  const fields = {
+    id: projects.id,
+    name: projects.name,
+    projectId: projects.projectId,
+    clientName: projects.clientName,
   }
 
-  return query.orderBy(asc(projects.projectId))
+  if (filters?.sellerId) {
+    return db
+      .select(fields)
+      .from(projects)
+      .where(eq(projects.sellerId, filters.sellerId))
+      .orderBy(asc(projects.projectId))
+  }
+
+  return db.select(fields).from(projects).orderBy(asc(projects.projectId))
+})
+
+export const getCachedCommandBarProducts = React.cache(async () => {
+  return db
+    .select({
+      id: products.id,
+      name: products.name,
+      slug: products.slug,
+    })
+    .from(products)
+    .where(eq(products.isActive, true))
+    .orderBy(asc(products.name))
 })

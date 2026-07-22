@@ -250,7 +250,9 @@ export default function SellersPageClient({ sellers }: { sellers: SellerDirector
                     className="btn btn-primary"
                     type="button"
                     disabled={isPending}
-                    onClick={() => handleApprove(selectedSeller.id)}
+                    onClick={() => {
+                      void handleApprove(selectedSeller.id)
+                    }}
                   >
                     <Check size={14} />
                     Approve
@@ -260,7 +262,9 @@ export default function SellersPageClient({ sellers }: { sellers: SellerDirector
                     type="button"
                     disabled={isPending}
                     style={{ color: 'var(--color-danger)' }}
-                    onClick={() => handleReject(selectedSeller.id)}
+                    onClick={() => {
+                      void handleReject(selectedSeller.id)
+                    }}
                   >
                     <X size={14} />
                     Reject

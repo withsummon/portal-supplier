@@ -2,14 +2,12 @@ import { type Page, expect } from '@playwright/test'
 import type { TestUser } from './test-users'
 
 const roleText: Record<string, string> = {
-  seller: 'Seller',
-  vendor: 'Vendor',
+  seller: 'Makelar',
   admin: 'Summon Team',
 }
 
 export async function registerUser(page: Page, user: TestUser): Promise<void> {
-  const rolePath = user.role === 'SELLER' ? '/register/seller' : '/register/vendor'
-  await page.goto(rolePath)
+  await page.goto('/register/seller')
   await page.waitForLoadState('networkidle')
 
   // Fill text inputs using evaluate to ensure React synthetic events fire
@@ -78,13 +76,16 @@ export async function loginUser(
   page: Page,
   email: string,
   password: string,
-  role: 'seller' | 'vendor' | 'admin',
+  role: 'seller' | 'admin',
 ): Promise<void> {
   await page.goto('/login')
   await page.waitForLoadState('networkidle')
 
   // Click role button first (fires React onClick to set selectedRole state)
-  const roleBtn = page.locator('button').filter({ hasText: new RegExp('^' + roleText[role] + '$', 'i') }).first()
+  const roleBtn = page
+    .locator('button')
+    .filter({ hasText: new RegExp('^' + roleText[role] + '$', 'i') })
+    .first()
   if (await roleBtn.isVisible({ timeout: 3000 }).catch(() => false)) {
     await roleBtn.click()
     await page.waitForTimeout(200)

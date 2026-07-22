@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState, type ReactNode } from 'react'
+import { useEffect, type ReactNode } from 'react'
 import { createPortal } from 'react-dom'
 
 interface ModalProps {
@@ -18,12 +18,6 @@ export default function Modal({
   maxWidth = '600px',
   noPadding = false,
 }: ModalProps) {
-  const [mounted, setMounted] = useState(false)
-
-  useEffect(() => {
-    setMounted(true)
-  }, [])
-
   useEffect(() => {
     if (isOpen) {
       document.body.style.overflow = 'hidden'
@@ -35,7 +29,7 @@ export default function Modal({
     }
   }, [isOpen])
 
-  if (!mounted || !isOpen) {
+  if (typeof document === 'undefined' || !isOpen) {
     return null
   }
 

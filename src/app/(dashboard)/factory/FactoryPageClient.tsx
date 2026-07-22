@@ -234,7 +234,9 @@ export default function FactoryPageClient({ products }: { products: FactoryProdu
       >
         {selectedProduct && (
           <div style={{ padding: 'var(--sp-6)' }}>
-            <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: 'var(--sp-3)' }}>
+            <div
+              style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: 'var(--sp-3)' }}
+            >
               <button
                 className="btn btn-ghost btn-sm"
                 type="button"
@@ -284,9 +286,7 @@ export default function FactoryPageClient({ products }: { products: FactoryProdu
                           height: '8px',
                           borderRadius: '4px',
                           background:
-                            i === currentImageIndex
-                              ? 'var(--blue-500)'
-                              : 'var(--neutral-200)',
+                            i === currentImageIndex ? 'var(--blue-500)' : 'var(--neutral-200)',
                           border: 'none',
                           cursor: 'pointer',
                           padding: 0,

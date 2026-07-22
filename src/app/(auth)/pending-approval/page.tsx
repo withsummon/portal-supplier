@@ -1,63 +1,27 @@
 'use client'
 
-import { Suspense, useEffect, useState } from 'react'
-import { useSearchParams } from 'next/navigation'
+import { Suspense } from 'react'
 import Link from 'next/link'
-import {
-  Clock,
-  ShieldCheck,
-  ArrowRight,
-  CheckCircle,
-  Search,
-  Rocket,
-  BarChart2,
-} from 'lucide-react'
+import { Clock, ShieldCheck, ArrowRight, CheckCircle, Rocket, BarChart2 } from 'lucide-react'
 
 function PendingApprovalContent() {
-  const searchParams = useSearchParams()
-  const role = searchParams.get('role') || 'seller'
-  const [mounted, setMounted] = useState(false)
-
-  useEffect(() => {
-    setMounted(true)
-  }, [])
-
-  const benefits =
-    role === 'seller'
-      ? [
-          {
-            icon: Rocket,
-            title: 'Submit Projects Instantly',
-            desc: 'Create detailed project briefs and get matched with verified vendors in minutes.',
-          },
-          {
-            icon: BarChart2,
-            title: 'Real-time Tracking',
-            desc: 'Monitor project milestones, communications, and deliverables in one centralized dashboard.',
-          },
-          {
-            icon: ShieldCheck,
-            title: 'Guaranteed Quality',
-            desc: 'All execution partners are vetted by the Summon team for peace of mind.',
-          },
-        ]
-      : [
-          {
-            icon: Search,
-            title: 'Discover Premium Projects',
-            desc: 'Browse curated project opportunities submitted by verified enterprises.',
-          },
-          {
-            icon: Rocket,
-            title: 'Streamlined Proposals',
-            desc: 'Submit quotes quickly using our standardized workflow designed to win work.',
-          },
-          {
-            icon: BarChart2,
-            title: 'Grow Your Business',
-            desc: 'Build a reputation on the platform to unlock exclusive, high-value contracts.',
-          },
-        ]
+  const benefits = [
+    {
+      icon: Rocket,
+      title: 'Submit Projects Instantly',
+      desc: 'Create detailed project briefs and get reviewed by the Summon team in minutes.',
+    },
+    {
+      icon: BarChart2,
+      title: 'Real-time Tracking',
+      desc: 'Monitor project milestones, communications, and deliverables in one centralized dashboard.',
+    },
+    {
+      icon: ShieldCheck,
+      title: 'Guaranteed Quality',
+      desc: 'Execution partners are reviewed by the Summon team for peace of mind.',
+    },
+  ]
 
   return (
     <div
@@ -191,7 +155,7 @@ function PendingApprovalContent() {
                 marginBottom: 'var(--sp-8)',
               }}
             >
-              Thank you for applying to join Summon as a {role}. Our team is reviewing your profile
+              Thank you for applying to join Summon as a makelar. Our team is reviewing your profile
               to ensure the highest quality network. We typically respond within 24-48 hours.
             </p>
 
@@ -238,8 +202,6 @@ function PendingApprovalContent() {
                     style={{
                       display: 'flex',
                       gap: 'var(--sp-4)',
-                      opacity: mounted ? 1 : 0,
-                      transform: mounted ? 'translateY(0)' : 'translateY(10px)',
                       transition: `all 0.5s cubic-bezier(0.4, 0, 0.2, 1) ${0.2 + i * 0.1}s`,
                     }}
                   >

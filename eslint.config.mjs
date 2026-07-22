@@ -1,7 +1,7 @@
-import { defineConfig, globalIgnores } from "eslint/config";
-import nextVitals from "eslint-config-next/core-web-vitals";
-import nextTs from "eslint-config-next/typescript";
-import prettier from "eslint-plugin-prettier";
+import { defineConfig, globalIgnores } from 'eslint/config'
+import nextVitals from 'eslint-config-next/core-web-vitals'
+import nextTs from 'eslint-config-next/typescript'
+import prettier from 'eslint-plugin-prettier'
 
 const eslintConfig = defineConfig([
   ...nextVitals,
@@ -9,24 +9,24 @@ const eslintConfig = defineConfig([
   {
     plugins: { prettier },
     rules: {
-      "prettier/prettier": "error",
+      'prettier/prettier': 'error',
       // Type safety rules
-      "@typescript-eslint/no-explicit-any": "error",
-      "@typescript-eslint/no-non-null-assertion": "error",
-      "@typescript-eslint/require-await": "error",
-      "@typescript-eslint/no-floating-promises": "error",
-      "@typescript-eslint/no-misused-promises": "error",
-      "@typescript-eslint/no-unnecessary-type-assertion": "error",
-      "@typescript-eslint/consistent-type-imports": [
-        "error",
-        { prefer: "type-imports", fixStyle: "inline-type-imports" },
+      '@typescript-eslint/no-explicit-any': 'error',
+      '@typescript-eslint/no-non-null-assertion': 'error',
+      '@typescript-eslint/require-await': 'error',
+      '@typescript-eslint/no-floating-promises': 'error',
+      '@typescript-eslint/no-misused-promises': 'error',
+      '@typescript-eslint/no-unnecessary-type-assertion': 'error',
+      '@typescript-eslint/consistent-type-imports': [
+        'error',
+        { prefer: 'type-imports', fixStyle: 'inline-type-imports' },
       ],
-      "@typescript-eslint/consistent-type-exports": "error",
+      '@typescript-eslint/consistent-type-exports': 'error',
       // React hooks rules
-      "react-hooks/exhaustive-deps": "warn",
-      "react-hooks/rules-of-hooks": "error",
+      'react-hooks/exhaustive-deps': 'warn',
+      'react-hooks/rules-of-hooks': 'error',
       // Best practices
-      "no-console": ["warn", { allow: ["warn", "error"] }],
+      'no-console': ['warn', { allow: ['warn', 'error'] }],
     },
   },
   {
@@ -37,13 +37,16 @@ const eslintConfig = defineConfig([
     },
   },
   globalIgnores([
-    ".next/**",
-    "out/**",
-    "build/**",
-    "next-env.d.ts",
-    "drizzle/**",
-    "node_modules/**",
+    '.next/**',
+    'out/**',
+    'build/**',
+    'e2e/**',
+    'eslint.config.mjs',
+    'playwright-report/**',
+    'next-env.d.ts',
+    'drizzle/**',
+    'node_modules/**',
   ]),
-]);
+])
 
-export default eslintConfig;
+export default eslintConfig

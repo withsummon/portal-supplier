@@ -21,10 +21,10 @@ export function formatDateTime(iso: string | Date | null | undefined): string {
 }
 
 // ============================================================
-// STATUS MAPPING (mock data uses lowercase, DB uses uppercase)
+// STATUS MAPPING (UI uses lowercase, DB uses uppercase)
 // ============================================================
 
-export type MockProjectStatus =
+export type ProjectStatusKey =
   | 'submitted'
   | 'under_review'
   | 'accepted'
@@ -35,11 +35,9 @@ export type MockProjectStatus =
   | 'paid'
   | 'cancelled'
 
-export type MockQuoteStatus = 'pending' | 'accepted' | 'rejected' | 'withdrawn'
+export type PriorityKey = 'low' | 'medium' | 'high' | 'critical'
 
-export type MockPriority = 'low' | 'medium' | 'high' | 'critical'
-
-export const mockToDbStatus: Record<MockProjectStatus, string> = {
+export const uiToDbStatus: Record<ProjectStatusKey, string> = {
   submitted: 'SUBMITTED',
   under_review: 'UNDER_REVIEW',
   accepted: 'ACCEPTED',
@@ -51,7 +49,7 @@ export const mockToDbStatus: Record<MockProjectStatus, string> = {
   cancelled: 'CANCELLED',
 }
 
-export const dbToMockStatus: Record<string, MockProjectStatus> = {
+export const dbToUiStatus: Record<string, ProjectStatusKey> = {
   SUBMITTED: 'submitted',
   UNDER_REVIEW: 'under_review',
   ACCEPTED: 'accepted',
@@ -63,28 +61,14 @@ export const dbToMockStatus: Record<string, MockProjectStatus> = {
   CANCELLED: 'cancelled',
 }
 
-export const mockToDbQuoteStatus: Record<MockQuoteStatus, string> = {
-  pending: 'PENDING',
-  accepted: 'ACCEPTED',
-  rejected: 'REJECTED',
-  withdrawn: 'WITHDRAWN',
-}
-
-export const dbToMockQuoteStatus: Record<string, MockQuoteStatus> = {
-  PENDING: 'pending',
-  ACCEPTED: 'accepted',
-  REJECTED: 'rejected',
-  WITHDRAWN: 'withdrawn',
-}
-
-export const mockToDbPriority: Record<MockPriority, string> = {
+export const uiToDbPriority: Record<PriorityKey, string> = {
   low: 'LOW',
   medium: 'MEDIUM',
   high: 'HIGH',
   critical: 'CRITICAL',
 }
 
-export const dbToMockPriority: Record<string, MockPriority> = {
+export const dbToUiPriority: Record<string, PriorityKey> = {
   LOW: 'low',
   MEDIUM: 'medium',
   HIGH: 'high',
@@ -114,17 +98,6 @@ export const projectStatusLabels: Record<string, string> = {
 }
 
 export const statusLabels = projectStatusLabels
-
-export const quoteStatusLabels: Record<string, string> = {
-  pending: 'Pending',
-  accepted: 'Accepted',
-  rejected: 'Rejected',
-  withdrawn: 'Withdrawn',
-  PENDING: 'Pending',
-  ACCEPTED: 'Accepted',
-  REJECTED: 'Rejected',
-  WITHDRAWN: 'Withdrawn',
-}
 
 export const priorityLabels: Record<string, string> = {
   low: 'Low',

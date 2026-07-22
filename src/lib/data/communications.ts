@@ -8,7 +8,6 @@ import {
   notifications,
   sellers,
   users,
-  vendors,
 } from '@/db/schema'
 
 export interface ConversationMessageDto {
@@ -47,22 +46,9 @@ function toIsoString(value: Date | null | undefined) {
   return value ? value.toISOString() : new Date(0).toISOString()
 }
 
-function getNotificationTab(role: 'ADMIN' | 'SELLER' | 'VENDOR', type: string) {
-  if (role === 'VENDOR') {
-    if (type === 'QUOTE_RECEIVED') return 'Quote Updates'
-    if (
-      type === 'PROJECT_ACCEPTED' ||
-      type === 'PROJECT_REJECTED' ||
-      type === 'PROJECT_CLARIFICATION'
-    ) {
-      return 'New Projects'
-    }
-    if (type === 'MESSAGE_RECEIVED') return 'Messages'
-    return 'System'
-  }
-
+function getNotificationTab(role: 'ADMIN' | 'SELLER', type: string) {
   if (role === 'ADMIN') {
-    if (type === 'SELLER_REGISTRATION' || type === 'VENDOR_REGISTRATION') return 'Registrations'
+    if (type === 'SELLER_REGISTRATION') return 'Registrations'
   }
 
   if (type === 'MESSAGE_RECEIVED') return 'Messages'
@@ -78,10 +64,9 @@ function getNotificationTab(role: 'ADMIN' | 'SELLER' | 'VENDOR', type: string) {
   return 'System'
 }
 
-function getParticipantRoleLabel(role: 'ADMIN' | 'SELLER' | 'VENDOR') {
+function getParticipantRoleLabel(role: 'ADMIN' | 'SELLER') {
   if (role === 'ADMIN') return 'Summon Team'
-  if (role === 'VENDOR') return 'Vendor'
-  return 'Seller'
+  return 'Makelar'
 }
 
 export const getCachedUserConversations = React.cache(async (userId: string) => {
@@ -109,7 +94,7 @@ export const getCachedUserConversations = React.cache(async (userId: string) => 
     ),
   )
 
-  const [messageRows, participantRows, sellerRows, vendorRows, adminRows] = await Promise.all([
+  const [messageRows, participantRows, sellerRows, adminRows] = await Promise.all([
     db
       .select({
         id: messages.id,
@@ -148,15 +133,6 @@ export const getCachedUserConversations = React.cache(async (userId: string) => 
     participantIds.length > 0
       ? db
           .select({
-            userId: vendors.userId,
-            companyName: vendors.companyName,
-          })
-          .from(vendors)
-          .where(inArray(vendors.userId, participantIds))
-      : Promise.resolve([]),
-    participantIds.length > 0
-      ? db
-          .select({
             userId: adminTeamMembers.userId,
             teamRole: adminTeamMembers.role,
           })
@@ -169,7 +145,6 @@ export const getCachedUserConversations = React.cache(async (userId: string) => 
     participantRows.map((participant) => [participant.id, participant]),
   )
   const sellerMap = new Map(sellerRows.map((seller) => [seller.userId, seller.companyName]))
-  const vendorMap = new Map(vendorRows.map((vendor) => [vendor.userId, vendor.companyName]))
   const adminMap = new Map(adminRows.map((admin) => [admin.userId, admin.teamRole]))
   const messageMap = new Map<string, ConversationMessageDto[]>()
 
@@ -192,15 +167,13 @@ export const getCachedUserConversations = React.cache(async (userId: string) => 
     const participant = participantMap.get(otherParticipantId)
     const participantRole = participant?.role ?? 'SELLER'
     const participantCompany =
-      sellerMap.get(otherParticipantId) ??
-      vendorMap.get(otherParticipantId) ??
-      (participantRole === 'ADMIN' ? 'Summon' : null)
+      sellerMap.get(otherParticipantId) ?? (participantRole === 'ADMIN' ? 'Summon' : null)
     const participantName =
       participant?.name ?? participantCompany ?? participant?.email ?? 'Unknown Participant'
     const participantRoleLabel =
       participantRole === 'ADMIN'
         ? (adminMap.get(otherParticipantId) ?? getParticipantRoleLabel('ADMIN'))
-        : getParticipantRoleLabel(participantRole)
+        : getParticipantRoleLabel('SELLER')
     const conversationMessages = messageMap.get(conversation.id) ?? []
     const unreadCount = conversationMessages.filter(
       (message) => message.senderId !== userId && !message.read,
@@ -220,7 +193,7 @@ export const getCachedUserConversations = React.cache(async (userId: string) => 
 })
 
 export const getCachedUserNotifications = React.cache(
-  async (userId: string, role: 'ADMIN' | 'SELLER' | 'VENDOR') => {
+  async (userId: string, role: 'ADMIN' | 'SELLER') => {
     const rows = await db
       .select({
         id: notifications.id,

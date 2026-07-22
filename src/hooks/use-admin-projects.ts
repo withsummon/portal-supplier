@@ -1,10 +1,14 @@
 'use client'
 
 import { useMemo, useState, useTransition } from 'react'
-import { reviewProjectSubmission, updateProjectStatus, markProjectPaid, updateQuoteStatus } from '@/lib/actions/projects'
+import {
+  markProjectPaid,
+  reviewProjectSubmission,
+  updateProjectStatus,
+} from '@/lib/actions/projects'
 import type { AdminProjectDto, ProjectReviewNoteDto } from '@/lib/data/project-workflows'
 
-type ActionType = 'accept' | 'reject' | 'clarify' | 'start' | 'complete' | 'lunas' | 'acceptQuote' | 'rejectQuote'
+type ActionType = 'accept' | 'reject' | 'clarify' | 'start' | 'complete' | 'lunas'
 
 export function useAdminProjects(
   initialProjects: AdminProjectDto[],
@@ -20,7 +24,6 @@ export function useAdminProjects(
   const [actionModal, setActionModal] = useState<{
     projectId: string
     action: ActionType
-    quoteId?: string
   } | null>(null)
   const [actionNote, setActionNote] = useState('')
   const [isPending, startTransition] = useTransition()
@@ -51,8 +54,8 @@ export function useAdminProjects(
     setSelectedProjectId(null)
   }
 
-  function queueAction(projectId: string, action: ActionType, quoteId?: string) {
-    setActionModal(quoteId !== undefined ? { projectId, action, quoteId } : { projectId, action })
+  function queueAction(projectId: string, action: ActionType) {
+    setActionModal({ projectId, action })
     setActionNote('')
   }
 
@@ -73,38 +76,14 @@ export function useAdminProjects(
 
     startTransition(() => {
       void (async () => {
-        const { projectId, action, quoteId } = actionModal
+        const { projectId, action } = actionModal
 
-        if (action === 'acceptQuote' && quoteId) {
-          const result = await updateQuoteStatus(quoteId, 'ACCEPTED')
-          setProjects((current) =>
-            current.map((project) =>
-              project.id === projectId
-                ? {
-                    ...project,
-                    quotes: project.quotes.map((q) =>
-                      q.id === quoteId ? { ...q, status: 'accepted' as const } : q,
-                    ),
-                  }
-                : project,
-            ),
+        if (action === 'start') {
+          const result = await updateProjectStatus(
+            projectId,
+            'IN_PROGRESS',
+            actionNote || undefined,
           )
-        } else if (action === 'rejectQuote' && quoteId) {
-          const result = await updateQuoteStatus(quoteId, 'REJECTED')
-          setProjects((current) =>
-            current.map((project) =>
-              project.id === projectId
-                ? {
-                    ...project,
-                    quotes: project.quotes.map((q) =>
-                      q.id === quoteId ? { ...q, status: 'rejected' as const } : q,
-                    ),
-                  }
-                : project,
-            ),
-          )
-        } else if (action === 'start') {
-          const result = await updateProjectStatus(projectId, 'IN_PROGRESS', actionNote || undefined)
           setProjects((current) =>
             current.map((project) =>
               project.id === projectId
@@ -133,7 +112,7 @@ export function useAdminProjects(
         } else {
           const result = await reviewProjectSubmission({
             projectId,
-            action: action as 'accept' | 'reject' | 'clarify',
+            action,
             note: actionNote,
           })
           setProjects((current) =>

@@ -196,11 +196,6 @@ export default function AdminProfileClient({ profile }: { profile: AdminProfileD
                   'Project Updates',
                   'Get notified when projects are submitted or updated',
                 ],
-                [
-                  'vendorApplications',
-                  'Vendor Applications',
-                  'Receive alerts for new vendor applications',
-                ],
                 ['weeklyReports', 'Weekly Reports', 'Receive weekly platform performance reports'],
               ].map(([key, label, description]) => (
                 <div

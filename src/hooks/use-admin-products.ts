@@ -97,12 +97,17 @@ export function useAdminProducts(initialProducts: ProductFormState[]) {
       clients: formData.clients.filter((item) => item.trim()),
     }
 
+    const productToEdit = editingProduct?.id ? { ...editingProduct, id: editingProduct.id } : null
+    if (editingProduct && !productToEdit) {
+      return
+    }
+
     startTransition(() => {
-      const action = editingProduct
+      const action = productToEdit
         ? updateProduct({
-            id: editingProduct.id!,
+            id: productToEdit.id,
             ...cleanData,
-            existingImages: editingProduct.images.filter((image) =>
+            existingImages: productToEdit.images.filter((image) =>
               cleanData.images.includes(image),
             ),
             imageFiles: newImageFiles,
@@ -139,8 +144,8 @@ export function useAdminProducts(initialProducts: ProductFormState[]) {
         }
 
         setProducts((current) =>
-          editingProduct
-            ? current.map((item) => (item.id === editingProduct.id ? normalizedProduct : item))
+          productToEdit
+            ? current.map((item) => (item.id === productToEdit.id ? normalizedProduct : item))
             : [normalizedProduct, ...current],
         )
         setShowModal(false)

@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
-import { Search, FolderOpen, BookOpen, Cpu, ArrowRight } from 'lucide-react'
+import { Search, FolderOpen, Cpu, ArrowRight } from 'lucide-react'
 
 export interface CommandBarProject {
   id: string
@@ -11,47 +11,19 @@ export interface CommandBarProject {
   clientName?: string | null
 }
 
-const RESEARCH_ARTICLES = [
-  {
-    title: 'The State of AI Transformation in Enterprise 2024',
-    slug: 'ai-transformation-enterprise-2024',
-  },
-  { title: 'Building a Robust Security Framework for LLMs', slug: 'security-framework-llms' },
-  { title: 'The Future of Computer Vision in Manufacturing', slug: 'future-computer-vision' },
-  {
-    title: 'Scalable Data Architectures for Multi-tenant Systems',
-    slug: 'scalable-data-architectures',
-  },
-  {
-    title: 'Case Study: AI-Powered Supply Chain for GoTo Group',
-    slug: 'case-study-goto-supply-chain',
-  },
-  { title: 'Navigating AI Governance in Southeast Asia', slug: 'ai-governance-sea' },
-  { title: 'RAG vs Fine-Tuning: When to Use Each', slug: 'rag-vs-fine-tuning' },
-  { title: 'Case Study: Bank Mandiri Fraud Detection System', slug: 'case-study-mandiri-fraud' },
-]
-
-const FACTORY_PRODUCTS = [
-  { name: 'Summon AI Assistant', id: 'assistant' },
-  { name: 'Summon Smart Chatbot', id: 'chatbot' },
-  { name: 'Summon Data Pipeline', id: 'pipeline' },
-  { name: 'Summon Vision', id: 'vision' },
-  { name: 'Summon Analytics Hub', id: 'analytics' },
-  { name: 'Summon Sentinel', id: 'sentinel' },
-]
-
 interface SearchResult {
-  type: 'project' | 'research' | 'factory'
+  type: 'project' | 'factory'
   title: string
   subtitle: string
   href: string
 }
 
 interface CommandBarProps {
+  products: { id: string; name: string; slug: string }[]
   projects: CommandBarProject[]
 }
 
-export default function CommandBar({ projects }: CommandBarProps) {
+export default function CommandBar({ products, projects }: CommandBarProps) {
   const [open, setOpen] = useState(false)
   const [query, setQuery] = useState('')
   const [selectedIndex, setSelectedIndex] = useState(0)
@@ -108,25 +80,17 @@ export default function CommandBar({ projects }: CommandBarProps) {
         }),
       )
 
-    // Research
-    RESEARCH_ARTICLES.filter((a) => a.title.toLowerCase().includes(q)).forEach((a) =>
-      results.push({
-        type: 'research',
-        title: a.title,
-        subtitle: 'Research Blog',
-        href: `/research/${a.slug}`,
-      }),
-    )
-
     // Factory
-    FACTORY_PRODUCTS.filter((p) => p.name.toLowerCase().includes(q)).forEach((p) =>
-      results.push({
-        type: 'factory',
-        title: p.name,
-        subtitle: 'Summon Factory',
-        href: '/factory',
-      }),
-    )
+    products
+      .filter((p) => p.name.toLowerCase().includes(q))
+      .forEach((p) =>
+        results.push({
+          type: 'factory',
+          title: p.name,
+          subtitle: 'Summon Factory',
+          href: `/factory?product=${p.slug}`,
+        }),
+      )
   }
 
   const navigate = (href: string) => {
@@ -150,8 +114,6 @@ export default function CommandBar({ projects }: CommandBarProps) {
     switch (type) {
       case 'project':
         return <FolderOpen size={15} style={{ color: 'var(--blue-600)' }} />
-      case 'research':
-        return <BookOpen size={15} style={{ color: 'var(--color-purple)' }} />
       case 'factory':
         return <Cpu size={15} style={{ color: 'var(--color-success)' }} />
       default:
@@ -183,7 +145,7 @@ export default function CommandBar({ projects }: CommandBarProps) {
           <input
             ref={inputRef}
             type="text"
-            placeholder="Search projects, research, and factory products..."
+            placeholder="Search projects and factory products..."
             value={query}
             onChange={(e) => {
               setQuery(e.target.value)

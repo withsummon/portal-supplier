@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, Suspense } from 'react'
-import { useSearchParams, useRouter } from 'next/navigation'
+import { useRouter } from 'next/navigation'
 import {
   ArrowRight,
   CheckCircle,
@@ -13,9 +13,7 @@ import {
 } from 'lucide-react'
 
 function OnboardingWizard() {
-  const searchParams = useSearchParams()
   const router = useRouter()
-  const role = searchParams.get('role') || 'seller'
 
   const [step, setStep] = useState(1)
   const [volume, setVolume] = useState('')
@@ -34,7 +32,7 @@ function OnboardingWizard() {
 
   const handleSubmit = () => {
     // Submit logic would go here
-    router.push(`/pending-approval?role=${role}`)
+    router.push('/pending-approval?role=seller')
   }
 
   return (
@@ -193,8 +191,8 @@ function OnboardingWizard() {
                   lineHeight: 'var(--lh-relaxed)',
                 }}
               >
-                Before we set up your {role === 'seller' ? 'Seller' : 'Vendor'} workspace, we need a
-                few more details to customize your experience.
+                Before we set up your Makelar workspace, we need a few more details to customize
+                your experience.
               </p>
 
               <div className="auth-fields">
@@ -204,7 +202,7 @@ function OnboardingWizard() {
                     <option value="">Select a goal</option>
                     <option>Find execution partners for our projects</option>
                     <option>Explore the platform capabilities</option>
-                    <option>Become a verified vendor</option>
+                    <option>Get reviewed by the Summon team</option>
                   </select>
                 </div>
                 <div className="form-group">
@@ -226,7 +224,11 @@ function OnboardingWizard() {
                       gap: 'var(--sp-2)',
                     }}
                   >
-                    {['< Rp 250.000.000', 'Rp 250.000.000 - Rp 1.000.000.000', '> Rp 1.000.000.000'].map((vol) => {
+                    {[
+                      '< Rp 250.000.000',
+                      'Rp 250.000.000 - Rp 1.000.000.000',
+                      '> Rp 1.000.000.000',
+                    ].map((vol) => {
                       const isSelected = volume === vol
                       return (
                         <div

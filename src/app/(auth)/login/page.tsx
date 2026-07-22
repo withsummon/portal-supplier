@@ -11,27 +11,20 @@ import {
   Shield,
   TrendingUp,
   Building2,
-  Users,
   ShieldCheck,
   AlertCircle,
   Loader2,
 } from 'lucide-react'
 import { signIn } from '@/lib/actions/auth'
 
-type UserRole = 'seller' | 'vendor' | 'admin'
+type UserRole = 'seller' | 'admin'
 
 const roles = [
   {
     id: 'seller' as UserRole,
-    label: 'Seller',
+    label: 'Makelar',
     icon: Building2,
     desc: 'Submit and track projects.',
-  },
-  {
-    id: 'vendor' as UserRole,
-    label: 'Vendor',
-    icon: Users,
-    desc: 'Find and execute client projects.',
   },
   {
     id: 'admin' as UserRole,
@@ -50,7 +43,6 @@ type SignInState = {
 
 const redirectMap: Record<UserRole, string> = {
   admin: '/admin',
-  vendor: '/vendor',
   seller: '/dashboard',
 }
 
@@ -63,7 +55,7 @@ async function handleSignIn(_prevState: SignInState, formData: FormData) {
     return { error: 'Email and password are required' }
   }
 
-  const expectedRole = role === 'admin' ? 'ADMIN' : role === 'vendor' ? 'VENDOR' : 'SELLER'
+  const expectedRole = role === 'admin' ? 'ADMIN' : 'SELLER'
 
   const result = await signIn({ email, password, expectedRole })
 
@@ -92,8 +84,7 @@ export default function LoginPage() {
     }
 
     if (state?.pending) {
-      const roleParam = selectedRole === 'seller' ? 'seller' : 'vendor'
-      router.push(`/pending-approval?role=${roleParam}`)
+      router.push('/pending-approval?role=seller')
       return
     }
 
@@ -123,7 +114,7 @@ export default function LoginPage() {
               Select Workspace Role
             </label>
             <div
-              style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 'var(--sp-2)' }}
+              style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 'var(--sp-2)' }}
             >
               {roles.map((role) => {
                 const Icon = role.icon

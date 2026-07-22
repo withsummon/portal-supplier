@@ -1,7 +1,7 @@
 import React from 'react'
 import { db } from '@/db'
-import { comments, projects, quotes, sellers, vendors } from '@/db/schema'
-import { desc, eq, gte } from 'drizzle-orm'
+import { comments, projects, sellers } from '@/db/schema'
+import { and, desc, eq, gte } from 'drizzle-orm'
 
 // ============================================================
 // PROJECTS
@@ -28,7 +28,6 @@ export const getCachedProjectsById = React.cache(async (id: string) => {
         },
         orderBy: [desc(comments.createdAt)],
       },
-      quotes: { with: { vendor: { with: { user: true } } } },
     },
   })
 })
@@ -55,47 +54,6 @@ export const getCachedSeller = React.cache(async (userId?: string) => {
 })
 
 // ============================================================
-// VENDOR
-// ============================================================
-
-export const getCachedVendor = React.cache(async (userId?: string) => {
-  if (userId) {
-    return db.query.vendors.findFirst({
-      where: eq(vendors.userId, userId),
-      with: { user: true },
-    })
-  }
-  return db.query.vendors.findFirst({ with: { user: true } })
-})
-
-export const getCachedVendorQuotes = React.cache(async (vendorId: string) => {
-  return db.query.quotes.findMany({
-    where: eq(quotes.vendorId, vendorId),
-    with: { project: true },
-    orderBy: [desc(quotes.createdAt)],
-  })
-})
-
-// ============================================================
-// QUOTES
-// ============================================================
-
-export const getCachedAllQuotes = React.cache(async () => {
-  return db.query.quotes.findMany({
-    with: { project: true, vendor: { with: { user: true } } },
-    orderBy: [desc(quotes.createdAt)],
-  })
-})
-
-export const getCachedProjectQuotes = React.cache(async (projectId: string) => {
-  return db.query.quotes.findMany({
-    where: eq(quotes.projectId, projectId),
-    with: { vendor: { with: { user: true } } },
-    orderBy: [desc(quotes.createdAt)],
-  })
-})
-
-// ============================================================
 // INSIGHTS
 // ============================================================
 
@@ -116,7 +74,7 @@ export const getCachedMonthlyData = React.cache(async (sellerId?: string) => {
       budgetMax: projects.budgetMax,
     })
     .from(projects)
-    .where(conditions.length > 1 ? require('drizzle-orm').and(...conditions) : conditions[0])
+    .where(conditions.length > 1 ? and(...conditions) : conditions[0])
 
   const monthlyMap: Record<string, { submissions: number; revenue: number }> = {}
   const now = new Date()

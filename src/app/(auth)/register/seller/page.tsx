@@ -128,9 +128,9 @@ export default function RegisterSellerPage() {
         </div>
 
         <div className="auth-form animate-in">
-          <h1 className="auth-heading">Join as a Seller</h1>
+          <h1 className="auth-heading">Join as a Makelar</h1>
           <p className="auth-sub">
-            Create your seller account to start submitting and tracking projects.
+            Create your makelar account to start submitting and tracking projects.
           </p>
 
           <form action={formAction}>
@@ -407,7 +407,7 @@ export default function RegisterSellerPage() {
           <div className="auth-feature-list">
             {[
               { icon: CheckCircle, text: 'No complicated onboarding — get started fast' },
-              { icon: Shield, text: 'All vendors are pre-screened and verified' },
+              { icon: Shield, text: 'Execution partners are reviewed by the Summon team' },
               { icon: TrendingUp, text: 'End-to-end project visibility from day one' },
             ].map(({ icon: Icon, text }) => (
               <div className="auth-feature-item" key={text}>

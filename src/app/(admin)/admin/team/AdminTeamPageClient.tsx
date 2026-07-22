@@ -19,7 +19,7 @@ const DEPARTMENTS = ['Operations', 'Engineering', 'Business Development', 'Suppo
 const ROLES = [
   'Platform Administrator',
   'Technical Reviewer',
-  'Vendor Relations',
+  'Partner Relations',
   'Project Coordinator',
   'Quality Assurance',
   'Support Staff',

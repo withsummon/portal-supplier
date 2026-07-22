@@ -1,21 +1,12 @@
-import {
-  projectStatusLabels,
-  quoteStatusLabels,
-  type MockProjectStatus,
-  type MockQuoteStatus,
-} from '@/lib/utils/data'
+import { projectStatusLabels, type ProjectStatusKey } from '@/lib/utils/data'
 
 type Props = {
-  status: MockProjectStatus | MockQuoteStatus
-  type?: 'project' | 'quote'
+  status: ProjectStatusKey
   showDot?: boolean
 }
 
-export default function StatusBadge({ status, type = 'project', showDot = true }: Props) {
-  const label =
-    type === 'project'
-      ? (projectStatusLabels[status] ?? status)
-      : (quoteStatusLabels[status] ?? status)
+export default function StatusBadge({ status, showDot = true }: Props) {
+  const label = projectStatusLabels[status] ?? status
 
   return (
     <span className={`badge badge-${status}`}>

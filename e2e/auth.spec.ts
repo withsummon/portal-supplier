@@ -15,6 +15,14 @@ const RUN_ID = Date.now()
  * Uses unique RUN_ID per execution to avoid email collisions across runs.
  */
 test.describe('Auth Flow', () => {
+  test('workspace roles: only Makelar and admin are offered', async ({ page }) => {
+    await page.goto('/login')
+    await expect(page.getByRole('button', { name: /^Makelar$/i })).toBeVisible()
+    await expect(page.getByRole('button', { name: /^Summon Team$/i })).toBeVisible()
+    await page.goto('/register')
+    await expect(page).toHaveURL(/\/register\/seller/i)
+  })
+
   // ============================================================
   // REGISTRATION
   // ============================================================
@@ -28,19 +36,6 @@ test.describe('Auth Flow', () => {
       lastName: 'User',
       companyName: 'Auth Seller Corp',
       role: 'SELLER',
-    })
-    await expect(page).toHaveURL(/pending-approval/i, { timeout: 12000 })
-  })
-
-  test('VENDOR: register → pending approval', async ({ page }) => {
-    const email = `auth_vendor_${RUN_ID}@test.com`
-    await registerUser(page, {
-      email,
-      password: 'Vendor123!@#',
-      firstName: 'AuthVendor',
-      lastName: 'User',
-      companyName: 'Auth Vendor Solutions',
-      role: 'VENDOR',
     })
     await expect(page).toHaveURL(/pending-approval/i, { timeout: 12000 })
   })
@@ -72,27 +67,6 @@ test.describe('Auth Flow', () => {
     await expect(page).toHaveURL(/\/dashboard/i, { timeout: 15000 })
   })
 
-  test('VENDOR: login → redirect to vendor portal after approval', async ({ page }) => {
-    const email = `auth_vendor_${RUN_ID}_approved@test.com`
-
-    await registerUser(page, {
-      email,
-      password: 'Vendor123!@#',
-      firstName: 'AuthVendor',
-      lastName: 'Approved',
-      companyName: 'Auth Vendor Solutions',
-      role: 'VENDOR',
-    })
-    await expect(page).toHaveURL(/pending-approval/i, { timeout: 12000 })
-
-    await loginUser(page, ADMIN_EMAIL, ADMIN_PASSWORD, 'admin')
-    await expect(page).toHaveURL(/\/admin/i, { timeout: 15000 })
-    await approveUser(page, email, 'vendor')
-
-    await loginUser(page, email, 'Vendor123!@#', 'vendor')
-    await expect(page).toHaveURL(/\/vendor/i, { timeout: 15000 })
-  })
-
   test('ADMIN: login → redirect to admin portal', async ({ page }) => {
     await loginUser(page, ADMIN_EMAIL, ADMIN_PASSWORD, 'admin')
     await expect(page).toHaveURL(/\/admin/i, { timeout: 15000 })
@@ -104,7 +78,9 @@ test.describe('Auth Flow', () => {
 
   test('login: show error on invalid credentials', async ({ page }) => {
     await loginUser(page, 'wrong@test.com', 'WrongPass123!', 'seller')
-    await expect(page.getByText(/invalid|incorrect|wrong|failed|error/i)).toBeVisible({ timeout: 8000 })
+    await expect(page.getByText(/invalid|incorrect|wrong|failed|error/i)).toBeVisible({
+      timeout: 8000,
+    })
   })
 
   test('register: show error on weak password', async ({ page }) => {
@@ -133,7 +109,9 @@ test.describe('Auth Flow', () => {
     }
 
     await page.locator('form').locator('button[type="submit"]').click()
-    await expect(page.getByText(/password must be at least 8 characters/i)).toBeVisible({ timeout: 8000 })
+    await expect(page.getByText(/password must be at least 8 characters/i)).toBeVisible({
+      timeout: 8000,
+    })
   })
 
   // ============================================================
@@ -142,9 +120,6 @@ test.describe('Auth Flow', () => {
 
   test('redirect to login when accessing protected routes unauthenticated', async ({ page }) => {
     await page.goto('/dashboard')
-    await expect(page).toHaveURL(/\/login/i, { timeout: 5000 })
-
-    await page.goto('/vendor')
     await expect(page).toHaveURL(/\/login/i, { timeout: 5000 })
 
     await page.goto('/admin')

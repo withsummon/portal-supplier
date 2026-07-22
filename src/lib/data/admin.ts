@@ -1,11 +1,10 @@
 import React from 'react'
 import { desc, eq } from 'drizzle-orm'
 import { db } from '@/db'
-import { projects, sellers, users, vendors } from '@/db/schema'
+import { projects, sellers, users } from '@/db/schema'
 
 export interface AdminStatDto {
   totalSellers: number
-  totalVendors: number
   activeProjects: number
   totalRevenue: number
   conversionRate: number
@@ -16,7 +15,7 @@ export interface AdminActivityDto {
   action: string
   subject: string
   time: string
-  type: 'seller' | 'vendor' | 'project'
+  type: 'seller' | 'project'
 }
 
 export interface SellerDirectoryDto {
@@ -32,30 +31,10 @@ export interface SellerDirectoryDto {
   specialty: string
 }
 
-export interface VendorDirectoryDto {
-  id: string
-  name: string
-  email: string
-  phone: string
-  location: string
-  status: string
-  projectsCompleted: number
-  activeProjects: number
-  rating: number
-  revenue: number
-  joinedAt: string
-  specialty: string
-  tier: string
-}
-
 export const getCachedAdminDashboard = React.cache(async () => {
-  const [sellerRows, vendorRows, projectRows] = await Promise.all([
+  const [sellerRows, projectRows] = await Promise.all([
     db.query.sellers.findMany({
       orderBy: [desc(sellers.createdAt)],
-      with: { user: true },
-    }),
-    db.query.vendors.findMany({
-      orderBy: [desc(vendors.createdAt)],
       with: { user: true },
     }),
     db.query.projects.findMany({
@@ -64,9 +43,7 @@ export const getCachedAdminDashboard = React.cache(async () => {
     }),
   ])
 
-  const totalRevenue =
-    sellerRows.reduce((sum, seller) => sum + Number(seller.revenue), 0) +
-    vendorRows.reduce((sum, vendor) => sum + Number(vendor.revenue), 0)
+  const totalRevenue = sellerRows.reduce((sum, seller) => sum + Number(seller.revenue), 0)
 
   const acceptedProjects = projectRows.filter((project) => project.status === 'ACCEPTED').length
   const conversionRate =
@@ -79,13 +56,6 @@ export const getCachedAdminDashboard = React.cache(async () => {
       subject: seller.companyName,
       time: seller.createdAt.toISOString(),
       type: 'seller' as const,
-    })),
-    ...vendorRows.slice(0, 3).map((vendor) => ({
-      id: `vendor-${vendor.id}`,
-      action: 'Vendor registered',
-      subject: vendor.companyName,
-      time: vendor.createdAt.toISOString(),
-      type: 'vendor' as const,
     })),
     ...projectRows.slice(0, 4).map((project) => ({
       id: `project-${project.id}`,
@@ -101,7 +71,6 @@ export const getCachedAdminDashboard = React.cache(async () => {
   return {
     stats: {
       totalSellers: sellerRows.length,
-      totalVendors: vendorRows.length,
       activeProjects: projectRows.filter((project) =>
         ['SUBMITTED', 'UNDER_REVIEW', 'ACCEPTED', 'IN_PROGRESS', 'NEED_CLARIFICATION'].includes(
           project.status,
@@ -114,14 +83,8 @@ export const getCachedAdminDashboard = React.cache(async () => {
     pendingActions: [
       {
         id: 'pending-sellers',
-        title: 'Review seller applications',
+        title: 'Review makelar applications',
         count: sellerRows.filter((seller) => seller.status === 'PENDING').length,
-        priority: 'high',
-      },
-      {
-        id: 'pending-vendors',
-        title: 'Review vendor applications',
-        count: vendorRows.filter((vendor) => vendor.status === 'PENDING').length,
         priority: 'high',
       },
       {
@@ -170,44 +133,4 @@ export const getCachedAdminSellers = React.cache(async () => {
     joinedAt: row.joinedAt.toISOString(),
     specialty: row.specialty ?? 'Generalist',
   })) satisfies SellerDirectoryDto[]
-})
-
-export const getCachedAdminVendors = React.cache(async () => {
-  const rows = await db
-    .select({
-      id: vendors.id,
-      name: vendors.companyName,
-      email: users.email,
-      phone: users.phone,
-      location: vendors.location,
-      status: vendors.status,
-      activeProjects: vendors.activeProjects,
-      revenue: vendors.revenue,
-      joinedAt: vendors.createdAt,
-      specialty: vendors.industry,
-      tier: vendors.tier,
-    })
-    .from(vendors)
-    .innerJoin(users, eq(vendors.userId, users.id))
-    .orderBy(desc(vendors.createdAt))
-
-  return rows.map((row) => ({
-    id: row.id,
-    name: row.name,
-    email: row.email,
-    phone: row.phone ?? '',
-    location: row.location ?? '',
-    status: row.status.toLowerCase(),
-    projectsCompleted: 0,
-    activeProjects: row.activeProjects,
-    rating: 4.5,
-    revenue: Number(row.revenue),
-    joinedAt: row.joinedAt.toISOString(),
-    specialty: row.specialty ?? 'Generalist',
-    tier: row.tier,
-  })) satisfies VendorDirectoryDto[]
-})
-
-export const getCachedAdminSuppliers = React.cache(async () => {
-  return getCachedAdminVendors()
 })

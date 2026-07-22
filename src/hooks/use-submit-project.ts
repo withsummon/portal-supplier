@@ -47,10 +47,40 @@ export function useSubmitProject() {
     key: K,
     value: SubmitProjectFormState[K],
   ) {
+    setError(null)
     setFormData((current) => ({ ...current, [key]: value }))
   }
 
+  function validateStep(currentStep: number) {
+    if (currentStep === 0) {
+      if (!formData.projectName.trim()) return 'Project name is required.'
+      if (!formData.clientName.trim()) return 'Client name is required.'
+      if (!formData.category) return 'Project category is required.'
+      if (!formData.description.trim()) return 'Brief description is required.'
+    }
+
+    if (currentStep === 1 && !formData.requirements.trim()) {
+      return 'Detailed requirements are required.'
+    }
+
+    if (currentStep === 2) {
+      if (!formData.startDate) return 'Expected start date is required.'
+      if (!formData.endDate) return 'Expected end date is required.'
+      if (!formData.budgetRange) return 'Budget range is required.'
+      if (!formData.priority) return 'Priority level is required.'
+    }
+
+    return null
+  }
+
   function nextStep() {
+    const validationError = validateStep(step)
+    if (validationError) {
+      setError(validationError)
+      return
+    }
+
+    setError(null)
     setStep((current) => Math.min(current + 1, 4))
   }
 
@@ -59,8 +89,13 @@ export function useSubmitProject() {
   }
 
   function submit() {
-    setError(null)
+    const validationError = validateStep(0) ?? validateStep(1) ?? validateStep(2)
+    if (validationError) {
+      setError(validationError)
+      return
+    }
 
+    setError(null)
     startTransition(() => {
       void submitProjectWithFiles({
         name: formData.projectName,

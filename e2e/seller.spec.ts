@@ -1,7 +1,5 @@
 import { test, expect, type Page } from '@playwright/test'
-import { loginUser, registerUser } from './helpers/auth'
-import { approveUser } from './helpers/admin-helpers'
-import { ADMIN_EMAIL, ADMIN_PASSWORD } from './helpers/test-users'
+import { loginUser } from './helpers/auth'
 
 /**
  * Seller E2E Tests
@@ -16,29 +14,11 @@ import { ADMIN_EMAIL, ADMIN_PASSWORD } from './helpers/test-users'
  */
 test.describe('Seller Portal', () => {
   const timestamp = Date.now()
-  const sellerEmail = `seller_${timestamp}@test.com`
-
-  // Register + approve seller once before all tests in this describe block
-  test.beforeAll(async ({ page }) => {
-    await registerUser(page, {
-      email: sellerEmail,
-      password: 'Seller123!@#',
-      firstName: 'Seller',
-      lastName: 'E2E',
-      companyName: 'Test Seller Corp',
-      role: 'SELLER',
-    })
-    await expect(page).toHaveURL(/pending-approval/i, { timeout: 12000 })
-
-    await loginUser(page, ADMIN_EMAIL, ADMIN_PASSWORD, 'admin')
-    await expect(page).toHaveURL(/\/admin/i, { timeout: 15000 })
-    await approveUser(page, sellerEmail, 'seller')
-  })
 
   // Pre-condition: seller must be approved via admin panel
   test.beforeEach(async ({ page }) => {
     // Login as seller
-    await loginUser(page, sellerEmail, 'Seller123!@#', 'seller')
+    await loginUser(page, 'seller@arya.local', 'Password123!', 'seller')
     // If redirected to pending-approval, skip test (not yet approved)
     if (page.url().includes('pending-approval')) {
       test.skip()
@@ -54,7 +34,7 @@ test.describe('Seller Portal', () => {
       await page.goto('/projects/submit')
 
       // Step 1: Project Basics
-      await expect(page.getByText(/project basics/i)).toBeVisible()
+      await expect(page.getByText(/step 1: project basics/i)).toBeVisible()
       await page.locator('input[placeholder*="E-Commerce" i]').fill(`E2E Test Project ${timestamp}`)
       await page.locator('input[placeholder*="PT Maju" i]').fill(`Test Client Corp ${timestamp}`)
 
@@ -63,18 +43,23 @@ test.describe('Seller Portal', () => {
       await categorySelect.selectOption({ index: 1 })
 
       // Description
-      await page.locator('textarea').filter({ hasText: /brief overview/i }).fill('This is an E2E test project for automation.')
+      await page
+        .locator('textarea[placeholder*="brief overview" i]')
+        .fill('This is an E2E test project for automation.')
 
       await page.getByRole('button', { name: /next step/i }).click()
 
       // Step 2: Requirements
       await expect(page.getByText(/requirements/i, { exact: false }).first()).toBeVisible()
-      await page.locator('textarea').filter({ hasText: /technical and functional/i }).fill(
-        'Full-stack web application with React frontend and Node.js backend.',
-      )
+      await page
+        .locator('textarea[placeholder*="technical and functional" i]')
+        .fill('Full-stack web application with React frontend and Node.js backend.')
 
       // Tech stack - toggle a few
-      const techButtons = page.locator('button').filter({ hasText: /react|node|typescript/i }).first()
+      const techButtons = page
+        .locator('button')
+        .filter({ hasText: /react|node|typescript/i })
+        .first()
       if (await techButtons.isVisible({ timeout: 2000 }).catch(() => false)) {
         await techButtons.click()
       }
@@ -84,17 +69,21 @@ test.describe('Seller Portal', () => {
       // Step 3: Timeline & Budget
       await expect(page.getByText(/timeline|budget/i).first()).toBeVisible()
 
+      await page.locator('input[type="date"]').nth(0).fill('2026-08-01')
+      await page.locator('input[type="date"]').nth(1).fill('2026-08-31')
+
       const budgetSelect = page.locator('select').filter({ hasText: /.+/i }).first()
       if (await budgetSelect.isVisible({ timeout: 2000 }).catch(() => false)) {
         await budgetSelect.selectOption({ index: 1 })
       }
 
       // Priority
-      const priorityBtn = page.locator('button').filter({ hasText: /medium|high/i }).first()
-      if (await priorityBtn.isVisible({ timeout: 2000 }).catch(() => false)) {
-        await priorityBtn.click()
-      }
+      await page.locator('input[name="priority"][value="medium"]').check()
 
+      await page.getByRole('button', { name: /next step/i }).click()
+
+      // Step 4: Attachments (optional)
+      await expect(page.getByText(/attachments/i).first()).toBeVisible()
       await page.getByRole('button', { name: /next step/i }).click()
 
       // Step 4: Review
@@ -103,8 +92,8 @@ test.describe('Seller Portal', () => {
       // Submit
       await page.getByRole('button', { name: /submit project/i }).click()
 
-      // Should redirect to projects list
-      await expect(page).toHaveURL(/\/projects/i, { timeout: 10000 })
+      // Should redirect to project detail
+      await expect(page).toHaveURL(/\/projects\/[^/]+$/i, { timeout: 10000 })
       await expect(page.getByText(`E2E Test Project ${timestamp}`)).toBeVisible({ timeout: 10000 })
     })
 
@@ -114,7 +103,7 @@ test.describe('Seller Portal', () => {
       await page.getByRole('button', { name: /next step/i }).click()
 
       // Should stay on step 1 and show validation
-      await expect(page.getByText(/project name|required/i)).toBeVisible()
+      await expect(page.getByText('Project name is required.')).toBeVisible()
       await expect(page).toHaveURL(/\/projects\/submit/i)
     })
   })
@@ -135,7 +124,10 @@ test.describe('Seller Portal', () => {
   test('projects list: filter by status', async ({ page }) => {
     await page.goto('/projects')
 
-    const filterSelect = page.locator('select').filter({ hasText: /all|status/i }).first()
+    const filterSelect = page
+      .locator('select')
+      .filter({ hasText: /all|status/i })
+      .first()
     if (await filterSelect.isVisible({ timeout: 3000 }).catch(() => false)) {
       await filterSelect.selectOption({ index: 1 })
       await page.waitForTimeout(500)

@@ -1,7 +1,7 @@
 'use server'
 
 import { db } from '@/db'
-import { sellers, vendors, notifications, users } from '@/db/schema'
+import { notifications, sellers } from '@/db/schema'
 import { eq } from 'drizzle-orm'
 import { revalidatePath } from 'next/cache'
 import { requireRole } from '@/lib/auth/session'
@@ -21,7 +21,7 @@ export async function approveSeller(sellerId: string) {
       userId: seller.userId,
       type: 'SYSTEM',
       title: 'Registration approved',
-      content: 'Your seller account has been approved. You can now access the seller portal.',
+      content: 'Your makelar account has been approved. You can now access the makelar portal.',
       link: '/dashboard',
     })
   }
@@ -47,67 +47,12 @@ export async function rejectSeller(sellerId: string, reason?: string) {
       userId: seller.userId,
       type: 'SYSTEM',
       title: 'Registration not approved',
-      content:
-        reason ??
-        'Unfortunately, your seller registration was not approved at this time.',
+      content: reason ?? 'Unfortunately, your makelar registration was not approved at this time.',
       link: '/register',
     })
   }
 
   revalidatePath('/admin/sellers')
-  revalidatePath('/admin')
-
-  return { success: true }
-}
-
-export async function approveVendor(vendorId: string) {
-  await requireRole('ADMIN')
-
-  await db.update(vendors).set({ status: 'ACTIVE' }).where(eq(vendors.id, vendorId))
-
-  const vendor = await db.query.vendors.findFirst({
-    where: eq(vendors.id, vendorId),
-    with: { user: true },
-  })
-
-  if (vendor?.user) {
-    await db.insert(notifications).values({
-      userId: vendor.userId,
-      type: 'SYSTEM',
-      title: 'Registration approved',
-      content: 'Your vendor account has been approved. You can now access the vendor portal.',
-      link: '/vendor',
-    })
-  }
-
-  revalidatePath('/admin/vendors')
-  revalidatePath('/admin')
-
-  return { success: true }
-}
-
-export async function rejectVendor(vendorId: string, reason?: string) {
-  await requireRole('ADMIN')
-
-  await db.update(vendors).set({ status: 'REJECTED' }).where(eq(vendors.id, vendorId))
-
-  const vendor = await db.query.vendors.findFirst({
-    where: eq(vendors.id, vendorId),
-    with: { user: true },
-  })
-
-  if (vendor?.user) {
-    await db.insert(notifications).values({
-      userId: vendor.userId,
-      type: 'SYSTEM',
-      title: 'Registration not approved',
-      content:
-        reason ?? 'Unfortunately, your vendor registration was not approved at this time.',
-      link: '/register',
-    })
-  }
-
-  revalidatePath('/admin/vendors')
   revalidatePath('/admin')
 
   return { success: true }

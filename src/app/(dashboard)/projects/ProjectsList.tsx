@@ -4,7 +4,7 @@ import { useState } from 'react'
 import Link from 'next/link'
 import { Search, Plus, ChevronRight, Filter } from 'lucide-react'
 import StatusBadge from '@/components/projects/StatusBadge'
-import { formatDate, dbToMockStatus, type MockProjectStatus } from '@/lib/utils/data'
+import { formatDate, dbToUiStatus, type ProjectStatusKey } from '@/lib/utils/data'
 
 interface Project {
   id: string
@@ -23,7 +23,7 @@ interface Props {
   projects: Project[]
 }
 
-const statusTabs: { label: string; value: 'all' | MockProjectStatus }[] = [
+const statusTabs: { label: string; value: 'all' | ProjectStatusKey }[] = [
   { label: 'All', value: 'all' },
   { label: 'Submitted', value: 'submitted' },
   { label: 'Under Review', value: 'under_review' },
@@ -44,11 +44,11 @@ const priorityColors: Record<string, string> = {
 }
 
 export default function ProjectsPage({ projects }: Props) {
-  const [activeTab, setActiveTab] = useState<'all' | MockProjectStatus>('all')
+  const [activeTab, setActiveTab] = useState<'all' | ProjectStatusKey>('all')
   const [search, setSearch] = useState('')
 
   const filtered = projects.filter((p) => {
-    const dbStatus = dbToMockStatus[p.status] ?? p.status
+    const dbStatus = dbToUiStatus[p.status] ?? p.status
     const matchesStatus = activeTab === 'all' || dbStatus === activeTab
     const matchesSearch =
       search === '' ||
@@ -58,8 +58,8 @@ export default function ProjectsPage({ projects }: Props) {
     return matchesStatus && matchesSearch
   })
 
-  const countByStatus = (status: MockProjectStatus) =>
-    projects.filter((p) => dbToMockStatus[p.status] === status).length
+  const countByStatus = (status: ProjectStatusKey) =>
+    projects.filter((p) => dbToUiStatus[p.status] === status).length
 
   return (
     <div className="animate-in">
@@ -181,7 +181,7 @@ export default function ProjectsPage({ projects }: Props) {
               </thead>
               <tbody>
                 {filtered.map((project) => {
-                  const mockStatus = dbToMockStatus[project.status] ?? project.status
+                  const uiStatus = dbToUiStatus[project.status] ?? project.status
                   return (
                     <tr key={project.id}>
                       <td
@@ -243,7 +243,7 @@ export default function ProjectsPage({ projects }: Props) {
                         {project.budgetRange ?? '—'}
                       </td>
                       <td>
-                        <StatusBadge status={mockStatus as MockProjectStatus} />
+                        <StatusBadge status={uiStatus as ProjectStatusKey} />
                       </td>
                       <td
                         style={{

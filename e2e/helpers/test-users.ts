@@ -6,7 +6,7 @@ export type TestUser = {
   firstName: string
   lastName: string
   companyName: string
-  role: 'SELLER' | 'VENDOR' | 'ADMIN'
+  role: 'SELLER' | 'ADMIN'
 }
 
 // Seeded admin credentials (from scripts/seed.ts)

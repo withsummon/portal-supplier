@@ -1,19 +1,14 @@
 'use client'
 
-import Link from 'next/link'
 import type { LucideIcon } from 'lucide-react'
 import {
   AlertCircle,
-  Calendar,
   CheckCircle,
   Clock,
-  DollarSign,
   Eye,
-  FileText,
   MessageSquare,
   Search,
   Send,
-  User,
   XCircle,
 } from 'lucide-react'
 import Modal from '@/components/ui/Modal'
@@ -117,9 +112,6 @@ export default function AdminProjectsPageClient({
           <h1 className="page-title">Projects</h1>
           <p className="page-subtitle">Review and manage supplier project submissions.</p>
         </div>
-        <Link href="/admin/projects/new" className="btn btn-primary">
-          + New Project
-        </Link>
       </div>
 
       <div
@@ -226,7 +218,6 @@ export default function AdminProjectsPageClient({
                 <th>Budget</th>
                 <th>Priority</th>
                 <th>Status</th>
-                <th>Quotes</th>
                 <th></th>
               </tr>
             </thead>
@@ -263,7 +254,6 @@ export default function AdminProjectsPageClient({
                         {status.label}
                       </span>
                     </td>
-                    <td>{project.quotes.length}</td>
                     <td>
                       <div style={{ display: 'flex', gap: 'var(--sp-2)' }}>
                         <button
@@ -331,11 +321,7 @@ export default function AdminProjectsPageClient({
                       ? 'Start Project'
                       : actionModal.action === 'complete'
                         ? 'Mark Complete'
-                        : actionModal.action === 'lunas'
-                          ? 'Mark Lunas (Paid)'
-                          : actionModal.action === 'acceptQuote'
-                            ? 'Accept Quote'
-                            : 'Reject Quote'}
+                        : 'Mark Lunas (Paid)'}
             </h2>
             <p
               style={{
@@ -344,17 +330,13 @@ export default function AdminProjectsPageClient({
                 marginBottom: 'var(--sp-4)',
               }}
             >
-              {actionModal.action === 'acceptQuote'
-                ? 'Accepting this quote will notify the vendor to begin work.'
-                : actionModal.action === 'rejectQuote'
-                  ? 'Rejecting this quote will notify the vendor.'
-                  : actionModal.action === 'start'
-                    ? 'This will move the project to In Progress status and notify the vendor.'
-                    : actionModal.action === 'complete'
-                      ? 'Marking complete will notify the seller and vendor.'
-                      : actionModal.action === 'lunas'
-                        ? 'This will mark the project as fully paid (lunas) and notify all parties.'
-                        : 'This note will be stored in project history and sent to the seller.'}
+              {actionModal.action === 'start'
+                ? 'This will move the project to In Progress status.'
+                : actionModal.action === 'complete'
+                  ? 'Marking complete will notify the makelar.'
+                  : actionModal.action === 'lunas'
+                    ? 'This will mark the project as fully paid (lunas) and notify stakeholders.'
+                    : 'This note will be stored in project history and sent to the makelar.'}
             </p>
             <textarea
               className="input input-textarea"

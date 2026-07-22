@@ -7,7 +7,6 @@ import type { AdminProfileDto } from '@/lib/data/profiles'
 const defaultPreferences = {
   emailNotifications: true,
   projectUpdates: true,
-  vendorApplications: true,
   weeklyReports: true,
 }
 

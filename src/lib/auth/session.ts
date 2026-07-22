@@ -22,7 +22,6 @@ export async function getCurrentUserRecord() {
     where: eq(users.id, session.user.id),
     with: {
       seller: true,
-      vendor: true,
       adminTeam: true,
     },
   })
@@ -48,9 +47,6 @@ export async function requireRole(role: typeof users.$inferSelect.role, redirect
   if (user.role !== role) {
     if (user.role === 'ADMIN') {
       redirect('/admin')
-    }
-    if (user.role === 'VENDOR') {
-      redirect('/vendor')
     }
     redirect('/dashboard')
   }

@@ -18,17 +18,10 @@
     "db:seed": "bun x dotenv-cli -- tsx scripts/seed.ts",
     "test:e2e": "playwright test",
     "test:e2e:ui": "playwright test --ui",
-    "test:e2e:flow1": "playwright test e2e/flows/flow-1-registration.spec.ts",
-    "test:e2e:flow2": "playwright test e2e/flows/flow-2-auth.spec.ts",
-    "test:e2e:flow3": "playwright test e2e/flows/flow-3-seller-project-bidding.spec.ts",
-    "test:e2e:flow4": "playwright test e2e/flows/flow-4-admin-direct-assign.spec.ts",
-    "test:e2e:flow5": "playwright test e2e/flows/flow-5-crud.spec.ts",
     "test:e2e:debug": "playwright test --debug",
     "test:e2e:headed": "playwright test --headed",
     "test:e2e:auth": "playwright test e2e/auth.spec.ts",
-    "test:e2e:seller": "playwright test e2e/seller.spec.ts",
-    "test:e2e:admin": "playwright test e2e/admin.spec.ts",
-    "test:e2e:vendor": "playwright test e2e/vendor-bidding.spec.ts"
+    "test:e2e:seller": "playwright test e2e/seller.spec.ts"
   },
   "dependencies": {
     "@auth/drizzle-adapter": "^1.11.2",
