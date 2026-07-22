@@ -1,0 +1,68 @@
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+@media (max-width: 1024px) {
+  .auth-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .auth-hero {
+    display: none;
+  }
+
+  .grid-3 {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .insights-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .factory-shell,
+  .factory-detail-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .factory-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 768px) {
+  :root {
+    --sidebar-width: 0px;
+  }
+
+  .portal-main {
+    margin-left: 0;
+  }
+
+  .portal-header {
+    left: 0;
+  }
+
+  .portal-content {
+    padding: var(--sp-4);
+  }
+
+  .kpi-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .grid-2,
+  .grid-3 {
+    grid-template-columns: 1fr;
+  }
+
+  .factory-client-proof {
+    padding: var(--sp-4);
+  }
+
+  .factory-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .factory-banner-frame {
+    min-height: 220px;
+  }
+}

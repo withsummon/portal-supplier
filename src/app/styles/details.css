@@ -1,0 +1,66 @@
+/* ============================================================
+/* ============================================================
+   INFO ROWS (detail page)
+   ============================================================ */
+.info-row {
+  display: flex;
+  align-items: flex-start;
+  padding: var(--sp-4) 0;
+  border-bottom: 1px solid var(--border-default);
+  gap: var(--sp-4);
+}
+
+.info-row:last-child {
+  border-bottom: none;
+}
+
+.info-label {
+  font-size: var(--fs-xs);
+  font-weight: var(--fw-semibold);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-muted);
+  width: 160px;
+  flex-shrink: 0;
+  padding-top: 2px;
+}
+
+.info-value {
+  font-size: var(--fs-sm);
+  color: var(--text-primary);
+  flex: 1;
+}
+
+/* ============================================================
+   TABS
+   ============================================================ */
+.tabs {
+  display: flex;
+  gap: 0;
+  border-bottom: 1px solid var(--border-default);
+  margin-bottom: var(--sp-6);
+}
+
+.tab {
+  padding: var(--sp-3) var(--sp-5);
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-medium);
+  color: var(--text-secondary);
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+  transition: all var(--transition-fast);
+  white-space: nowrap;
+}
+
+.tab:hover {
+  color: var(--text-primary);
+}
+
+.tab.active {
+  color: var(--blue-600);
+  border-bottom-color: var(--blue-600);
+  font-weight: var(--fw-semibold);
+}
+
+/* ============================================================
