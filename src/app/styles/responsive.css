@@ -17,15 +17,6 @@
   .insights-grid {
     grid-template-columns: 1fr;
   }
-
-  .factory-shell,
-  .factory-detail-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .factory-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
 }
 
 @media (max-width: 768px) {
@@ -52,17 +43,5 @@
   .grid-2,
   .grid-3 {
     grid-template-columns: 1fr;
-  }
-
-  .factory-client-proof {
-    padding: var(--sp-4);
-  }
-
-  .factory-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .factory-banner-frame {
-    min-height: 220px;
   }
 }

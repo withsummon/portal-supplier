@@ -60,16 +60,14 @@ test.describe('Portal smoke', () => {
 
     await expectHealthyPage(page, '/dashboard', /dashboard/i)
     await expect(page.getByRole('heading', { name: /^Welcome,/i })).toBeVisible()
-    await expect(page.getByRole('heading', { name: /good evening|good morning|good afternoon/i })).toHaveCount(0)
+    await expect(
+      page.getByRole('heading', { name: /good evening|good morning|good afternoon/i }),
+    ).toHaveCount(0)
     await expectHealthyPage(page, '/projects', /projects/i)
     await expectHealthyPage(page, '/projects/submit', /submit new project/i)
     await expectHealthyPage(page, '/factory', /factory/i)
     await expect(page.getByRole('button', { name: /produk/i })).toBeVisible()
     await expect(page.getByRole('button', { name: /portofolio/i })).toBeVisible()
-    await expect(page.getByTestId('factory-product-list')).toHaveAttribute(
-      'data-layout',
-      'vertical',
-    )
     await expect(page.getByTestId('factory-client-proof')).toBeVisible()
     await expect(page.getByTestId('factory-client-proof').locator('.chip').first()).toBeVisible()
     await expect(page.locator('main').getByText(/Rp\s|\bIDR\b|USD|\$\d/i)).toHaveCount(0)

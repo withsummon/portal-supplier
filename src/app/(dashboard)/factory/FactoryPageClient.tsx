@@ -2,8 +2,8 @@
 
 import Image from 'next/image'
 import Link from 'next/link'
-import { createElement } from 'react'
-import { ArrowRight, Search } from 'lucide-react'
+import { createElement, useMemo } from 'react'
+import { ArrowRight, Search, Users } from 'lucide-react'
 import { getProductIcon } from '@/lib/product-icons'
 import { useFactoryProducts } from '@/hooks/use-factory-products'
 
@@ -36,6 +36,17 @@ export default function FactoryPageClient({ products }: { products: FactoryProdu
     setActiveCategory,
     setSearchQuery,
   } = useFactoryProducts(products)
+  const proofClients = useMemo(
+    () =>
+      Array.from(
+        new Set(
+          products.flatMap((product) =>
+            product.clients.map((client) => client.trim()).filter(Boolean),
+          ),
+        ),
+      ).slice(0, 12),
+    [products],
+  )
 
   return (
     <div className="animate-in">
@@ -48,7 +59,7 @@ export default function FactoryPageClient({ products }: { products: FactoryProdu
         </div>
       </div>
 
-      <div style={{ marginBottom: 'var(--sp-6)' }}>
+      <div style={{ marginBottom: 'var(--sp-5)' }}>
         <div className="header-search" style={{ maxWidth: '400px', background: 'white' }}>
           <Search size={15} style={{ color: 'var(--text-muted)', flexShrink: 0 }} />
           <input
@@ -61,7 +72,23 @@ export default function FactoryPageClient({ products }: { products: FactoryProdu
         </div>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '220px 1fr', gap: 'var(--sp-6)' }}>
+      {proofClients.length > 0 && (
+        <section className="factory-client-proof" data-testid="factory-client-proof">
+          <div className="factory-client-proof-title">
+            <Users size={16} />
+            Previous clients and partners
+          </div>
+          <div className="factory-client-proof-list">
+            {proofClients.map((client) => (
+              <span key={client} className="chip selected">
+                {client}
+              </span>
+            ))}
+          </div>
+        </section>
+      )}
+
+      <div className="factory-shell">
         <div
           className="card"
           style={{
@@ -131,9 +158,7 @@ export default function FactoryPageClient({ products }: { products: FactoryProdu
             {filteredProducts.length} {filteredProducts.length === 1 ? 'item' : 'items'}
           </div>
 
-          <div
-            style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 'var(--sp-5)' }}
-          >
+          <div className="factory-grid">
             {filteredProducts.map((product) => {
               const bannerImage = product.images[0]
               return (
@@ -201,8 +226,8 @@ export default function FactoryPageClient({ products }: { products: FactoryProdu
                     <div
                       style={{
                         display: 'flex',
-                        justifyContent: 'space-between',
-                        alignItems: 'center',
+                        alignItems: 'flex-start',
+                        flexDirection: 'column',
                         gap: 'var(--sp-3)',
                         marginBottom: 'var(--sp-2)',
                       }}

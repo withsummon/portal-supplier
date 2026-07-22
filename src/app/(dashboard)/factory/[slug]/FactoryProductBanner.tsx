@@ -25,16 +25,7 @@ export default function FactoryProductBanner({
 
   return (
     <div className="card" style={{ overflow: 'hidden' }}>
-      <div
-        style={{
-          height: '420px',
-          background: 'var(--neutral-100)',
-          position: 'relative',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-        }}
-      >
+      <div className="factory-banner-frame">
         {activeImage ? (
           <Image
             src={activeImage}
@@ -93,7 +84,7 @@ export default function FactoryProductBanner({
         <div
           style={{
             display: 'grid',
-            gridTemplateColumns: 'repeat(4, 1fr)',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(88px, 1fr))',
             gap: 'var(--sp-3)',
             padding: 'var(--sp-4)',
           }}

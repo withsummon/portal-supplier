@@ -1,7 +1,7 @@
 import { createElement } from 'react'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
-import { ArrowLeft, Download } from 'lucide-react'
+import { ArrowLeft, CheckCircle2, Download } from 'lucide-react'
 import { getProductIcon } from '@/lib/product-icons'
 import { getCachedFactoryProductBySlug } from '@/lib/data/products'
 import FactoryProductBanner from './FactoryProductBanner'
@@ -44,7 +44,7 @@ export default async function FactoryProductDetailPage({
         </div>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1.2fr 0.8fr', gap: 'var(--sp-6)' }}>
+      <div className="factory-detail-grid">
         <FactoryProductBanner images={product.images} productName={product.name} />
 
         <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--sp-5)' }}>
@@ -69,38 +69,45 @@ export default async function FactoryProductDetailPage({
               <span className="badge">{product.category}</span>
               {product.badge && <span className="badge badge-accepted">{product.badge}</span>}
             </div>
+            <h2 className="factory-section-title">Overview</h2>
             <p style={{ color: 'var(--text-secondary)', lineHeight: 'var(--lh-relaxed)' }}>
               {product.longDescription || product.description}
             </p>
           </div>
 
           <div className="card" style={{ padding: 'var(--sp-6)' }}>
-            <div className="card-title" style={{ marginBottom: 'var(--sp-3)' }}>
+            <h2 className="factory-section-title" style={{ marginBottom: 'var(--sp-3)' }}>
               Features
-            </div>
-            <ul style={{ paddingLeft: '18px', color: 'var(--text-secondary)' }}>
+            </h2>
+            <ul className="factory-detail-list">
               {product.features.map((feature) => (
-                <li key={feature}>{feature}</li>
+                <li key={feature}>
+                  <CheckCircle2 size={15} />
+                  <span>{feature}</span>
+                </li>
               ))}
             </ul>
           </div>
 
           <div className="card" style={{ padding: 'var(--sp-6)' }}>
-            <div className="card-title" style={{ marginBottom: 'var(--sp-3)' }}>
+            <h2 className="factory-section-title" style={{ marginBottom: 'var(--sp-3)' }}>
               Use Cases
-            </div>
-            <ul style={{ paddingLeft: '18px', color: 'var(--text-secondary)' }}>
+            </h2>
+            <ul className="factory-detail-list">
               {product.useCases.map((useCase) => (
-                <li key={useCase}>{useCase}</li>
+                <li key={useCase}>
+                  <CheckCircle2 size={15} />
+                  <span>{useCase}</span>
+                </li>
               ))}
             </ul>
           </div>
 
           {product.clients.length > 0 && (
             <div className="card" style={{ padding: 'var(--sp-6)' }}>
-              <div className="card-title" style={{ marginBottom: 'var(--sp-3)' }}>
+              <h2 className="factory-section-title" style={{ marginBottom: 'var(--sp-3)' }}>
                 Clients
-              </div>
+              </h2>
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: 'var(--sp-2)' }}>
                 {product.clients.map((client) => (
                   <span key={client} className="chip selected">
