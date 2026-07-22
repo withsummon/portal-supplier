@@ -18,7 +18,7 @@ export default function WikiPage() {
           No wiki articles yet
         </h3>
         <p className="text-sm text-secondary" style={{ marginTop: 'var(--sp-2)' }}>
-          This page no longer shows static article data.
+          Published wiki content from admin will appear here.
         </p>
       </div>
     </div>

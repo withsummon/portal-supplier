@@ -333,10 +333,10 @@ export default function AdminProjectsPageClient({
               {actionModal.action === 'start'
                 ? 'This will move the project to In Progress status.'
                 : actionModal.action === 'complete'
-                  ? 'Marking complete will notify the makelar.'
+                  ? 'Marking complete will notify the seller.'
                   : actionModal.action === 'lunas'
                     ? 'This will mark the project as fully paid (lunas) and notify stakeholders.'
-                    : 'This note will be stored in project history and sent to the makelar.'}
+                    : 'This note will be stored in project history and sent to the seller.'}
             </p>
             <textarea
               className="input input-textarea"

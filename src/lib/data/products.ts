@@ -20,3 +20,15 @@ export const getCachedFactoryProducts = React.cache(async () => {
 
   return rows.map(serializeProduct)
 })
+
+export const getCachedFactoryProductBySlug = React.cache(async (slug: string) => {
+  const row = await db.query.products.findFirst({
+    where: eq(products.slug, slug),
+  })
+
+  if (!row || !row.isActive) {
+    return null
+  }
+
+  return serializeProduct(row)
+})

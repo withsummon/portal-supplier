@@ -34,6 +34,7 @@ async function saveProductImages(files: File[]) {
 
 export async function createProduct(input: {
   name: string
+  kind: string
   category: string
   description: string
   longDescription: string
@@ -66,11 +67,12 @@ export async function createProduct(input: {
     .values({
       name: input.name.trim(),
       slug: slugify(input.name),
+      kind: input.kind === 'PORTFOLIO' ? 'PORTFOLIO' : 'PRODUCT',
       category: input.category.trim(),
       description: input.description.trim(),
       longDescription: input.longDescription.trim(),
       basePrice: input.basePrice.toString(),
-      currency: input.currency.trim() || 'USD',
+      currency: 'IDR',
       features: input.features,
       useCases: input.useCases,
       clients: input.clients,
@@ -92,6 +94,7 @@ export async function createProduct(input: {
 export async function updateProduct(input: {
   id: string
   name: string
+  kind: string
   category: string
   description: string
   longDescription: string
@@ -131,11 +134,12 @@ export async function updateProduct(input: {
     .set({
       name: input.name.trim(),
       slug: slugify(input.name),
+      kind: input.kind === 'PORTFOLIO' ? 'PORTFOLIO' : 'PRODUCT',
       category: input.category.trim(),
       description: input.description.trim(),
       longDescription: input.longDescription.trim(),
       basePrice: input.basePrice.toString(),
-      currency: input.currency.trim() || 'USD',
+      currency: 'IDR',
       features: input.features,
       useCases: input.useCases,
       clients: input.clients,
@@ -152,6 +156,7 @@ export async function updateProduct(input: {
 
   revalidatePath('/admin/products')
   revalidatePath('/factory')
+  revalidatePath(`/factory/${product?.slug ?? ''}`)
   return product
 }
 

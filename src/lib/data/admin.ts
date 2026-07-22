@@ -83,7 +83,7 @@ export const getCachedAdminDashboard = React.cache(async () => {
     pendingActions: [
       {
         id: 'pending-sellers',
-        title: 'Review makelar applications',
+        title: 'Review seller applications',
         count: sellerRows.filter((seller) => seller.status === 'PENDING').length,
         priority: 'high',
       },

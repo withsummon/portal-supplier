@@ -5,6 +5,7 @@ import {
   ChevronLeft,
   ChevronRight,
   Factory,
+  FileText,
   FolderOpen,
   LayoutDashboard,
   LogOut,
@@ -53,7 +54,10 @@ const sellerNavItems: NavSection[] = [
   },
   {
     section: 'Explore',
-    items: [{ label: 'Summon Factory', href: '/factory', icon: Factory }],
+    items: [
+      { label: 'Summon Factory', href: '/factory', icon: Factory },
+      { label: 'Articles', href: '/research', icon: FileText },
+    ],
   },
 ]
 
@@ -63,13 +67,16 @@ const adminNavItems: NavSection[] = [
     section: 'Main',
     items: [
       { label: 'Dashboard', href: '/admin', icon: LayoutDashboard },
-      { label: 'Makelar', href: '/admin/sellers', icon: Users },
+      { label: 'Seller', href: '/admin/sellers', icon: Users },
       { label: 'Projects', href: '/admin/projects', icon: FolderOpen },
     ],
   },
   {
     section: 'Manage',
-    items: [{ label: 'Summon Factory', href: '/admin/products', icon: Factory }],
+    items: [
+      { label: 'Summon Factory', href: '/admin/products', icon: Factory },
+      { label: 'Articles', href: '/admin/articles', icon: FileText },
+    ],
   },
   {
     section: 'Communication',
@@ -138,7 +145,7 @@ export default function Sidebar({
         {!collapsed && (
           <div className="sidebar-brand-text">
             <span className="sidebar-brand-name">Summon</span>
-            {isAdmin ? null : <span className="sidebar-brand-sub">Makelar Portal</span>}
+            {isAdmin ? null : <span className="sidebar-brand-sub">Seller Portal</span>}
           </div>
         )}
       </div>

@@ -22,7 +22,7 @@ type UserRole = 'seller' | 'admin'
 const roles = [
   {
     id: 'seller' as UserRole,
-    label: 'Makelar',
+    label: 'Seller',
     icon: Building2,
     desc: 'Submit and track projects.',
   },

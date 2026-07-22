@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { CheckCircle, Eye, Mail, Search, Shield, XCircle, Check, X } from 'lucide-react'
 import { useAdminDirectory } from '@/hooks/use-admin-directory'
 import type { SellerDirectoryDto } from '@/lib/data/admin'
-import { formatUSDtoIDR } from '@/lib/currency'
+import { formatIDR } from '@/lib/currency'
 import Modal from '@/components/ui/Modal'
 import { approveSeller, rejectSeller } from '@/lib/actions/members'
 
@@ -74,7 +74,7 @@ export default function SellersPageClient({ sellers }: { sellers: SellerDirector
         </div>
         <div className="card" style={{ padding: 'var(--sp-5)' }}>
           <div style={{ fontSize: 'var(--fs-2xl)', fontWeight: 'var(--fw-bold)' }}>
-            {formatUSDtoIDR(sellers.reduce((sum, seller) => sum + seller.revenue, 0))}
+            {formatIDR(sellers.reduce((sum, seller) => sum + seller.revenue, 0))}
           </div>
           <div style={{ fontSize: 'var(--fs-xs)', color: 'var(--text-muted)' }}>Total Revenue</div>
         </div>
@@ -154,7 +154,7 @@ export default function SellersPageClient({ sellers }: { sellers: SellerDirector
                     </span>
                   </td>
                   <td>{String(seller.dealsClosed)}</td>
-                  <td>{formatUSDtoIDR(Number(seller.revenue))}</td>
+                  <td>{formatIDR(Number(seller.revenue))}</td>
                   <td>
                     <div style={{ display: 'flex', gap: 'var(--sp-2)' }}>
                       <button
@@ -231,7 +231,7 @@ export default function SellersPageClient({ sellers }: { sellers: SellerDirector
               <div>
                 <div style={{ fontSize: 'var(--fs-xs)', color: 'var(--text-muted)' }}>Revenue</div>
                 <div style={{ fontWeight: 'var(--fw-medium)' }}>
-                  {formatUSDtoIDR(selectedSeller.revenue)}
+                  {formatIDR(selectedSeller.revenue)}
                 </div>
               </div>
             </div>

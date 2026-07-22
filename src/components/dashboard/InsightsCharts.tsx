@@ -1,6 +1,7 @@
 'use client'
 
-import { TrendingUp, DollarSign, PieChart } from 'lucide-react'
+import { TrendingUp, ReceiptText, PieChart } from 'lucide-react'
+import { formatIDR } from '@/lib/currency'
 
 interface MonthlyData {
   month: string
@@ -41,8 +42,6 @@ export default function InsightsCharts({ monthlyData, categoryData, pipelineData
   const maxSubmissions =
     monthlyData.length > 0 ? Math.max(...monthlyData.map((m) => m.submissions), 1) : 1
   const maxRevenue = pipelineData.total || 1
-
-  const formatCurrency = (val: number) => (val >= 1000 ? `$${(val / 1000).toFixed(0)}K` : `$${val}`)
 
   return (
     <div className="insights-section">
@@ -92,11 +91,11 @@ export default function InsightsCharts({ monthlyData, categoryData, pipelineData
           <div className="card-header">
             <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--sp-2)' }}>
               <div className="insight-icon insight-icon-green">
-                <DollarSign size={15} />
+                <ReceiptText size={15} />
               </div>
               <div className="card-title">Revenue Pipeline</div>
             </div>
-            <span className="insight-total">{formatCurrency(pipelineData.total)}</span>
+            <span className="insight-total">{formatIDR(pipelineData.total)}</span>
           </div>
           <div className="card-body">
             <div className="pipeline-items">
@@ -109,9 +108,7 @@ export default function InsightsCharts({ monthlyData, categoryData, pipelineData
                     />
                     {pipelineData.accepted.label}
                   </span>
-                  <span className="pipeline-value">
-                    {formatCurrency(pipelineData.accepted.value)}
-                  </span>
+                  <span className="pipeline-value">{formatIDR(pipelineData.accepted.value)}</span>
                 </div>
                 <div className="pipeline-bar-track">
                   <div
@@ -131,9 +128,7 @@ export default function InsightsCharts({ monthlyData, categoryData, pipelineData
                     />
                     {pipelineData.inProgress.label}
                   </span>
-                  <span className="pipeline-value">
-                    {formatCurrency(pipelineData.inProgress.value)}
-                  </span>
+                  <span className="pipeline-value">{formatIDR(pipelineData.inProgress.value)}</span>
                 </div>
                 <div className="pipeline-bar-track">
                   <div
@@ -159,7 +154,7 @@ export default function InsightsCharts({ monthlyData, categoryData, pipelineData
               <div className="pipeline-summary-item">
                 <span className="pipeline-summary-label">Avg. Deal</span>
                 <span className="pipeline-summary-value">
-                  {formatCurrency(maxRevenue / Math.max(categoryData.length, 1))}
+                  {formatIDR(maxRevenue / Math.max(categoryData.length, 1))}
                 </span>
               </div>
               <div className="pipeline-summary-item">
@@ -208,7 +203,7 @@ export default function InsightsCharts({ monthlyData, categoryData, pipelineData
                       </span>
                       <div className="category-stats">
                         <span className="category-percent">{cat.percent}%</span>
-                        <span className="category-revenue">{formatCurrency(cat.revenue)}</span>
+                        <span className="category-revenue">{formatIDR(cat.revenue)}</span>
                       </div>
                     </div>
                     <div className="category-bar-track">

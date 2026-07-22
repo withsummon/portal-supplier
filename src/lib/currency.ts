@@ -21,10 +21,3 @@ export function formatIDRBudget(amount: number): string {
   }
   return parts.join('.')
 }
-
-/**
- * Convert and format USD amount to IDR string
- */
-export function formatUSDtoIDR(usdAmount: number): string {
-  return formatIDR(usdAmount * 16000)
-}

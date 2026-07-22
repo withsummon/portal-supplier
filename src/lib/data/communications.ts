@@ -66,7 +66,7 @@ function getNotificationTab(role: 'ADMIN' | 'SELLER', type: string) {
 
 function getParticipantRoleLabel(role: 'ADMIN' | 'SELLER') {
   if (role === 'ADMIN') return 'Summon Team'
-  return 'Makelar'
+  return 'Seller'
 }
 
 export const getCachedUserConversations = React.cache(async (userId: string) => {

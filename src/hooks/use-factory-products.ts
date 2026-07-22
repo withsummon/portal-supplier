@@ -6,11 +6,10 @@ interface FactoryProduct {
   id: string
   slug: string
   name: string
+  kind: string
   category: string
   description: string
   longDescription: string
-  basePrice: number
-  currency: string
   features: string[]
   useCases: string[]
   clients: string[]
@@ -26,12 +25,10 @@ interface FactoryProduct {
 export function useFactoryProducts(initialProducts: FactoryProduct[]) {
   const [activeCategory, setActiveCategory] = useState('all')
   const [searchQuery, setSearchQuery] = useState('')
-  const [selectedProductId, setSelectedProductId] = useState<string | null>(null)
-  const [currentImageIndex, setCurrentImageIndex] = useState(0)
 
   const filteredProducts = useMemo(() => {
     return initialProducts.filter((product) => {
-      const matchesCategory = activeCategory === 'all' || product.category === activeCategory
+      const matchesCategory = activeCategory === 'all' || product.kind === activeCategory
       const matchesSearch =
         product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
         product.description.toLowerCase().includes(searchQuery.toLowerCase())
@@ -40,32 +37,27 @@ export function useFactoryProducts(initialProducts: FactoryProduct[]) {
   }, [activeCategory, initialProducts, searchQuery])
 
   const categories = useMemo(() => {
-    const productCategories = Array.from(
-      new Set(initialProducts.map((product) => product.category)),
-    )
     return [
-      { id: 'all', label: 'All Products', count: initialProducts.length },
-      ...productCategories.map((category) => ({
-        id: category,
-        label: category,
-        count: initialProducts.filter((product) => product.category === category).length,
-      })),
+      { id: 'all', label: 'All', count: initialProducts.length },
+      {
+        id: 'PRODUCT',
+        label: 'Produk',
+        count: initialProducts.filter((product) => product.kind !== 'PORTFOLIO').length,
+      },
+      {
+        id: 'PORTFOLIO',
+        label: 'Portofolio',
+        count: initialProducts.filter((product) => product.kind === 'PORTFOLIO').length,
+      },
     ]
   }, [initialProducts])
-
-  const selectedProduct =
-    initialProducts.find((product) => product.id === selectedProductId) ?? null
 
   return {
     activeCategory,
     categories,
-    currentImageIndex,
     filteredProducts,
     searchQuery,
-    selectedProduct,
     setActiveCategory,
-    setCurrentImageIndex,
     setSearchQuery,
-    setSelectedProductId,
   }
 }

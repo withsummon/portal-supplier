@@ -1,21 +1,18 @@
 'use client'
 
 import Link from 'next/link'
-import Image from 'next/image'
-import { ArrowRight, Cpu, Download, Search, X } from 'lucide-react'
+import { ArrowRight, Search } from 'lucide-react'
 import { getProductIcon } from '@/lib/product-icons'
 import { useFactoryProducts } from '@/hooks/use-factory-products'
-import Modal from '@/components/ui/Modal'
 
 interface FactoryProduct {
   id: string
   slug: string
   name: string
+  kind: string
   category: string
   description: string
   longDescription: string
-  basePrice: number
-  currency: string
   features: string[]
   useCases: string[]
   clients: string[]
@@ -32,14 +29,10 @@ export default function FactoryPageClient({ products }: { products: FactoryProdu
   const {
     activeCategory,
     categories,
-    currentImageIndex,
     filteredProducts,
     searchQuery,
-    selectedProduct,
     setActiveCategory,
-    setCurrentImageIndex,
     setSearchQuery,
-    setSelectedProductId,
   } = useFactoryProducts(products)
 
   return (
@@ -48,7 +41,7 @@ export default function FactoryPageClient({ products }: { products: FactoryProdu
         <div>
           <h1 className="page-title">Summon Factory</h1>
           <p className="page-subtitle">
-            Browse and resell Summon&apos;s enterprise AI solutions to your clients.
+            Browse Summon products and completed portfolio work for your clients.
           </p>
         </div>
       </div>
@@ -133,7 +126,7 @@ export default function FactoryPageClient({ products }: { products: FactoryProdu
               marginBottom: 'var(--sp-4)',
             }}
           >
-            {filteredProducts.length} {filteredProducts.length === 1 ? 'product' : 'products'}
+            {filteredProducts.length} {filteredProducts.length === 1 ? 'item' : 'items'}
           </div>
 
           <div
@@ -142,19 +135,18 @@ export default function FactoryPageClient({ products }: { products: FactoryProdu
             {filteredProducts.map((product) => {
               const Icon = getProductIcon(product.icon)
               return (
-                <button
+                <Link
                   key={product.id}
-                  type="button"
                   className="card"
-                  onClick={() => {
-                    setSelectedProductId(product.id)
-                    setCurrentImageIndex(0)
-                  }}
+                  href={`/factory/${product.slug}`}
                   style={{
+                    display: 'block',
                     padding: 'var(--sp-6)',
                     textAlign: 'left',
                     cursor: 'pointer',
                     border: '1px solid var(--border-default)',
+                    color: 'inherit',
+                    textDecoration: 'none',
                   }}
                 >
                   <div
@@ -183,9 +175,9 @@ export default function FactoryPageClient({ products }: { products: FactoryProdu
                     <div style={{ fontSize: 'var(--fs-lg)', fontWeight: 'var(--fw-bold)' }}>
                       {product.name}
                     </div>
-                    {product.badge && (
-                      <span className="badge badge-submitted">{product.badge}</span>
-                    )}
+                    <span className="badge badge-submitted">
+                      {product.kind === 'PORTFOLIO' ? 'Portofolio' : 'Produk'}
+                    </span>
                   </div>
                   <div
                     style={{
@@ -199,13 +191,10 @@ export default function FactoryPageClient({ products }: { products: FactoryProdu
                   <div
                     style={{
                       display: 'flex',
-                      justifyContent: 'space-between',
+                      justifyContent: 'flex-end',
                       alignItems: 'center',
                     }}
                   >
-                    <span style={{ fontSize: 'var(--fs-sm)', fontWeight: 'var(--fw-semibold)' }}>
-                      Rp {product.basePrice.toLocaleString()}
-                    </span>
                     <span
                       style={{
                         display: 'inline-flex',
@@ -219,154 +208,12 @@ export default function FactoryPageClient({ products }: { products: FactoryProdu
                       View Details <ArrowRight size={12} />
                     </span>
                   </div>
-                </button>
+                </Link>
               )
             })}
           </div>
         </div>
       </div>
-
-      <Modal
-        isOpen={!!selectedProduct}
-        onClose={() => setSelectedProductId(null)}
-        maxWidth="960px"
-        noPadding
-      >
-        {selectedProduct && (
-          <div style={{ padding: 'var(--sp-6)' }}>
-            <div
-              style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: 'var(--sp-3)' }}
-            >
-              <button
-                className="btn btn-ghost btn-sm"
-                type="button"
-                onClick={() => setSelectedProductId(null)}
-                aria-label="Close"
-              >
-                <X size={18} />
-              </button>
-            </div>
-
-            <div style={{ display: 'grid', gridTemplateColumns: '1.1fr 1fr', gap: 'var(--sp-6)' }}>
-              <div>
-                <div
-                  style={{
-                    height: '320px',
-                    borderRadius: 'var(--radius-xl)',
-                    background: 'var(--neutral-100)',
-                    overflow: 'hidden',
-                    marginBottom: 'var(--sp-4)',
-                    position: 'relative',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                  }}
-                >
-                  {selectedProduct.images[currentImageIndex] ? (
-                    <Image
-                      src={selectedProduct.images[currentImageIndex]}
-                      alt={selectedProduct.name}
-                      style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                      fill
-                      unoptimized
-                    />
-                  ) : (
-                    <Cpu size={40} style={{ color: 'var(--text-muted)' }} />
-                  )}
-                </div>
-                {selectedProduct.images.length > 1 && (
-                  <div style={{ display: 'flex', justifyContent: 'center', gap: 'var(--sp-2)' }}>
-                    {selectedProduct.images.map((_, i) => (
-                      <button
-                        key={i}
-                        type="button"
-                        onClick={() => setCurrentImageIndex(i)}
-                        style={{
-                          width: i === currentImageIndex ? '24px' : '8px',
-                          height: '8px',
-                          borderRadius: '4px',
-                          background:
-                            i === currentImageIndex ? 'var(--blue-500)' : 'var(--neutral-200)',
-                          border: 'none',
-                          cursor: 'pointer',
-                          padding: 0,
-                          transition: 'all 150ms',
-                        }}
-                      />
-                    ))}
-                  </div>
-                )}
-              </div>
-
-              <div>
-                <h2
-                  id="product-preview-title"
-                  style={{
-                    fontSize: 'var(--fs-2xl)',
-                    fontWeight: 'var(--fw-bold)',
-                    marginBottom: 'var(--sp-2)',
-                  }}
-                >
-                  {selectedProduct.name}
-                </h2>
-                <p style={{ color: 'var(--text-secondary)', marginBottom: 'var(--sp-4)' }}>
-                  {selectedProduct.longDescription}
-                </p>
-                <div style={{ fontWeight: 'var(--fw-semibold)', marginBottom: 'var(--sp-4)' }}>
-                  Rp {selectedProduct.basePrice.toLocaleString()}
-                </div>
-
-                <div style={{ marginBottom: 'var(--sp-5)' }}>
-                  <div className="form-label">Features</div>
-                  <ul style={{ paddingLeft: '18px', color: 'var(--text-secondary)' }}>
-                    {selectedProduct.features.map((feature) => (
-                      <li key={feature}>{feature}</li>
-                    ))}
-                  </ul>
-                </div>
-
-                <div style={{ marginBottom: 'var(--sp-5)' }}>
-                  <div className="form-label">Use Cases</div>
-                  <ul style={{ paddingLeft: '18px', color: 'var(--text-secondary)' }}>
-                    {selectedProduct.useCases.map((useCase) => (
-                      <li key={useCase}>{useCase}</li>
-                    ))}
-                  </ul>
-                </div>
-
-                {selectedProduct.clients.length > 0 && (
-                  <div style={{ marginBottom: 'var(--sp-5)' }}>
-                    <div className="form-label">Clients</div>
-                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: 'var(--sp-2)' }}>
-                      {selectedProduct.clients.map((client) => (
-                        <span key={client} className="chip selected">
-                          {client}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-                )}
-
-                <div style={{ display: 'flex', gap: 'var(--sp-3)' }}>
-                  {selectedProduct.pitchDeckPdf && (
-                    <Link
-                      href={selectedProduct.pitchDeckPdf}
-                      target="_blank"
-                      className="btn btn-secondary"
-                    >
-                      <Download size={14} />
-                      Pitch Deck
-                    </Link>
-                  )}
-                  <Link href="/projects/submit" className="btn btn-primary">
-                    Submit Client Opportunity
-                  </Link>
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
-      </Modal>
     </div>
   )
 }

@@ -128,9 +128,9 @@ export default function RegisterSellerPage() {
         </div>
 
         <div className="auth-form animate-in">
-          <h1 className="auth-heading">Join as a Makelar</h1>
+          <h1 className="auth-heading">Join as a Seller</h1>
           <p className="auth-sub">
-            Create your makelar account to start submitting and tracking projects.
+            Create your seller account to start submitting and tracking projects.
           </p>
 
           <form action={formAction}>

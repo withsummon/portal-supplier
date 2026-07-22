@@ -14,6 +14,12 @@ const CATEGORIES = [
   { id: 'security', label: 'Security' },
 ]
 
+const KINDS = [
+  { id: 'all', label: 'All Items' },
+  { id: 'PRODUCT', label: 'Produk' },
+  { id: 'PORTFOLIO', label: 'Portofolio' },
+]
+
 function updateArrayItem(items: string[], index: number, value: string) {
   return items.map((item, itemIndex) => (itemIndex === index ? value : item))
 }
@@ -50,9 +56,9 @@ export default function AdminProductsPageClient({
     <div className="animate-in">
       <div className="page-header">
         <div>
-          <h1 className="page-title">Product Catalog</h1>
+          <h1 className="page-title">Factory Catalog</h1>
           <p className="page-subtitle">
-            Manage Summon Factory products and publish them to sellers.
+            Manage Summon products and portfolio items published to sellers.
           </p>
         </div>
         <button
@@ -67,7 +73,7 @@ export default function AdminProductsPageClient({
           }}
         >
           <Plus size={15} />
-          Add Product
+          Add Item
         </button>
       </div>
 
@@ -96,7 +102,7 @@ export default function AdminProductsPageClient({
             value={categoryFilter}
             onChange={(event) => setCategoryFilter(event.target.value)}
           >
-            {CATEGORIES.map((category) => (
+            {KINDS.map((category) => (
               <option key={category.id} value={category.id}>
                 {category.label}
               </option>
@@ -110,9 +116,9 @@ export default function AdminProductsPageClient({
           <table className="table">
             <thead>
               <tr>
-                <th>Product</th>
+                <th>Item</th>
+                <th>Type</th>
                 <th>Category</th>
-                <th>Price</th>
                 <th>Assets</th>
                 <th>Status</th>
                 <th></th>
@@ -170,8 +176,8 @@ export default function AdminProductsPageClient({
                         </div>
                       </button>
                     </td>
+                    <td>{product.kind === 'PORTFOLIO' ? 'Portofolio' : 'Produk'}</td>
                     <td>{product.category}</td>
-                    <td>Rp {product.basePrice.toLocaleString()}</td>
                     <td style={{ fontSize: 'var(--fs-xs)', color: 'var(--text-muted)' }}>
                       {product.images.length} images{product.pitchDeckPdf ? ' · PDF' : ''}
                     </td>
@@ -237,18 +243,31 @@ export default function AdminProductsPageClient({
             marginBottom: 'var(--sp-5)',
           }}
         >
-          Product Details
+          Catalog Details
         </h2>
 
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--sp-4)' }}>
           <input
             className="input"
-            placeholder="Product name"
+            placeholder="Item name"
             value={formData.name}
             onChange={(event) =>
               setFormData((current) => ({ ...current, name: event.target.value }))
             }
           />
+          <select
+            className="select"
+            value={formData.kind}
+            onChange={(event) =>
+              setFormData((current) => ({ ...current, kind: event.target.value }))
+            }
+          >
+            {KINDS.filter((category) => category.id !== 'all').map((category) => (
+              <option key={category.id} value={category.id}>
+                {category.label}
+              </option>
+            ))}
+          </select>
           <select
             className="select"
             value={formData.category}
@@ -268,23 +287,6 @@ export default function AdminProductsPageClient({
             value={formData.description}
             onChange={(event) =>
               setFormData((current) => ({ ...current, description: event.target.value }))
-            }
-          />
-          <input
-            className="input"
-            type="number"
-            placeholder="Base price"
-            value={formData.basePrice}
-            onChange={(event) =>
-              setFormData((current) => ({ ...current, basePrice: Number(event.target.value) }))
-            }
-          />
-          <input
-            className="input"
-            placeholder="Currency"
-            value={formData.currency}
-            onChange={(event) =>
-              setFormData((current) => ({ ...current, currency: event.target.value }))
             }
           />
           <input
@@ -598,7 +600,7 @@ export default function AdminProductsPageClient({
               }
             }}
           >
-            {isPending ? 'Saving...' : 'Save Product'}
+            {isPending ? 'Saving...' : 'Save Item'}
           </button>
         </div>
       </Modal>

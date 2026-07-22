@@ -191,8 +191,8 @@ function OnboardingWizard() {
                   lineHeight: 'var(--lh-relaxed)',
                 }}
               >
-                Before we set up your Makelar workspace, we need a few more details to customize
-                your experience.
+                Before we set up your Seller workspace, we need a few more details to customize your
+                experience.
               </p>
 
               <div className="auth-fields">

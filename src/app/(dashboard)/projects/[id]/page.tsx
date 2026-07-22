@@ -5,8 +5,8 @@ import {
   FileText,
   Download,
   Calendar,
-  DollarSign,
   Flag,
+  ReceiptText,
   User,
   CheckCircle,
   Clock,
@@ -40,7 +40,7 @@ const statusIcons: Record<ProjectStatusKey, typeof CheckCircle> = {
   rejected: XCircle,
   in_progress: Clock,
   completed: CheckCircle,
-  paid: DollarSign,
+  paid: ReceiptText,
   cancelled: XCircle,
 }
 
@@ -340,7 +340,7 @@ export default async function ProjectDetailPage({ params }: Props) {
                   { icon: User, label: 'Client', value: project.clientName ?? '—' },
                   { icon: FileText, label: 'Category', value: project.category },
                   { icon: Calendar, label: 'Deadline', value: formatDate(project.endDate) },
-                  { icon: DollarSign, label: 'Budget', value: project.budgetRange ?? '—' },
+                  { icon: ReceiptText, label: 'Budget', value: project.budgetRange ?? '—' },
                   {
                     icon: Flag,
                     label: 'Priority',

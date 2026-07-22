@@ -6,13 +6,13 @@ import {
   Activity,
   AlertCircle,
   CheckCircle,
-  DollarSign,
   FolderOpen,
+  ReceiptText,
   TrendingUp,
   Users,
 } from 'lucide-react'
 import type { AdminActivityDto, AdminStatDto } from '@/lib/data/admin'
-import { formatUSDtoIDR } from '@/lib/currency'
+import { formatIDR } from '@/lib/currency'
 
 function formatRelative(value: string) {
   const diff = Date.now() - new Date(value).getTime()
@@ -31,7 +31,7 @@ const DASHBOARD_STAT_CARDS: Array<{
   getValue: (stats: AdminStatDto) => string
 }> = [
   {
-    title: 'Total Makelar',
+    title: 'Total Seller',
     icon: Users,
     background: 'var(--blue-50)',
     color: 'var(--blue-600)',
@@ -46,10 +46,10 @@ const DASHBOARD_STAT_CARDS: Array<{
   },
   {
     title: 'Total Revenue',
-    icon: DollarSign,
+    icon: ReceiptText,
     background: 'var(--color-purple-bg)',
     color: 'var(--color-purple)',
-    getValue: (stats) => formatUSDtoIDR(stats.totalRevenue),
+    getValue: (stats) => formatIDR(stats.totalRevenue),
   },
   {
     title: 'Conversion Rate',

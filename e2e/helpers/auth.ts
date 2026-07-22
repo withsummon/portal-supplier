@@ -2,7 +2,7 @@ import { type Page, expect } from '@playwright/test'
 import type { TestUser } from './test-users'
 
 const roleText: Record<string, string> = {
-  seller: 'Makelar',
+  seller: 'Seller',
   admin: 'Summon Team',
 }
 

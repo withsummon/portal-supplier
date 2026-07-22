@@ -11,6 +11,7 @@ import {
 export interface ProductFormState {
   id?: string
   name: string
+  kind: string
   category: string
   description: string
   longDescription: string
@@ -38,11 +39,12 @@ export function useAdminProducts(initialProducts: ProductFormState[]) {
 
   const emptyForm = {
     name: '',
+    kind: 'PRODUCT',
     category: 'conversational-ai',
     description: '',
     longDescription: '',
     basePrice: 0,
-    currency: 'USD',
+    currency: 'IDR',
     features: [''],
     useCases: [''],
     clients: [''],
@@ -65,7 +67,7 @@ export function useAdminProducts(initialProducts: ProductFormState[]) {
       const matchesSearch =
         product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
         product.description.toLowerCase().includes(searchQuery.toLowerCase())
-      const matchesCategory = categoryFilter === 'all' || product.category === categoryFilter
+      const matchesCategory = categoryFilter === 'all' || product.kind === categoryFilter
       return matchesSearch && matchesCategory
     })
   }, [categoryFilter, products, searchQuery])
@@ -75,6 +77,8 @@ export function useAdminProducts(initialProducts: ProductFormState[]) {
       setEditingProduct(product)
       setFormData({
         ...product,
+        kind: product.kind ?? 'PRODUCT',
+        currency: 'IDR',
         features: product.features.length ? [...product.features] : [''],
         useCases: product.useCases.length ? [...product.useCases] : [''],
         clients: product.clients.length ? [...product.clients] : [''],
@@ -92,6 +96,8 @@ export function useAdminProducts(initialProducts: ProductFormState[]) {
   function saveProduct() {
     const cleanData = {
       ...formData,
+      kind: formData.kind === 'PORTFOLIO' ? 'PORTFOLIO' : 'PRODUCT',
+      currency: 'IDR',
       features: formData.features.filter((item) => item.trim()),
       useCases: formData.useCases.filter((item) => item.trim()),
       clients: formData.clients.filter((item) => item.trim()),
@@ -126,6 +132,7 @@ export function useAdminProducts(initialProducts: ProductFormState[]) {
         const normalizedProduct: ProductFormState = {
           id: product.id,
           name: product.name,
+          kind: product.kind ?? 'PRODUCT',
           category: product.category,
           description: product.description ?? '',
           longDescription: product.longDescription ?? '',

@@ -4,10 +4,10 @@ import {
   Calendar,
   CheckCircle,
   Clock,
-  DollarSign,
   FileText,
   MessageSquare,
   PlayCircle,
+  ReceiptText,
   User,
   X,
   XCircle,
@@ -165,7 +165,7 @@ export default function ProjectDetailModal({
                     {[
                       { icon: User, label: 'Seller', value: project.supplier },
                       { icon: FileText, label: 'Category', value: project.category },
-                      { icon: DollarSign, label: 'Budget', value: project.budget || '-' },
+                      { icon: ReceiptText, label: 'Budget', value: project.budget || '-' },
                       {
                         icon: Calendar,
                         label: 'Timeline',

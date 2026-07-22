@@ -69,8 +69,8 @@ export async function registerUser(data: {
         (admin) => ({
           userId: admin.id,
           type: 'SELLER_REGISTRATION',
-          title: `New makelar registration: ${data.companyName}`,
-          content: 'A new makelar registration requires your review.',
+          title: `New seller registration: ${data.companyName}`,
+          content: 'A new seller registration requires your review.',
           link: '/admin/sellers',
           meta: JSON.stringify({ profileId: newProfileId, role: data.role }),
         }),

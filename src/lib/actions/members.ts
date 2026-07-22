@@ -21,7 +21,7 @@ export async function approveSeller(sellerId: string) {
       userId: seller.userId,
       type: 'SYSTEM',
       title: 'Registration approved',
-      content: 'Your makelar account has been approved. You can now access the makelar portal.',
+      content: 'Your seller account has been approved. You can now access the seller portal.',
       link: '/dashboard',
     })
   }
@@ -47,7 +47,7 @@ export async function rejectSeller(sellerId: string, reason?: string) {
       userId: seller.userId,
       type: 'SYSTEM',
       title: 'Registration not approved',
-      content: reason ?? 'Unfortunately, your makelar registration was not approved at this time.',
+      content: reason ?? 'Unfortunately, your seller registration was not approved at this time.',
       link: '/register',
     })
   }

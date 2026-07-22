@@ -68,15 +68,18 @@ export default async function DashboardPage() {
   const rejected = allProjects.filter((p) => p.status === 'REJECTED').length
   const needClarification = allProjects.filter((p) => p.status === 'NEED_CLARIFICATION').length
   const recentProjects = allProjects.slice(0, 5)
-  const sellerName = seller?.user?.name ?? 'User'
+  const sellerName = seller?.user?.name?.trim() || seller?.companyName || 'Seller'
+  const sellerCompany = seller?.companyName
 
   return (
     <div className="animate-in">
       <div className="page-header">
         <div>
-          <h1 className="page-title">Good evening, {sellerName.split(' ')[0]} 👋</h1>
+          <h1 className="page-title">Welcome, {sellerName}</h1>
           <p className="page-subtitle">
-            Here&apos;s an overview of your project activity on Summon Supplier Portal.
+            {sellerCompany
+              ? `${sellerCompany} project activity on Summon Supplier Portal.`
+              : 'Your project activity on Summon Supplier Portal.'}
           </p>
         </div>
         <Link href="/projects/submit">

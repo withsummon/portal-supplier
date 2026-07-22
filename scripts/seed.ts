@@ -50,7 +50,7 @@ async function main() {
         {
           email: 'seller@arya.local',
           password,
-          name: 'Arya Makelar',
+          name: 'Arya Seller',
           role: 'SELLER',
           emailVerified: true,
         },
@@ -73,7 +73,7 @@ async function main() {
       .insert(sellers)
       .values({
         userId: sellerUser.id,
-        companyName: 'Arya Makelar Nusantara',
+        companyName: 'Arya Seller Nusantara',
         industry: 'Technology',
         companySize: '11-50 employees',
         status: 'ACTIVE',
@@ -81,7 +81,7 @@ async function main() {
       .returning()
 
     if (!seller) {
-      throw new Error('Failed to seed makelar')
+      throw new Error('Failed to seed seller')
     }
 
     await tx.insert(categories).values([
@@ -113,14 +113,14 @@ async function main() {
     await tx.insert(statusHistory).values({
       projectId: project.id,
       status: 'SUBMITTED',
-      note: 'Project submitted by makelar.',
+      note: 'Project submitted by seller.',
       changedBy: sellerUser.id,
     })
   })
 
   console.error('Seed complete')
   console.error('Admin:', 'admin@withsummon.com', 'Password123!')
-  console.error('Makelar:', 'seller@arya.local', 'Password123!')
+  console.error('Seller:', 'seller@arya.local', 'Password123!')
 }
 
 main().catch((error) => {

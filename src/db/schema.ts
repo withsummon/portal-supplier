@@ -321,6 +321,7 @@ export const products = pgTable(
     slug: text('slug').notNull().unique(),
     description: text('description'),
     longDescription: text('long_description'),
+    kind: text('kind').default('PRODUCT').notNull(),
     category: text('category').notNull(),
     basePrice: decimal('base_price', { precision: 10, scale: 2 }).notNull(),
     currency: text('currency').default('IDR').notNull(),
@@ -341,6 +342,33 @@ export const products = pgTable(
       .$onUpdate(() => new Date()),
   },
   (table) => [uniqueIndex('products_slug_idx').on(table.slug)],
+)
+
+// ============================================================
+// ARTICLES (Seller-facing news and insights)
+// ============================================================
+
+export const articles = pgTable(
+  'articles',
+  {
+    id: uuid('id').defaultRandom().primaryKey(),
+    title: text('title').notNull(),
+    slug: text('slug').notNull().unique(),
+    excerpt: text('excerpt'),
+    content: text('content').notNull(),
+    coverImage: text('cover_image'),
+    status: text('status').default('DRAFT').notNull(),
+    publishedAt: timestamp('published_at', { withTimezone: true }),
+    createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
+    updatedAt: timestamp('updated_at', { withTimezone: true })
+      .defaultNow()
+      .notNull()
+      .$onUpdate(() => new Date()),
+  },
+  (table) => [
+    uniqueIndex('articles_slug_idx').on(table.slug),
+    index('articles_status_published_at_idx').on(table.status, table.publishedAt),
+  ],
 )
 
 // ============================================================

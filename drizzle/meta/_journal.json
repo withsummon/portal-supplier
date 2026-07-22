@@ -29,6 +29,13 @@
       "when": 1784723340000,
       "tag": "0003_remove_vendor",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1784727000000,
+      "tag": "0004_factory_portfolio_articles",
+      "breakpoints": true
     }
   ]
 }

@@ -15,9 +15,9 @@ const RUN_ID = Date.now()
  * Uses unique RUN_ID per execution to avoid email collisions across runs.
  */
 test.describe('Auth Flow', () => {
-  test('workspace roles: only Makelar and admin are offered', async ({ page }) => {
+  test('workspace roles: only Seller and admin are offered', async ({ page }) => {
     await page.goto('/login')
-    await expect(page.getByRole('button', { name: /^Makelar$/i })).toBeVisible()
+    await expect(page.getByRole('button', { name: /^Seller$/i })).toBeVisible()
     await expect(page.getByRole('button', { name: /^Summon Team$/i })).toBeVisible()
     await page.goto('/register')
     await expect(page).toHaveURL(/\/register\/seller/i)

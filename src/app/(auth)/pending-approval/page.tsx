@@ -155,7 +155,7 @@ function PendingApprovalContent() {
                 marginBottom: 'var(--sp-8)',
               }}
             >
-              Thank you for applying to join Summon as a makelar. Our team is reviewing your profile
+              Thank you for applying to join Summon as a seller. Our team is reviewing your profile
               to ensure the highest quality network. We typically respond within 24-48 hours.
             </p>
 

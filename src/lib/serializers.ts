@@ -25,6 +25,7 @@ export function serializeProduct(product: {
   name: string
   slug: string
   category: string
+  kind?: string | null
   description: string | null
   longDescription: string | null
   basePrice: string | number
@@ -45,6 +46,7 @@ export function serializeProduct(product: {
     slug: product.slug,
     name: product.name,
     category: product.category,
+    kind: product.kind ?? 'PRODUCT',
     description: product.description ?? '',
     longDescription: product.longDescription ?? '',
     basePrice: Number(product.basePrice),
