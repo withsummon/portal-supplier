@@ -47,7 +47,7 @@ export default function AdminProfileClient({ profile }: { profile: AdminProfileD
         </div>
       )}
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 320px', gap: 'var(--sp-5)' }}>
+      <div className="form-aside-layout">
         <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--sp-5)' }}>
           <div className="card">
             <div
@@ -109,7 +109,7 @@ export default function AdminProfileClient({ profile }: { profile: AdminProfileD
                 </div>
               </div>
 
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--sp-4)' }}>
+              <div className="form-grid-2">
                 <div className="form-group">
                   <label className="form-label">Full Name</label>
                   <input

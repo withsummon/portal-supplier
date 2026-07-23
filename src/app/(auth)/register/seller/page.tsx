@@ -352,7 +352,7 @@ export default function RegisterSellerPage() {
                     Creating account...
                   </span>
                 ) : (
-                  'Continue to Onboarding'
+                  'Submit Seller Registration'
                 )}
               </button>
             </div>

@@ -142,9 +142,41 @@ export default function ProductFormClient({
         </div>
       )}
 
-      <div style={{ display: 'grid', gap: 'var(--sp-5)' }}>
-        <ProductFormSection title="Basic Information">
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--sp-4)' }}>
+      <div className="form-stack">
+        <ProductFormSection
+          title="Publishing Preview"
+          description="Check what sellers will see before editing supporting details."
+        >
+          <div className="form-grid-2">
+            <label
+              style={{
+                alignItems: 'center',
+                display: 'flex',
+                gap: 'var(--sp-2)',
+              }}
+            >
+              <input
+                type="checkbox"
+                checked={formData.visible}
+                onChange={(event) => updateField('visible', event.target.checked)}
+              />
+              Visible in factory
+            </label>
+            <div style={{ color: 'var(--text-muted)', fontSize: 'var(--fs-sm)' }}>
+              Hidden items stay in the admin catalog but are not shown to sellers.
+            </div>
+          </div>
+          <div style={{ marginTop: 'var(--sp-5)' }}>
+            <div className="form-label">Seller Grid Preview</div>
+            <ProductFactoryPreview imageFiles={imageFiles} product={formData} />
+          </div>
+        </ProductFormSection>
+
+        <ProductFormSection
+          title="Catalog Basics"
+          description="Name, type, and copy shown in the factory catalog."
+        >
+          <div className="form-grid-2">
             <ProductFormField label="Item Name" required error={errors.name}>
               <input
                 className="input"
@@ -153,7 +185,7 @@ export default function ProductFormClient({
                 onChange={(event) => updateField('name', event.target.value)}
               />
             </ProductFormField>
-            <ProductFormField label="Type" required>
+            <ProductFormField label="Type" required hint="Use Portofolio only for completed work.">
               <select
                 className="select"
                 value={formData.kind}
@@ -166,7 +198,7 @@ export default function ProductFormClient({
                 ))}
               </select>
             </ProductFormField>
-            <ProductFormField label="Category" required>
+            <ProductFormField label="Category" required hint="Controls seller filtering.">
               <select
                 className="select"
                 value={formData.category}
@@ -191,7 +223,8 @@ export default function ProductFormClient({
               label="Long Description"
               required
               error={errors.longDescription}
-              style={{ gridColumn: 'span 2' }}
+              style={{ gridColumn: '1 / -1' }}
+              hint="Shown on the detail page."
             >
               <textarea
                 className="input input-textarea"
@@ -204,8 +237,48 @@ export default function ProductFormClient({
           </div>
         </ProductFormSection>
 
-        <ProductFormSection title="Catalog Presentation">
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--sp-4)' }}>
+        <ProductFormSection
+          title="Media & Documents"
+          description="Upload catalog banners and optional pitch material."
+        >
+          <ProductMediaFields
+            formData={formData}
+            replacePitchDeck={replacePitchDeck}
+            setFormData={setFormData}
+            setImageFiles={setImageFiles}
+            setPitchDeckFile={setPitchDeckFile}
+            setReplacePitchDeck={setReplacePitchDeck}
+          />
+        </ProductFormSection>
+
+        <ProductFormSection
+          title="Selling Details"
+          description="Use short, scan-friendly bullets for the detail page."
+        >
+          <div className="form-grid-3">
+            <ProductTextListEditor
+              label="Features"
+              items={formData.features}
+              onChange={(features) => setFormData((current) => ({ ...current, features }))}
+            />
+            <ProductTextListEditor
+              label="Use Cases"
+              items={formData.useCases}
+              onChange={(useCases) => setFormData((current) => ({ ...current, useCases }))}
+            />
+            <ProductTextListEditor
+              label="Clients"
+              items={formData.clients}
+              onChange={(clients) => setFormData((current) => ({ ...current, clients }))}
+            />
+          </div>
+        </ProductFormSection>
+
+        <ProductFormSection
+          title="Visual Style"
+          description="Optional catalog styling. Leave defaults unless the item needs distinction."
+        >
+          <div className="form-grid-2">
             <ProductFormField label="Badge">
               <input
                 className="input"
@@ -232,62 +305,6 @@ export default function ProductFormClient({
               iconColor={formData.iconColor}
               onChange={(style) => setFormData((current) => ({ ...current, ...style }))}
             />
-            <label
-              style={{
-                alignItems: 'center',
-                display: 'flex',
-                gap: 'var(--sp-2)',
-                paddingTop: '24px',
-              }}
-            >
-              <input
-                type="checkbox"
-                checked={formData.visible}
-                onChange={(event) => updateField('visible', event.target.checked)}
-              />
-              Visible in factory
-            </label>
-          </div>
-        </ProductFormSection>
-
-        <ProductFormSection title="Selling Details">
-          <div
-            style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(3, 1fr)',
-              gap: 'var(--sp-4)',
-            }}
-          >
-            <ProductTextListEditor
-              label="Features"
-              items={formData.features}
-              onChange={(features) => setFormData((current) => ({ ...current, features }))}
-            />
-            <ProductTextListEditor
-              label="Use Cases"
-              items={formData.useCases}
-              onChange={(useCases) => setFormData((current) => ({ ...current, useCases }))}
-            />
-            <ProductTextListEditor
-              label="Clients"
-              items={formData.clients}
-              onChange={(clients) => setFormData((current) => ({ ...current, clients }))}
-            />
-          </div>
-        </ProductFormSection>
-
-        <ProductFormSection title="Media & Documents">
-          <ProductMediaFields
-            formData={formData}
-            replacePitchDeck={replacePitchDeck}
-            setFormData={setFormData}
-            setImageFiles={setImageFiles}
-            setPitchDeckFile={setPitchDeckFile}
-            setReplacePitchDeck={setReplacePitchDeck}
-          />
-          <div style={{ marginTop: 'var(--sp-5)' }}>
-            <div className="form-label">Seller Grid Preview</div>
-            <ProductFactoryPreview imageFiles={imageFiles} product={formData} />
           </div>
         </ProductFormSection>
       </div>

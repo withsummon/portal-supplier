@@ -75,8 +75,28 @@ const STEPS = [
   { label: 'Project Basics', desc: 'Name and category' },
   { label: 'Requirements', desc: 'Scope and deliverables' },
   { label: 'Timeline', desc: 'Dates and budget' },
-  { label: 'Attachments', desc: 'Upload files' },
+  { label: 'Attachments', desc: 'Optional files' },
   { label: 'Review', desc: 'Confirm and submit' },
+]
+
+const STEP_TIPS = [
+  [
+    'Use a client-facing project name.',
+    'Pick the closest category so the review team can route it quickly.',
+  ],
+  [
+    'Start with outcomes, then list constraints.',
+    'Add deliverables only when they are agreed or expected.',
+  ],
+  [
+    'Use dates that reflect the real target window.',
+    'Budget and priority help admin decide review urgency.',
+  ],
+  [
+    'Attach specs, references, or existing proposals when available.',
+    'Files are optional, but they reduce back-and-forth.',
+  ],
+  ['Check required fields before submitting.', 'After submission, the project detail page opens.'],
 ]
 
 function FieldError({ message }: { message?: string | undefined }) {
@@ -659,6 +679,7 @@ export default function SubmitProjectPageClient({ categories }: { categories: st
     updateField,
   } = useSubmitProject()
   const currentStep = STEPS[step] ?? STEPS[0] ?? { label: 'Project Basics', desc: '' }
+  const currentTips = STEP_TIPS[step] ?? []
   const projectCategories = categories.length > 0 ? categories : DEFAULT_CATEGORIES
 
   return (
@@ -681,7 +702,7 @@ export default function SubmitProjectPageClient({ categories }: { categories: st
         {STEPS.map((stepItem, index) => (
           <div
             key={stepItem.label}
-            className="stepper-item"
+            className={`stepper-item${step === index ? ' active' : index < step ? ' completed' : ''}`}
             style={{ flex: index < STEPS.length - 1 ? 1 : 'none' }}
           >
             <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--sp-3)' }}>
@@ -705,7 +726,7 @@ export default function SubmitProjectPageClient({ categories }: { categories: st
         ))}
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 280px', gap: 'var(--sp-6)' }}>
+      <div className="form-aside-layout">
         <div className="card">
           <div className="card-header">
             <div>
@@ -726,6 +747,7 @@ export default function SubmitProjectPageClient({ categories }: { categories: st
               {step + 1} / {STEPS.length}
             </span>
           </div>
+          {error && <div className="form-error-summary">{error}</div>}
           <div className="card-body">
             {step === 0 && (
               <Step1
@@ -739,17 +761,6 @@ export default function SubmitProjectPageClient({ categories }: { categories: st
             {step === 2 && <Step3 data={formData} errors={fieldErrors} onChange={updateField} />}
             {step === 3 && <Step4 data={formData} onChange={updateField} />}
             {step === 4 && <Step5 data={formData} />}
-            {error && Object.values(fieldErrors).every((message) => !message) && (
-              <div
-                style={{
-                  marginTop: 'var(--sp-4)',
-                  fontSize: 'var(--fs-sm)',
-                  color: 'var(--color-danger)',
-                }}
-              >
-                {error}
-              </div>
-            )}
           </div>
           <div
             style={{
@@ -816,15 +827,11 @@ export default function SubmitProjectPageClient({ categories }: { categories: st
             className="card-body"
             style={{ display: 'flex', flexDirection: 'column', gap: 'var(--sp-4)' }}
           >
-            <div style={{ fontSize: 'var(--fs-sm)', color: 'var(--text-secondary)' }}>
-              Be specific on scope, constraints, and delivery timeline.
-            </div>
-            <div style={{ fontSize: 'var(--fs-sm)', color: 'var(--text-secondary)' }}>
-              Add supporting documents so admin can review faster.
-            </div>
-            <div style={{ fontSize: 'var(--fs-sm)', color: 'var(--text-secondary)' }}>
-              Clarify budget and priority early to reduce back-and-forth.
-            </div>
+            {currentTips.map((tip) => (
+              <div key={tip} style={{ fontSize: 'var(--fs-sm)', color: 'var(--text-secondary)' }}>
+                {tip}
+              </div>
+            ))}
           </div>
         </div>
       </div>

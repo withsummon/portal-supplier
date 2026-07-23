@@ -3,12 +3,14 @@ import type { CSSProperties, ReactNode } from 'react'
 export default function ProductFormField({
   children,
   error,
+  hint,
   label,
   required,
   style,
 }: {
   children: ReactNode
   error?: string | undefined
+  hint?: string | undefined
   label: string
   required?: boolean | undefined
   style?: CSSProperties | undefined
@@ -19,6 +21,7 @@ export default function ProductFormField({
         {label} {required && <span className="form-required">*</span>}
       </span>
       {children}
+      {hint && <span className="form-field-hint">{hint}</span>}
       {error && (
         <span
           style={{

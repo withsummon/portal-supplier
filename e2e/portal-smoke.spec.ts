@@ -106,6 +106,7 @@ test.describe('Portal smoke', () => {
       await page.getByLabel(/title/i).fill(title)
       await page.getByLabel(/excerpt/i).fill('Real article smoke excerpt')
       await page.getByLabel(/article content/i).fill('Real article smoke content')
+      page.once('dialog', (dialog) => dialog.accept())
       await page.getByRole('button', { name: /publish/i }).click()
       await expect(page).toHaveURL(/\/admin\/articles\/[^/]+\/edit$/i, { timeout: 15000 })
       await page.goto('/admin/articles')

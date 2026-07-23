@@ -2,9 +2,11 @@ import type { ReactNode } from 'react'
 
 export default function ProductFormSection({
   children,
+  description,
   title,
 }: {
   children: ReactNode
+  description?: string | undefined
   title: string
 }) {
   return (
@@ -18,6 +20,7 @@ export default function ProductFormSection({
       >
         {title}
       </h2>
+      {description && <p className="form-section-desc">{description}</p>}
       {children}
     </section>
   )

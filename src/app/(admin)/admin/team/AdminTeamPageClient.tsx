@@ -229,12 +229,17 @@ export default function AdminTeamPageClient({
                     <button
                       className={`badge badge-${member.status === 'active' ? 'accepted' : member.status === 'pending' ? 'submitted' : 'rejected'}`}
                       type="button"
-                      onClick={() =>
+                      aria-label={`Set ${member.name} status to ${
+                        member.status === 'active' ? 'pending' : 'active'
+                      }`}
+                      onClick={() => {
+                        const nextStatus = member.status === 'active' ? 'pending' : 'active'
+                        if (!window.confirm(`Set ${member.name} to ${nextStatus}?`)) return
                         updateMember(member.id, {
-                          status: member.status === 'active' ? 'pending' : 'active',
+                          status: nextStatus,
                           verified: member.status !== 'active',
                         })
-                      }
+                      }}
                     >
                       {member.status}
                     </button>
@@ -245,9 +250,14 @@ export default function AdminTeamPageClient({
                   <td>
                     <button
                       className="btn btn-ghost btn-sm"
+                      aria-label={`Delete ${member.name}`}
                       title="Delete team member"
                       type="button"
-                      onClick={() => removeMember(member.id)}
+                      onClick={() => {
+                        if (window.confirm(`Delete ${member.name} from the admin team?`)) {
+                          removeMember(member.id)
+                        }
+                      }}
                     >
                       <Trash2 size={14} />
                     </button>

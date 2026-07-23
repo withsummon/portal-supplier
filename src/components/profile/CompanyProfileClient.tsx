@@ -112,7 +112,7 @@ export default function CompanyProfileClient({
           Company Information
         </div>
 
-        <div className="grid-2" style={{ gap: 'var(--sp-6)' }}>
+        <div className="form-grid-2" style={{ gap: 'var(--sp-6)' }}>
           <div className="form-group">
             <label className="form-label">Contact Name</label>
             <input
@@ -143,7 +143,7 @@ export default function CompanyProfileClient({
             </div>
           </div>
 
-          <div className="form-group" style={{ gridColumn: 'span 2' }}>
+          <div className="form-group" style={{ gridColumn: '1 / -1' }}>
             <label className="form-label">Company Description</label>
             <textarea
               className="input input-textarea"

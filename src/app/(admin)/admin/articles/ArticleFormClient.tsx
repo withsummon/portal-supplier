@@ -49,6 +49,14 @@ export default function ArticleFormClient({ article }: { article?: ArticleData }
   }
 
   function saveArticle(published: boolean) {
+    if (
+      published &&
+      !formData.published &&
+      !window.confirm('Publish this article so sellers can read it?')
+    ) {
+      return
+    }
+
     const nextErrors = {
       title: formData.title.trim() ? '' : 'Title is required.',
       content: formData.content.trim() ? '' : 'Article content is required.',
@@ -137,10 +145,18 @@ export default function ArticleFormClient({ article }: { article?: ArticleData }
         </div>
       )}
 
-      <div style={{ display: 'grid', gap: 'var(--sp-5)' }}>
-        <ProductFormSection title="Content">
-          <div style={{ display: 'grid', gap: 'var(--sp-4)' }}>
-            <ProductFormField label="Title" required error={errors.title}>
+      <div className="form-stack">
+        <ProductFormSection
+          title="Content"
+          description="Write the seller-facing title and article body before publishing."
+        >
+          <div className="form-stack">
+            <ProductFormField
+              label="Title"
+              required
+              error={errors.title}
+              hint="Shown on article cards and detail pages."
+            >
               <input
                 className="input"
                 placeholder="Quarterly platform update"
@@ -148,7 +164,7 @@ export default function ArticleFormClient({ article }: { article?: ArticleData }
                 onChange={(event) => updateField('title', event.target.value)}
               />
             </ProductFormField>
-            <ProductFormField label="Excerpt">
+            <ProductFormField label="Excerpt" hint="Optional summary shown on article cards.">
               <textarea
                 className="input input-textarea"
                 rows={3}
@@ -157,7 +173,12 @@ export default function ArticleFormClient({ article }: { article?: ArticleData }
                 onChange={(event) => updateField('excerpt', event.target.value)}
               />
             </ProductFormField>
-            <ProductFormField label="Article Content" required error={errors.content}>
+            <ProductFormField
+              label="Article Content"
+              required
+              error={errors.content}
+              hint="Published content is visible to sellers."
+            >
               <textarea
                 className="input input-textarea"
                 rows={12}
@@ -169,8 +190,11 @@ export default function ArticleFormClient({ article }: { article?: ArticleData }
           </div>
         </ProductFormSection>
 
-        <ProductFormSection title="Cover & Preview">
-          <div style={{ display: 'grid', gridTemplateColumns: '320px 1fr', gap: 'var(--sp-5)' }}>
+        <ProductFormSection
+          title="Cover & Status"
+          description="Preview the image and confirm whether this article is draft or published."
+        >
+          <div className="form-cover-grid">
             <div
               style={{
                 aspectRatio: '16 / 10',
@@ -203,7 +227,7 @@ export default function ArticleFormClient({ article }: { article?: ArticleData }
               )}
             </div>
             <div>
-              <ProductFormField label="Cover Image">
+              <ProductFormField label="Cover Image" hint="Use a wide image for article cards.">
                 <input
                   type="file"
                   accept="image/*"
