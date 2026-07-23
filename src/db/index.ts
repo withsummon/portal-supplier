@@ -7,6 +7,8 @@ const globalForDb = globalThis as unknown as {
   db: ReturnType<typeof drizzle<typeof schema>> | undefined
 }
 
+type Db = ReturnType<typeof drizzle<typeof schema>>
+
 function createPool() {
   if (!process.env.DATABASE_URL) {
     throw new Error('DATABASE_URL is required')
@@ -28,13 +30,33 @@ function createDb(pool: Pool) {
   })
 }
 
-const pool = globalForDb.pool ?? createPool()
-const db = globalForDb.db ?? createDb(pool)
+function getPool() {
+  if (!globalForDb.pool) {
+    globalForDb.pool = createPool()
+  }
 
-if (process.env.NODE_ENV !== 'production') {
-  globalForDb.pool = pool
-  globalForDb.db = db
+  return globalForDb.pool
 }
+
+function getDb() {
+  if (!globalForDb.db) {
+    globalForDb.db = createDb(getPool())
+  }
+
+  return globalForDb.db
+}
+
+function lazy<T extends object>(getValue: () => T): T {
+  return new Proxy({} as T, {
+    get(_target, property) {
+      const value = Reflect.get(getValue(), property)
+      return typeof value === 'function' ? value.bind(getValue()) : value
+    },
+  })
+}
+
+const pool = lazy<Pool>(getPool)
+const db = lazy<Db>(getDb)
 
 export { db, pool }
 export * from './schema'

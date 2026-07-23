@@ -15,8 +15,7 @@ COPY . .
 # Set build-time environment
 ENV NODE_ENV=production
 
-# Generate Drizzle schema & Build Next.js
-RUN bunx drizzle-kit generate
+# Build Next.js. Drizzle schema sync runs in start.sh when runtime env is available.
 RUN bun run build
 
 # ============================================================
