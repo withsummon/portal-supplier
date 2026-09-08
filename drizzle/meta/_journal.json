@@ -36,6 +36,13 @@
       "when": 1784727000000,
       "tag": "0004_factory_portfolio_articles",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1788847859494,
+      "tag": "0005_add_paid_project_status",
+      "breakpoints": true
     }
   ]
 }
