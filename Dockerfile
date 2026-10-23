@@ -1,7 +1,7 @@
 # ============================================================
 # Stage 1: Builder
 # ============================================================
-FROM oven/bun:1-alpine AS builder
+FROM oven/bun:1.4.4-alpine AS builder
 
 WORKDIR /app
 
@@ -21,7 +21,7 @@ RUN bun run build
 # ============================================================
 # Stage 2: Runner (Optimized & Small)
 # ============================================================
-FROM oven/bun:1-alpine AS runner
+FROM oven/bun:1.4.4-alpine AS runner
 
 WORKDIR /app
 
